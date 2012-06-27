@@ -55,13 +55,36 @@
 <p>The bulk of documentation for workflows is to be done in the source file itself.  Such practice will minimize the number of documentation files and ensure documentation is kept upto date with code changes.</p>
 <div class="section" id="how-to-write-workflow-code-with-proper-documentation">
 <span id="documenting-workflows"></span><h2>How to write workflow code with proper documentation<a class="headerlink" href="#how-to-write-workflow-code-with-proper-documentation" title="Permalink to this headline">¶</a></h2>
-<p>Proper workflow documentation will follow the general standards provided by numpy (<a class="reference external" href="https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt">https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt</a>).</p>
+<p>Proper workflow documentation will follow the general standards provided by numpy (<a class="reference external" href="https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt">https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt</a>).  Because workflow creation functions are themselves python functions, their parameters and what they return should be documented as such.  Please refer to the <a class="reference external" href="https://github.com/numpy/numpy/blob/master/doc/example.py">example.py</a> provided by numpy for syntax.</p>
 <p><a class="reference internal" href="../workflows/anatpreproc.html"><em>Example of a documented workflow</em></a></p>
-<p><strong>Required Information:</strong></p>
-<p><em>Parameters</em>: refer to workflow inputs</p>
-<p><em>Returns</em>: refer to workflow outputs.</p>
-<p><em>Notes</em>: should provide an in-depth description of the proccessing which occurs inside a workflow.</p>
-<p><em>Examples</em>: should provide at least one example of how to appropriately use the workflow.  The example should be completely standalone and executable directly from a python interpreter with CPAC correctly installed.  The outputs of a workflow should be displayed to the user in a relevant manner.  For instance, the names of the files created or the numerical values of the resulting output run for example data.</p>
+<p><strong>Notes section:</strong></p>
+<p>Workflows have nipype inputs and outputs which are specific to the workflow returned.  Any workflow specific information should be documented in the <em>Notes</em> section.  At a minimum, workflows are required to have the following information:</p>
+<ul class="simple">
+<li>A link pointing to the file on GitHub.</li>
+<li><em>Workflow Inputs</em>: refer to workflow inputs. This is often received by an IdentityInterface node named &#8216;inputspec&#8217;.</li>
+<li><em>Workflow Outputs</em>: refer to workflow outputs.  This is often received by an IdentityInterface node named &#8216;outputspec&#8217;.</li>
+<li>Explanation of the processing which occurs inside the workflow</li>
+</ul>
+<p>Example of <em>Notes</em> section for a workflow:</p>
+<div class="highlight-python"><pre>Notes
+-----
+
+`Source &lt;GitHub link pointing to workflow source file&gt;`_
+
+Workflow Inputs::
+
+    inputspec.X : possible data type(s) of X
+        Detailed description of X
+
+Workflow Outputs::
+
+    outputspec.Y : possible data type(s) of Y
+        Detailed description of Y
+
+X is denoised and spatially smoothed.</pre>
+</div>
+<p><strong>Examples Section:</strong></p>
+<p>This section should provide at least one example of how to appropriately use the workflow.  The example should be completely standalone and executable directly from a python interpreter with CPAC correctly installed.  The outputs of a workflow should be displayed to the user in a relevant manner.  For instance, the names of the files created or the numerical values of the resulting output run for example data.</p>
 </div>
 <div class="section" id="generating-website-documenation-for-workflows">
 <h2>Generating website documenation for workflows<a class="headerlink" href="#generating-website-documenation-for-workflows" title="Permalink to this headline">¶</a></h2>

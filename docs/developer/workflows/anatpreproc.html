@@ -54,38 +54,34 @@
 <dd><p>The main purpose of this workflow is to process T1 scans. Raw mprage file is deobliqued, reoriented 
 into RPI and skullstripped. Also, a whole brain only mask is generated from the skull stripped image 
 for later use in registration.</p>
-<p>Source code: <a class="reference external" href="https://github.com/ssikka/NKI_NYU_Nipype/blob/development/base.py#L250">anat_preproc</a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>inputspec.anat</strong> : mprage file or a list of mprage nifti file</p>
-<blockquote>
-<div><p>User input anatomical(T1) Image, in any of the 8 orientations</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>outputspec.refit</strong> : nifti file</p>
-<blockquote>
-<div><p>Deobliqued anatomical data</p>
-</div></blockquote>
-<p><strong>outputspec.reorient</strong> : nifti file</p>
-<blockquote>
-<div><p>RPI oriented anatomical data</p>
-</div></blockquote>
-<p><strong>outputspec.skullstrip</strong> : nifti file</p>
-<blockquote>
-<div><p>Skull Stripped RPI oriented mprage file with normalized intensities.</p>
-</div></blockquote>
-<p><strong>outputspec.brain</strong> : nifti file</p>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>anat_preproc</strong> : workflow</p>
 <blockquote class="last">
-<div><p>Skull Stripped RPI Brain Image with original intensity values and not normalized or scaled.</p>
+<div><p>Anatomical preprocessing workflow</p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
+<p><a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/CPAC/anatpreproc/anatpreproc.py">Source</a></p>
+<p>Workflow Inputs:</p>
+<div class="highlight-python"><pre>inputspec.anat : mprage file or a list of mprage nifti file 
+    User input anatomical(T1) Image, in any of the 8 orientations</pre>
+</div>
+<p>Workflow Outputs:</p>
+<div class="highlight-python"><pre>outputspec.refit : nifti file
+    Deobliqued anatomical data 
+outputspec.reorient : nifti file
+    RPI oriented anatomical data 
+outputspec.skullstrip : nifti file
+    Skull Stripped RPI oriented mprage file with normalized intensities.
+outputspec.brain : nifti file
+    Skull Stripped RPI Brain Image with original intensity values and not normalized or scaled.</pre>
+</div>
 <p>Order of commands:</p>
 <ul>
 <li><p class="first">Deobliqing the scans.  For details see <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/doc/program_help/3drefit.html">3drefit</a>:</p>
@@ -106,9 +102,9 @@ for later use in registration.</p>
 </li>
 </ul>
 <p>High Level Workflow Graph:</p>
-<img alt="../_images/anatpreproc_graph.dot9.png" src="../_images/anatpreproc_graph.dot9.png" style="width: 500px;" />
+<img alt="../_images/anatpreproc_graph.dot.png" src="../_images/anatpreproc_graph.dot.png" style="width: 500px;" />
 <p>Detailed Workflow Graph:</p>
-<img alt="../_images/anatpreproc_graph_detailed.dot9.png" src="../_images/anatpreproc_graph_detailed.dot9.png" style="width: 500px;" />
+<img alt="../_images/anatpreproc_graph_detailed.dot.png" src="../_images/anatpreproc_graph_detailed.dot.png" style="width: 500px;" />
 <p class="rubric">Examples</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">anat</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">prproc</span> <span class="o">=</span> <span class="n">create_anat_preproc</span><span class="p">()</span>
