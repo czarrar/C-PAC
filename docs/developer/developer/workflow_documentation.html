@@ -35,6 +35,12 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="testing.html" title="Testing CPAC"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -95,8 +101,8 @@ X is denoised and spatially smoothed.</pre>
 <div class="highlight-python"><pre>Human readable name of workflow (eg. Anatomical Preprocessing)
 ==============================================================
 
-.. currentmodule:: workflow_name
-.. autofunction:: create_workflow_name</pre>
+.. automodule:: CPAC.workflow_name
+    :members:</pre>
 </div>
 </li>
 <li><p class="first">Add your workflow to the table of contents in ./CPAC/doc/workflows/index.rst (<a class="reference external" href="https://raw.github.com/openconnectome/C-PAC/master/doc/workflows/index.rst">example</a>):</p>
@@ -109,13 +115,6 @@ Contents:
    :maxdepth: 2
    ...
    workflow_name</pre>
-</div>
-</li>
-<li><p class="first">Make your workflow code available to sphinx by adding the following line to ./CPAC/doc/conf.py (<a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/doc/conf.py#L29">example</a>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;sphinxext&#39;</span><span class="p">))</span>
-<span class="o">...</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;../CPAC/workflow_name/&#39;</span><span class="p">))</span>
-</pre></div>
 </div>
 </li>
 <li><p class="first">Generate the html documentation using sphinx by running the command in ./CPAC/doc/:</p>
@@ -175,6 +174,12 @@ Contents:
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="testing.html" title="Testing CPAC"
              >next</a> |</li>

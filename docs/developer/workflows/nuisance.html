@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Nuisance Signal Removal &mdash; CPAC v0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="up" title="Workflows" href="index.html" />
+    <link rel="prev" title="Bootstrap Analysis of Stable Clusters" href="basc.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-CPAC.nuisance">
+<span id="nuisance-signal-removal"></span><h1>Nuisance Signal Removal<a class="headerlink" href="#module-CPAC.nuisance" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="CPAC.nuisance.create_nuisance">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">create_nuisance</tt><big>(</big><em>name='nuisance'</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.create_nuisance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Workflow for the removal of various signals considered to be noise in resting state
+fMRI data.  The residual signals for linear regression denoising is performed in a single
+model.  Therefore the residual time-series will be orthogonal to all signals.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
+<blockquote>
+<div><p>Name of the workflow.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>nuisance</strong> : nipype.pipeline.engine.Workflow</p>
+<blockquote class="last">
+<div><p>Nuisance workflow.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Workflow Inputs:</p>
+<div class="highlight-python"><pre>inputspec.realigned_file : string (nifti file)
+    Path of a realigned nifti file.
+inputspec.wm_mask : string (nifti file)
+    Corresponding white matter mask.
+inputspec.csf_mask : string (nifti file)
+    Corresponding cerebral spinal fluid mask.
+inputspec.gm_mask : string (nifti file)
+    Corresponding grey matter mask.
+inputspec.motion_components : string (text file)
+    Corresponding rigid-body motion parameters.  Matrix in the file should be of shape 
+    (`T`, `R`), `T` timepoints and `R` motion parameters.</pre>
+</div>
+<p>Workflow Outputs:</p>
+<div class="highlight-python"><pre>outputspec.residual_file : string (nifti file)
+outputspec.median_angle_corrected_file : string (nifti file)
+outputspec.angles : string (numpy file)</pre>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.bandpass_voxels">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">bandpass_voxels</tt><big>(</big><em>realigned_file</em>, <em>sample_period</em>, <em>bandpass_freqs</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.bandpass_voxels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs ideal bandpass filtering on each voxel time-series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+<p><strong>sample_period</strong> : float</p>
+<blockquote>
+<div><p>Length of sampling period in seconds.</p>
+</div></blockquote>
+<p><strong>bandpass_freqs</strong> : tuple</p>
+<blockquote>
+<div><p>Tuple containing the bandpass frequencies.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>bandpassed_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of filtered output (nifti file).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.linear_detrend_voxels">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">linear_detrend_voxels</tt><big>(</big><em>realigned_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.linear_detrend_voxels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes linear trend for each voxel time-series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>detrended_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of detrended output (nifti file).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.extract_compcor_components">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_compcor_components</tt><big>(</big><em>nc</em>, <em>realigned_file</em>, <em>wm_mask</em>, <em>csf_mask</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_compcor_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the largest principal components found in white matter (WM) and cerebral spinal fluid
+(CSF).  CompCor algorithm based on <a class="reference internal" href="#r4">[R4]</a>.  Note that WM and CSF masks are not eroded.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>nc</strong> : integer</p>
+<blockquote>
+<div><p>Number of the largest principal components (in decsending order) to extract.</p>
+</div></blockquote>
+<p><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+<p><strong>wm_mask</strong> : string</p>
+<blockquote>
+<div><p>Path of a white matter mask (nifti file).</p>
+</div></blockquote>
+<p><strong>csf_mask</strong> : string</p>
+<blockquote>
+<div><p>Path of a cerebral spinal fluid mask (nifti file).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>components_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of the text file containing the extracted principal components.  Each component is
+stored as a column in the matrix.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R4]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <ol class="last upperalpha simple" start="25">
+<li>Behzadi, K. Restom, J. Liau, and T. T. Liu, A component based noise correction method (CompCor) for BOLD and perfusion based fMRI., NeuroImage, vol. 37, no. 1, pp. 90-101, Aug. 2007.</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.extract_global_component">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_global_component</tt><big>(</big><em>realigned_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_global_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the global signal, defined as the average time-series of all non-zero voxels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>components_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of the text file containing global signal component</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.extract_frommask_component">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_frommask_component</tt><big>(</big><em>realigned_file</em>, <em>mask_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_frommask_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the average time-series of voxels inside a given mask.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+<p><strong>mask_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a mask file</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>components_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of the text file containing extracted component</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.extract_firstprinc_component">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_firstprinc_component</tt><big>(</big><em>realigned_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_firstprinc_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the first principal component of all non-zero voxels.  Note the data is centered in 
+voxel space only.  Without centering in time space, the first principal component will likely 
+be highly correlated with the global signal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>components_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of the text file containing the first principal component</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.extract_linear_component">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_linear_component</tt><big>(</big><em>realigned_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_linear_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a linear component of the same length as the input time-series.  This linear
+component starts at <cite>0</cite> and ends at <cite>(timepoints - 1)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>components_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of the text file containing the linear component</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.median_angle_correct">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">median_angle_correct</tt><big>(</big><em>target_angle_deg</em>, <em>realigned_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.median_angle_correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs median angle correction on fMRI data.  Median angle correction algorithm
+based on <a class="reference internal" href="#r5">[R5]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>target_angle_deg</strong> : float</p>
+<blockquote>
+<div><p>Target median angle to adjust the time-series data.</p>
+</div></blockquote>
+<p><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>corrected_file</strong> : string</p>
+<blockquote>
+<div><p>Path of corrected file (nifti file).</p>
+</div></blockquote>
+<p><strong>angles_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of numpy file (.npy file) containing the angles (in radians) of all voxels with 
+the 5 largest principal components.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R5]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <ol class="last upperalpha simple" start="8">
+<li>He and T. T. Liu, &#8220;A geometric view of global signal confounds in resting-state functional MRI,&#8221; NeuroImage, Sep. 2011.</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.nuisance.extract_residuals">
+<tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_residuals</tt><big>(</big><em>realigned_file</em>, <em>regressors_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_residuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the residual time-series of all voxels with respect to the given regressors.  The
+output file will be in an orthogonal subspace to the regressors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>realigned_file</strong> : string</p>
+<blockquote>
+<div><p>Path of a realigned nifti file.</p>
+</div></blockquote>
+<p><strong>regressors_file</strong> : string</p>
+<blockquote>
+<div><p>Path of text file of regressors.  Matrix in the file should be of shape (<cite>T</cite>, <cite>R</cite>), <cite>T</cite> 
+timepoints and <cite>R</cite> regressors.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>residual_file</strong> : string</p>
+<blockquote class="last">
+<div><p>Path of residual output file (nifti file).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="basc.html"
+                        title="previous chapter">Bootstrap Analysis of Stable Clusters</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/workflows/nuisance.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Workflows</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Brian.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
