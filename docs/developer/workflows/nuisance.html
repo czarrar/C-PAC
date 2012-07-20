@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
+    <link rel="next" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF" href="alff.html" />
     <link rel="prev" title="Bootstrap Analysis of Stable Clusters" href="basc.html" /> 
   </head>
   <body>
@@ -39,6 +40,9 @@
         <li class="right" >
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="alff.html" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
              accesskey="P">previous</a> |</li>
@@ -159,7 +163,7 @@ outputspec.angles : string (numpy file)</pre>
 <dt id="CPAC.nuisance.extract_compcor_components">
 <tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">extract_compcor_components</tt><big>(</big><em>nc</em>, <em>realigned_file</em>, <em>wm_mask</em>, <em>csf_mask</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.extract_compcor_components" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts the largest principal components found in white matter (WM) and cerebral spinal fluid
-(CSF).  CompCor algorithm based on <a class="reference internal" href="#r4">[R4]</a>.  Note that WM and CSF masks are not eroded.</p>
+(CSF).  CompCor algorithm based on <a class="reference internal" href="#r5">[R5]</a>.  Note that WM and CSF masks are not eroded.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -192,10 +196,10 @@ stored as a column in the matrix.</p>
 </tbody>
 </table>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r4" rules="none">
+<table class="docutils citation" frame="void" id="r5" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R4]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <ol class="last upperalpha simple" start="25">
+<tr><td class="label">[R5]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <ol class="last upperalpha simple" start="25">
 <li>Behzadi, K. Restom, J. Liau, and T. T. Liu, A component based noise correction method (CompCor) for BOLD and perfusion based fMRI., NeuroImage, vol. 37, no. 1, pp. 90-101, Aug. 2007.</li>
 </ol>
 </td></tr>
@@ -310,7 +314,7 @@ component starts at <cite>0</cite> and ends at <cite>(timepoints - 1)</cite></p>
 <dt id="CPAC.nuisance.median_angle_correct">
 <tt class="descclassname">CPAC.nuisance.</tt><tt class="descname">median_angle_correct</tt><big>(</big><em>target_angle_deg</em>, <em>realigned_file</em><big>)</big><a class="headerlink" href="#CPAC.nuisance.median_angle_correct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs median angle correction on fMRI data.  Median angle correction algorithm
-based on <a class="reference internal" href="#r5">[R5]</a>.</p>
+based on <a class="reference internal" href="#r6">[R6]</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -339,10 +343,10 @@ the 5 largest principal components.</p>
 </tbody>
 </table>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r5" rules="none">
+<table class="docutils citation" frame="void" id="r6" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R5]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <ol class="last upperalpha simple" start="8">
+<tr><td class="label">[R6]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <ol class="last upperalpha simple" start="8">
 <li>He and T. T. Liu, &#8220;A geometric view of global signal confounds in resting-state functional MRI,&#8221; NeuroImage, Sep. 2011.</li>
 </ol>
 </td></tr>
@@ -391,6 +395,9 @@ timepoints and <cite>R</cite> regressors.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="basc.html"
                         title="previous chapter">Bootstrap Analysis of Stable Clusters</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="alff.html"
+                        title="next chapter">Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/nuisance.txt"
@@ -425,6 +432,9 @@ timepoints and <cite>R</cite> regressors.</p>
         <li class="right" >
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="alff.html" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF"
+             >next</a> |</li>
         <li class="right" >
           <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
              >previous</a> |</li>

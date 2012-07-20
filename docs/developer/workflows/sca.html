@@ -25,7 +25,7 @@
     <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
     <link rel="next" title="Bootstrap Analysis of Stable Clusters" href="basc.html" />
-    <link rel="prev" title="Anatomical Preprocessing" href="anat_preproc.html" /> 
+    <link rel="prev" title="Segmentation Workflow" href="seg_preproc.html" /> 
   </head>
   <body>
     <div class="related">
@@ -44,7 +44,7 @@
           <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="anat_preproc.html" title="Anatomical Preprocessing"
+          <a href="seg_preproc.html" title="Segmentation Workflow"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
@@ -56,11 +56,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="seed-based-correlation-analysis">
-<h1>Seed Based Correlation Analysis<a class="headerlink" href="#seed-based-correlation-analysis" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-CPAC.sca">
+<span id="seed-based-correlation-analysis"></span><h1>Seed Based Correlation Analysis<a class="headerlink" href="#module-CPAC.sca" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="sca.create_sca">
-<tt class="descclassname">sca.</tt><tt class="descname">create_sca</tt><big>(</big><em>extraction_space</em><big>)</big><a class="headerlink" href="#sca.create_sca" title="Permalink to this definition">¶</a></dt>
+<dt id="CPAC.sca.create_sca">
+<tt class="descclassname">CPAC.sca.</tt><tt class="descname">create_sca</tt><big>(</big><em>extraction_space</em><big>)</big><a class="headerlink" href="#CPAC.sca.create_sca" title="Permalink to this definition">¶</a></dt>
 <dd><p>Map of the correlations of the Region of Interest(Seed in native or MNI space) with the rest of brain voxels.
 The map is normalized to contain Z-scores, mapped in standard space and treated with spatial smoothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -85,45 +85,47 @@ Extract time series from ROI in MNI space or extract it in subjects native space
 <p class="rubric">Notes</p>
 <p><a class="reference external" href="https://github.com/ssikka/NKI_NYU_Nipype/blob/development/base.py#L1540">Source</a></p>
 <p>Workflow Inputs:</p>
-<div class="highlight-python"><pre>seed_list_input.seed_list : a list of existing nifti files
+<div class="highlight-python"><pre>seed_list_input.seed_list : list (string existing nifti file) 
     A list of seeds/ ROI iin MNI space.
 
-inputspec.rest_res_filt : an existing nifti file 
+inputspec.rest_res_filt : string (existing nifti file)
     Band passed Image with Global Signal , white matter, csf and motion regression. Recommended bandpass filter (0.001,0.1) )
 
-inputspec.rest_mask2standard : an existing nifti file
+inputspec.rest_mask2standard : string (existing nifti file)
     A mask volume(derived from the functional volume) in standard in standard space.
     Used in spatial smoothing the Z-transformed correlations in MNI space
 
-inputspec.premat : an existing affine transformation .mat file for transformation from native functional space to T1 space
+inputspec.premat : string (existing affine transformation .mat file)
+                Transformation from native functional space to T1 space
     Specifies an affine transform that should be applied to the data prior to the non-linear warping.
 
-inputspec.postmat : an existing affine transformation .mat file for transformation from T1 space to native functional space
+inputspec.postmat : string (existing affine transformation .mat file)
+                Transformation from T1 space to native functional space
     Specifies an affine transform that should be applied to the data following to the non-linear warping.
 
-inputspec.fieldcoeff_file : an existing nifti file
+inputspec.fieldcoeff_file : string (existing nifti file)
     File with warp coefficients/fields.
     This typically the output given by the -cout parameter of fnirt during registration step
 
-inputspec.ref : an existing nifti file
+inputspec.ref : string (existing nifti file)
     When Registering from MNI space to native space use the mean functional image in native space is used.
     When registering from native to MNI MNI152_T1_STANDARD_RES nifti file is used(target space).
 
-fwhm_input.fwhm : A list of floating point numbers
+fwhm_input.fwhm : list (float)
     For spatial smoothing the Z-transformed correlations in MNI space.
     Generally the value of this parameter is 1.5 or 2 times the voxel size of the input Image.</pre>
 </div>
 <p>Workflow Outputs:</p>
-<div class="highlight-python"><pre>outputspec.correlations : a nifti file
+<div class="highlight-python"><pre>outputspec.correlations : string (nifti file)
     Correlations for the seed 
 
-outputspec.z_trans_correlations : a nifti file
+outputspec.z_trans_correlations : string (nifti file)
     Fisher Z transformed correlations of the seed 
 
-outputspec.z_2standard : a nifti file
+outputspec.z_2standard : string (nifti file)
     Registered Z-Transformed Correlations to Standard Space
 
-outputspec.z_2standard_FWHM : a nifti file
+outputspec.z_2standard_FWHM : string (nifti file)
     Spatially smoothed corr_Z_2standard.nii.gz</pre>
 </div>
 <p>Order of commands:</p>
@@ -234,6 +236,44 @@ corr_Z_2standard_FWHM.nii.gz</pre>
 </div>
 </dd></dl>
 
+<dl class="function">
+<dt id="CPAC.sca.set_gauss">
+<tt class="descclassname">CPAC.sca.</tt><tt class="descname">set_gauss</tt><big>(</big><em>fwhm</em><big>)</big><a class="headerlink" href="#CPAC.sca.set_gauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the sigma value, given Full Width Half Max. 
+Further it builds an operand string and returns it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><strong>fwhm</strong> : float</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><strong>op_string</strong> : string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="CPAC.sca.pToFile">
+<tt class="descclassname">CPAC.sca.</tt><tt class="descname">pToFile</tt><big>(</big><em>time_series</em><big>)</big><a class="headerlink" href="#CPAC.sca.pToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write Timeseries values in an emty time series file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>time_series</strong> : list (float)</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>ts_oneD</strong> : string (.txt file)</p>
+<blockquote class="last">
+<div><p>file contains timeseries values, one value per line</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -243,8 +283,8 @@ corr_Z_2standard_FWHM.nii.gz</pre>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="anat_preproc.html"
-                        title="previous chapter">Anatomical Preprocessing</a></p>
+  <p class="topless"><a href="seg_preproc.html"
+                        title="previous chapter">Segmentation Workflow</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="basc.html"
                         title="next chapter">Bootstrap Analysis of Stable Clusters</a></p>
@@ -286,7 +326,7 @@ corr_Z_2standard_FWHM.nii.gz</pre>
           <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
              >next</a> |</li>
         <li class="right" >
-          <a href="anat_preproc.html" title="Anatomical Preprocessing"
+          <a href="seg_preproc.html" title="Segmentation Workflow"
              >previous</a> |</li>
         <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
