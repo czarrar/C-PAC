@@ -17,14 +17,22 @@ It is worth noting that VMHC is somewhat affected by the level of spatial smothi
 
 .. figure:: /images/vmhc_zuo_smoothing.png
 
-The image above (taken from Zuo et al., 2010) shows differences in VMHC due to smoothing.
+The image above (taken from Zuo et al., 2010) shows differences in VMHC due to smoothing. These differences should be taken into account when comparing studies using VMHC.
 
 Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-VMHC was first used by Zuo and colleagues to investigate age-related related changes in functional homotopy. Their results revealed that the VMHC of different brain regions follow distinct developmental trajectories. The figure below (taken from Zuo et al., 2010) illustrates these differences.
+Despite being a relatively new analysis method number of studies have already utilized VMHC to investigate group differences in functional homotopy. Kelly et al. (2011) found reduced VMHC between prefrontal regions in patients with cocaine addiction compared to healthy controls, and Zuo and colleagues (2010) were able to chart changing functional homotopy across healthy aging.
 
-.. figure:: /images/vmhc_zuo_trajectories.png
+Future studies may benefit from using VMHC as an indicator of distrubed functional specialization in patient groups, as well as in longitudinal studies to investigate changes in functional homotopy over time due to treatment, intervention, or development.
 
+References
+^^^^^^^^^^
+Zuo, X.-N., Kelly, C., Di Martino, A., Mennes, M., Margulies, D. S., Bangaru, S., Grzadzinski, R., et al. (2010). Growing together and growing apart: regional and sex differences in the lifespan developmental trajectories of functional homotopy. The Journal of Neuroscience, 30(45), 15034–15043. doi:10.1523/JNEUROSCI.2612-10.2010
 
-.. rubric:: References
-.. [#f1] Zuo, X.-N., Kelly, C., Di Martino, A., Mennes, M., Margulies, D. S., Bangaru, S., Grzadzinski, R., et al. (2010). Growing together and growing apart: regional and sex differences in the lifespan developmental trajectories of functional homotopy. The Journal of Neuroscience, 30(45), 15034–15043. doi:10.1523/JNEUROSCI.2612-10.2010
+Kelly, C., Zuo, X.-N., Gotimer, K., Cox, C. L., Lynch, L., Brock, D., Imperati, D., et al. (2011). Reduced interhemispheric resting state functional connectivity in cocaine addiction. Biological Psychiatry, 69(7), 684–692. doi:10.1016/j.biopsych.2010.11.022 
+
+Salvador R, Martínez A, Pomarol-Clotet E, Gomar J, Vila F, Sarro S, Capdevila A, Bullmore E (2008) A simple view of the brain through a frequency-
+specific functional connectivity measure. Neuroimage 39:279 –289.
+
+Stark DE, Margulies DS, Shehzad ZE, Reiss P, Kelly AM, Uddin LQ, Gee DG,
+Roy AK, Banich MT, Castellanos FX, Milham MP (2008) Regional variation in interhemispheric coordination of intrinsic hemodynamic fluctuations. J Neurosci 28:13754–13764.
