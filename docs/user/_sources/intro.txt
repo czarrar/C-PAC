@@ -39,5 +39,3 @@ Pipelines
 
 Derivatives
 """""""""""
-
-A derivative is any 
