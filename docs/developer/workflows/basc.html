@@ -86,7 +86,15 @@
 <div class="highlight-python"><pre>inputspec.roi : string (nifti file)
     Mask of region(s) of interest
 inputpsec.subjects : list (nifti files)
-    4-D timeseries of a group of subjects normalized to MNI space</pre>
+    4-D timeseries of a group of subjects normalized to MNI space
+inputspec.dataset_bootstraps : integer
+    Number of bootstrap samples of the dataset
+inputspec.timeseries_bootstraps : integer
+    Number of bootstraps of each subject's timeseries
+inputspec.k_clusters : integer
+    Number of clusters at both the individiual and group level
+inputspec.affinity_threshold : float
+    Minimum threshold for similarity matrix based on correlation to create an edge</pre>
 </div>
 <p>Workflow Outputs:</p>
 <div class="highlight-python"><pre>outputspec.gsm : ndarray
@@ -110,6 +118,10 @@ outputspec.gsmap_img : string (nifti file)
 <li>Cluster the group stability matrix</li>
 <li>Calculate average within-cluster stability based on the clustering of step 6</li>
 </ol>
+<p>Workflow Graph:</p>
+<img alt="../_images/basc.dot.png" src="../_images/basc.dot.png" style="width: 500px;" />
+<p>Detailed Workflow Graph:</p>
+<img alt="../_images/basc_detailed.dot.png" src="../_images/basc_detailed.dot.png" style="width: 500px;" />
 <p class="rubric">References</p>
 <table class="docutils citation" frame="void" id="r2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -128,7 +140,7 @@ outputspec.gsmap_img : string (nifti file)
 
 <dl class="function">
 <dt id="CPAC.basc.nifti_individual_stability">
-<tt class="descclassname">CPAC.basc.</tt><tt class="descname">nifti_individual_stability</tt><big>(</big><em>subject_file</em>, <em>roi_mask_file</em>, <em>n_bootstraps</em>, <em>k_clusters</em>, <em>cbb_block_size=None</em><big>)</big><a class="headerlink" href="#CPAC.basc.nifti_individual_stability" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.basc.</tt><tt class="descname">nifti_individual_stability</tt><big>(</big><em>subject_file</em>, <em>roi_mask_file</em>, <em>n_bootstraps</em>, <em>k_clusters</em>, <em>cbb_block_size=None</em>, <em>affinity_threshold=0.5</em><big>)</big><a class="headerlink" href="#CPAC.basc.nifti_individual_stability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the individual stability matrix for a single subject by using Circular Block Bootstrapping method
 for time-series data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -155,6 +167,10 @@ for time-series data.</p>
 <blockquote>
 <div><p>Size of the time-series block when performing circular block bootstrap</p>
 </div></blockquote>
+<p><strong>affinity_threshold</strong> : float, optional</p>
+<blockquote>
+<div><p>Minimum threshold for similarity matrix based on correlation to create an edge</p>
+</div></blockquote>
 </td>
 </tr>
 <tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>ism</strong> : array_like</p>
@@ -169,7 +185,7 @@ for time-series data.</p>
 
 <dl class="function">
 <dt id="CPAC.basc.group_stability_matrix">
-<tt class="descclassname">CPAC.basc.</tt><tt class="descname">group_stability_matrix</tt><big>(</big><em>indiv_stability_list</em>, <em>n_bootstraps</em>, <em>k_clusters</em><big>)</big><a class="headerlink" href="#CPAC.basc.group_stability_matrix" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.basc.</tt><tt class="descname">group_stability_matrix</tt><big>(</big><em>indiv_stability_list</em>, <em>n_bootstraps</em>, <em>k_clusters</em>, <em>stratification=None</em><big>)</big><a class="headerlink" href="#CPAC.basc.group_stability_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the group stability matrix of the entire dataset by bootstrapping the dataset</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -177,7 +193,7 @@ for time-series data.</p>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>indiv_stability_list</strong> : array_like</p>
 <blockquote>
-<div><p>A length <cite>N</cite> list of matrices of shape (<cite>T</cite>, <cite>V</cite>), <cite>N</cite> subjects, <cite>T</cite> timepoints, <cite>V</cite> voxels</p>
+<div><p>A length <cite>N</cite> list of matrices of shape (<cite>V</cite>, <cite>V</cite>), <cite>N</cite> subjects, <cite>V</cite> voxels</p>
 </div></blockquote>
 <p><strong>n_bootstraps</strong> : integer</p>
 <blockquote>
@@ -186,6 +202,10 @@ for time-series data.</p>
 <p><strong>k_clusters</strong> : integer</p>
 <blockquote>
 <div><p>Number of clusters</p>
+</div></blockquote>
+<p><strong>stratification</strong> : array_like, optional</p>
+<blockquote>
+<div><p>List of integer entries denoting stratums for indiv_stability_list</p>
 </div></blockquote>
 </td>
 </tr>
@@ -217,7 +237,7 @@ for time-series data.</p>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>tseries</strong> : array_like</p>
 <blockquote>
-<div><p>A matrix of shapes (<cite>M</cite>, <cite>N</cite>) with <cite>M</cite> variables and <cite>N</cite> timepoints</p>
+<div><p>A matrix of shapes (<cite>M</cite>, <cite>N</cite>) with <cite>M</cite> timepoints and <cite>N</cite> variables</p>
 </div></blockquote>
 <p><strong>block_size</strong> : integer</p>
 <blockquote>
@@ -286,7 +306,7 @@ special issue on Statistical Challenges and Advances in Brain Science,
 
 <dl class="function">
 <dt id="CPAC.basc.cluster_timeseries">
-<tt class="descclassname">CPAC.basc.</tt><tt class="descname">cluster_timeseries</tt><big>(</big><em>X</em>, <em>n_clusters</em>, <em>similarity_metric=None</em>, <em>affinity_threshold=0.0</em>, <em>neighbors=5</em><big>)</big><a class="headerlink" href="#CPAC.basc.cluster_timeseries" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.basc.</tt><tt class="descname">cluster_timeseries</tt><big>(</big><em>X</em>, <em>n_clusters</em>, <em>similarity_metric='k_neighbors'</em>, <em>affinity_threshold=0.0</em>, <em>neighbors=10</em><big>)</big><a class="headerlink" href="#CPAC.basc.cluster_timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cluster a given timeseries</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -300,12 +320,12 @@ special issue on Statistical Challenges and Advances in Brain Science,
 <blockquote>
 <div><p>Number of clusters</p>
 </div></blockquote>
-<p><strong>similarity_metric</strong> : {None, &#8216;correlation&#8217;, &#8216;data&#8217;}</p>
+<p><strong>similarity_metric</strong> : {&#8216;k_neighbors&#8217;, &#8216;correlation&#8217;, &#8216;data&#8217;}</p>
 <blockquote>
 <div><p>Type of similarity measure for spectral clustering.  The pairwise similarity measure
 specifies the edges of the similarity graph. &#8216;data&#8217; option assumes X as the similarity
-matrix and hence must be symmetric.  None will default to kneighbors_graph <a class="reference internal" href="#r4">[R4]</a> (forced 
-to by symmetric)</p>
+matrix and hence must be symmetric.  Default is kneighbors_graph <a class="reference internal" href="#r4">[R4]</a> (forced to be 
+symmetric)</p>
 </div></blockquote>
 <p><strong>affinity_threshold</strong> : float</p>
 <blockquote>
@@ -313,7 +333,10 @@ to by symmetric)</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last"><strong>y_pred</strong> : array_like</p>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y_pred</strong> : array_like</p>
+<blockquote class="last">
+<div><p>Predicted cluster labels</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -394,7 +417,7 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
 
 <dl class="function">
 <dt id="CPAC.basc.individual_stability_matrix">
-<tt class="descclassname">CPAC.basc.</tt><tt class="descname">individual_stability_matrix</tt><big>(</big><em>Y</em>, <em>n_bootstraps</em>, <em>k_clusters</em>, <em>cbb_block_size=None</em><big>)</big><a class="headerlink" href="#CPAC.basc.individual_stability_matrix" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.basc.</tt><tt class="descname">individual_stability_matrix</tt><big>(</big><em>Y</em>, <em>n_bootstraps</em>, <em>k_clusters</em>, <em>cbb_block_size=None</em>, <em>affinity_threshold=0.5</em><big>)</big><a class="headerlink" href="#CPAC.basc.individual_stability_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the individual stability matrix of a single subject by bootstrapping their time-series</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -415,6 +438,10 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
 <p><strong>cbb_block_size</strong> : integer, optional</p>
 <blockquote>
 <div><p>Block size to use for the Circular Block Bootstrap algorithm</p>
+</div></blockquote>
+<p><strong>affinity_threshold</strong> : float, optional</p>
+<blockquote>
+<div><p>Minimum threshold for similarity matrix based on correlation to create an edge</p>
 </div></blockquote>
 </td>
 </tr>
