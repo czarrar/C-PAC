@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installing C-PAC &mdash; C-PAC 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" />
+    <link rel="next" title="Using C-PAC" href="use.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="use.html" title="Using C-PAC"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installing-c-pac">
+<h1>Installing C-PAC<a class="headerlink" href="#installing-c-pac" title="Permalink to this headline">¶</a></h1>
+<p>C-PAC utilizes a number of existing software tools, and these must be installed before running any analysis with C-PAC. Like C-PAC itself, all of the required tools are open-source and free to use for non-commercial purposes.</p>
+<div class="section" id="system-requirements">
+<h2>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="python">
+<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>Python is the glue that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the <a class="reference external" href="http://INSERTURLHERE.com">C-PAC developer documentation</a>.</p>
+<div class="section" id="epd">
+<h3>EPD<a class="headerlink" href="#epd" title="Permalink to this headline">¶</a></h3>
+<p>For most users, it is easier to install a pre-compiled Python distribution than to install each library manually. We recommend using the <a class="reference external" href="http://www.enthought.com/products/epd.php">Enthought Python Distribution</a> (EPD). If you are an academic user, you can <a class="reference external" href="http://www.enthought.com/products/edudownload.php">download EPD for free</a>.</p>
+<p><a class="reference external" href="http://www.enthought.com/products/epdgetstart.php">Click here for instructions on how to install EPD</a>.</p>
+</div>
+<div class="section" id="nibabel-nipype">
+<h3>Nibabel &amp; Nipype<a class="headerlink" href="#nibabel-nipype" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="afni">
+<h2>AFNI<a class="headerlink" href="#afni" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://afni.nimh.nih.gov/afni/">AFNI</a>  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data. C-PAC uses AFNI for [INSERT SPECIFICS HERE]. AFNI is maintained by the <a class="reference external" href="http://afni.nimh.nih.gov/sscc">Scientific and Statistical Computing Core</a> at the NIMH.</p>
+<p><a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml">Click here for instructions on how to download and install AFNI</a>.</p>
+</div>
+<div class="section" id="fsl">
+<h2>FSL<a class="headerlink" href="#fsl" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/index.html">FSL</a> (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data. C-PAC uses FSL for [INSERT SPECIFICS HERE]. FSL is maintaned by the is maintained by the <a class="reference external" href="http://www.fmrib.ox.ac.uk/">Oxford Center for Functional MRI of the Brain</a>.</p>
+<p><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html">Click here for instructions on how to download and install FSL</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing C-PAC</a><ul>
+<li><a class="reference internal" href="#system-requirements">System Requirements</a></li>
+<li><a class="reference internal" href="#python">Python</a><ul>
+<li><a class="reference internal" href="#epd">EPD</a></li>
+<li><a class="reference internal" href="#nibabel-nipype">Nibabel &amp; Nipype</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#afni">AFNI</a></li>
+<li><a class="reference internal" href="#fsl">FSL</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="use.html"
+                        title="next chapter">Using C-PAC</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="use.html" title="Using C-PAC"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction"
+             >previous</a> |</li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, C-PAC Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

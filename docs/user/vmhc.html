@@ -1,0 +1,131 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Voxel-Mirrored Homotopic Connectivity (VMHC) &mdash; C-PAC 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="voxel-mirrored-homotopic-connectivity-vmhc">
+<h1>Voxel-Mirrored Homotopic Connectivity (VMHC)<a class="headerlink" href="#voxel-mirrored-homotopic-connectivity-vmhc" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-background">
+<h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
+<p>VMHC provides a voxel-wise measure of resting-state functional connectivity (RSFC) between hemispheres (Zuo et al., 2010). This is done by quantifying the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other.</p>
+<p>Functional homotopy, the high degree of syncrhony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.</p>
+</div>
+<div class="section" id="computation-and-analysis-considerations">
+<h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
+<p>VMHC assumes symmetric morphology between hemispheres. As this is assumption does not hold for real brains, images must transformed before VMHC can be calculated. The initial transformation is applied to anatomical data, and consists of averaging an image with its left-right mirrored version to create identical mirrored hemispheres. Functional data is then transformed to fit the new symmetrical anatomical image. VMHC is computed as the resting-state functional connectivity between any pair of symmetric interhemispheric voxels.</p>
+<p>For a more detailed description of the way C-PAC computes VMHC, please see the <a class="reference external" href="http://openconnectome.github.com/C-PAC/docs/developer/workflows/vmhc.html">VMHC section of the developer documentation</a>.</p>
+<p>It is worth noting that VMHC is somewhat affected by the level of spatial smothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.</p>
+<div class="figure">
+<img alt="_images/vmhc_zuo_smoothing.png" src="_images/vmhc_zuo_smoothing.png" />
+</div>
+<p>The image above (taken from Zuo et al., 2010) shows differences in VMHC due to smoothing.</p>
+</div>
+<div class="section" id="applications-and-recommendations">
+<h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
+<p>VMHC was first used by Zuo and colleagues to investigate age-related related changes in functional homotopy. Their results revealed that the VMHC of different brain regions follow distinct developmental trajectories. The figure below (taken from Zuo et al., 2010) illustrates these differences.</p>
+<div class="figure">
+<img alt="_images/vmhc_zuo_trajectories.png" src="_images/vmhc_zuo_trajectories.png" />
+</div>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Zuo, X.-N., Kelly, C., Di Martino, A., Mennes, M., Margulies, D. S., Bangaru, S., Grzadzinski, R., et al. (2010). Growing together and growing apart: regional and sex differences in the lifespan developmental trajectories of functional homotopy. The Journal of Neuroscience, 30(45), 15034–15043. doi:10.1523/JNEUROSCI.2612-10.2010</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Voxel-Mirrored Homotopic Connectivity (VMHC)</a><ul>
+<li><a class="reference internal" href="#introduction-background">Introduction &amp; Background</a></li>
+<li><a class="reference internal" href="#computation-and-analysis-considerations">Computation and Analysis Considerations</a></li>
+<li><a class="reference internal" href="#applications-and-recommendations">Applications and Recommendations</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/vmhc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, C-PAC Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

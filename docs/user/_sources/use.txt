@@ -1,0 +1,25 @@
+Using C-PAC
+===========
+
+
+The Configuration File
+----------------------
+
+Computer Settings
+^^^^^^^^^^^^^^^^^
+
+Directory Setup
+^^^^^^^^^^^^^^^
+
+Pre-Processing Setup
+^^^^^^^^^^^^^^^^^^^^
+
+Pre-Processing Options
+^^^^^^^^^^^^^^^^^^^^^^
+
+Analysis Options
+^^^^^^^^^^^^^^^^
+
+
+Running C-PAC
+-------------

@@ -1,0 +1,72 @@
+Introduction
+============
+
+
+Goals
+^^^^^
+
+
+Features
+^^^^^^^^
+
+Seed-based Correlation Analysis (SCA)
+"""""""""""""""""""""""""""""""""""""
+Calculates functional connectivity between a seed region and all other voxels.
+
+Key Paper: `Functional connectivity in the motor cortex of resting human brain using echo-planar MRI. <http://www.ncbi.nlm.nih.gov/pubmed/8524021>`_
+
+Time-Series Extraction
+""""""""""""""""""""""
+Extract time-series data for pre-defined units, graph vertices, or each voxel.
+
+Voxel-Matched Homotopic Connectivity (VMHC)
+"""""""""""""""""""""""""""""""""""""""""""
+Key Paper: `Growing together and growing apart: regional and sex differences in the lifespan developmental trajectories of functional homotopy. <http://www.ncbi.nlm.nih.gov/pubmed/21068309>`_
+
+Regional Homogeneity (ReHo)
+"""""""""""""""""""""""""""
+Measures the similarity of the time series of a given voxel to those of its nearest neighbors.
+
+Key Paper: `Regional homogeneity approach to fMRI data analysis. <http://www.ncbi.nlm.nih.gov/pubmed/15110032>`_ 
+
+Bootstrap Analysis of Stable Clusters (BASC)
+""""""""""""""""""""""""""""""""""""""""""""
+Quantifies the stability of resting-state networks.
+
+Key Paper: `Multi-level bootstrap analysis of stable clusters in resting-state fMRI. <http://www.ncbi.nlm.nih.gov/pubmed/20226257>`_
+
+Connectome Wide Association Studies (CWAS)
+""""""""""""""""""""""""""""""""""""""""""
+Relate a phenotype to every voxel’s pattern of whole-brain functional connectivity.
+
+Key Resource: `Connectir <http://connectir.projects.nitrc.org/>`_
+
+Fractional Amplitude of Low Frequency Fluctuations
+""""""""""""""""""""""""""""""""""""""""""""""""""
+Key Paper: `An improved approach to detection of amplitude of low-frequency fluctuation (ALFF) for resting-state fMRI: fractional ALFF. <http://www.ncbi.nlm.nih.gov/pubmed/18501969>`_
+
+Network Centrality
+""""""""""""""""""
+Centrality measures quantify functional connectivity within the brain connectome.
+
+Key Paper: `Network centrality in the human functional connectome. <http://www.ncbi.nlm.nih.gov/pubmed/21968567>`_
+
+FSL Group Analysis
+""""""""""""""""""
+Key Resource: `FMRI Expert Analysis Tool (FEAT) <http://www.fmrib.ox.ac.uk/fsl/feat5/detail.html#higher>`_
+
+
+
+Key Concepts
+^^^^^^^^^^^^
+
+Workflows
+"""""""""
+
+Pipelines
+"""""""""
+
+Derivatives
+"""""""""""
+
+A derivative is any 

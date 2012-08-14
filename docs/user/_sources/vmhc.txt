@@ -1,0 +1,30 @@
+Voxel-Mirrored Homotopic Connectivity (VMHC)
+--------------------------------------------
+
+Introduction & Background
+^^^^^^^^^^^^^^^^^^^^^^^^^
+VMHC provides a voxel-wise measure of resting-state functional connectivity (RSFC) between hemispheres (Zuo et al., 2010). This is done by quantifying the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other.
+
+Functional homotopy, the high degree of syncrhony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.
+
+Computation and Analysis Considerations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VMHC assumes symmetric morphology between hemispheres. As this is assumption does not hold for real brains, images must transformed before VMHC can be calculated. The initial transformation is applied to anatomical data, and consists of averaging an image with its left-right mirrored version to create identical mirrored hemispheres. Functional data is then transformed to fit the new symmetrical anatomical image. VMHC is computed as the resting-state functional connectivity between any pair of symmetric interhemispheric voxels.
+
+For a more detailed description of the way C-PAC computes VMHC, please see the `VMHC section of the developer documentation <http://openconnectome.github.com/C-PAC/docs/developer/workflows/vmhc.html>`_.
+
+It is worth noting that VMHC is somewhat affected by the level of spatial smothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.
+
+.. figure:: /images/vmhc_zuo_smoothing.png
+
+The image above (taken from Zuo et al., 2010) shows differences in VMHC due to smoothing.
+
+Applications and Recommendations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VMHC was first used by Zuo and colleagues to investigate age-related related changes in functional homotopy. Their results revealed that the VMHC of different brain regions follow distinct developmental trajectories. The figure below (taken from Zuo et al., 2010) illustrates these differences.
+
+.. figure:: /images/vmhc_zuo_trajectories.png
+
+
+.. rubric:: References
+.. [#f1] Zuo, X.-N., Kelly, C., Di Martino, A., Mennes, M., Margulies, D. S., Bangaru, S., Grzadzinski, R., et al. (2010). Growing together and growing apart: regional and sex differences in the lifespan developmental trajectories of functional homotopy. The Journal of Neuroscience, 30(45), 15034–15043. doi:10.1523/JNEUROSCI.2612-10.2010
