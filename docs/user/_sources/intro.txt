@@ -17,7 +17,7 @@ Features
 
 * Regional Homogeneity (ReHo)
 
-* Bootstrap Analysis of Stable Clusters (BASC)
+* :doc:`Bootstrap Analysis of Stable Clusters (BASC) </basc>`
 
 * Connectome Wide Association Studies (CWAS)
 

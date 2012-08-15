@@ -1,0 +1,138 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Bootstrap Analysis of Stable Clusters (BASC) &mdash; C-PAC 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bootstrap-analysis-of-stable-clusters-basc">
+<h1>Bootstrap Analysis of Stable Clusters (BASC)<a class="headerlink" href="#bootstrap-analysis-of-stable-clusters-basc" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-background">
+<h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
+<p>Bootstrap analysis of stable clusters (BASC) is a statistical framework to quantify the stability of resting state networks (RSNs) or how stable would the RSNs be during the following replication experiment (Bellec et al., 2010). The core of the method is bootstrapping the available datasets to replicate the clustering process a large number of times and quantify the stable features across all replications. It can be implemented in a multi-level fashion to investigate stable RSNs at the level of individual subjects and at the level of a group.</p>
+</div>
+<div class="section" id="computation-and-analysis-considerations">
+<h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
+<p>BASC can be applied to 4-D timeseries data in nifti format after preprocessing and being normalized to MNI space. Masks of region of interests (ROIs) are selected according to the primary interests of the user.</p>
+<p>Individual-level BASC Computation:</p>
+<ol class="arabic simple">
+<li>For each subject, bootstrapping is applied to the original 4D dataset within the ROIs, resulting in B (number of bootstraps) replicated 4D dataset.</li>
+<li>A clustering algorithm is then applied to each of the replicated dataset and resulted in B adjacency matrices.</li>
+<li>All adjacency matrices are then averaged to a stability matrix which quantifies the stabile features of the clustering process.</li>
+</ol>
+<p>Group-level BASC Computation:
+The group-level BASC is based on the results of the individual-level BASC.</p>
+<ol class="arabic simple">
+<li>Bootstraping is applied to the individual stability matrices of the full sample (all subjects within that group) to mimic the random variations of the subject recruitment. Subjects were drawn with replacement from the real sample to generate a surrogate dataset featuring the same number of subjects as the original. This procedure resulted in C (number of bootstraps) replicated samples.</li>
+<li>Within each replication sample, individual stability matrices of all subjects were averaged to an average individual stability matrix.</li>
+<li>A clustering algorithm is then applied to each average individual stability matrix to generate a group-level adjacency matrix.</li>
+<li>All group-level adjacency matrices are then averaged to a group stability matrix which depicts how stable two voxels belong to the same cluster.</li>
+</ol>
+<p>#. The group stability matrix is then fed in a clustering algorithm to derive stable clusters.
+The stable clusters do not convey by themselves any quantitative information regarding stability. A stability map can be constructed for a given cluster based on the stability matrix to depict how stable that a voxel belong to that cluster. The stability map can be derived both at the individual (Fig.1: Panel A) and group (Fig.1: Panel B) levels.</p>
+<p>Please see developer workflow documentation for detailed calculation steps.</p>
+</div>
+<div class="section" id="applications-and-recommendations">
+<h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
+<p>Recently, the reproducibility and test-retest reliability of BASC have been tested   (Garcia-Garcia et al., in preparation). This framework has also been used to examine similarities and differences in striatal organization between children with ADHD and typically developing children (TDC) (Garcia-Garcia et al., 2012).</p>
+<p>The most important parameters are the individual and group level number of clusters. Other parameters include the number of bootstrap at the individual and group level and minimum threshold for similarity matrix based on correlation to create an edge. Please see Bellec et al., 2010 for choice of the BASC parameters.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Bellec, P. Rosa-Neto, O. C. Lyttelton, H. Benali, and A. C. Evans, “Multi-level bootstrap analysis of stable clusters in resting-state fMRI.,” NeuroImage, vol. 51, no. 3, pp. 1126-39, Jul. 2010.
+Manuel Garcia-Garcia, Brian Cheung, Adriana Di Martino, Pierre Bellec, Clare Kelly, F. Xavier Castellanos, Michael Milham. Stability of Functional Connectivity networks in the Basal Ganglia in ADHD. Poster. 2012.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Bootstrap Analysis of Stable Clusters (BASC)</a><ul>
+<li><a class="reference internal" href="#introduction-background">Introduction &amp; Background</a></li>
+<li><a class="reference internal" href="#computation-and-analysis-considerations">Computation and Analysis Considerations</a></li>
+<li><a class="reference internal" href="#applications-and-recommendations">Applications and Recommendations</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/basc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, C-PAC Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
