@@ -21,7 +21,7 @@ Features
 
 * Connectome Wide Association Studies (CWAS)
 
-* Fractional Amplitude of Low Frequency Fluctuations
+* :doc:`Amplitude of Low Frequency Fluctuations (ALFF) </alff>`
 
 * Network Centrality
 

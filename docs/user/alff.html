@@ -1,0 +1,129 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Amplitude of Low Frequency Fluctuations (ALFF) &mdash; C-PAC 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="amplitude-of-low-frequency-fluctuations-alff">
+<h1>Amplitude of Low Frequency Fluctuations (ALFF)<a class="headerlink" href="#amplitude-of-low-frequency-fluctuations-alff" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-background">
+<h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
+<p>Slow flucutations in activity are a fundamental feature of the resting brain, and their presence is key to determining correlated activity between brain regions and defining resting state networks. The relative magnitude of these fluctuations can differ between brain regions and between subjects, and thus may act as a marker for individual differences or dysfunction. Amplitude of Low Frequency Flucutations (ALFF) and fractional Amplitude of Low Frequency Fluctuations are related measures that quantify the amplitude of these low frequency oscillations (LFOs).</p>
+<p>ALFF is defined as the total power within the frequency range between 0.01 and 0.1 Hz, and thus indexes the strength or intensity of LFO. fALFF is defined as the total power within the low-frequency range (0.01-0.1 Hz) divided by the total power in the entire detectable frequency range, and represents the relative contribution of specific LFO to the whole frequency range. [This paragraph taken/paraphrased from Zuo et al 2010]</p>
+</div>
+<div class="section" id="computation-and-analysis-considerations">
+<h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
+<p>All computations are performed in a subjects native space. After transforming voxel time series frequency information into the power domain, calculation of these measures is relatively simple. ALFF is calculated as the sum of amplitudes within a specific low frequency range. fALFF is calcualted as a fraction of the sum of amplitudes across the entire frequency range detectable in a given signal. For both measures, subject-level amplitude maps are standardized into subject-level Z-score maps. Anatomical images and Z-score maps are then transformed into MNI152 standard space. If selected, group-level analysis is then performed using FSL.</p>
+<p>Though both measures are more sensitive to signal from gray matter white matter or CSF, ALFF is more sensitive to physiological noise, particularly near the ventricles and large blood vessles. The figure below (from Zuo et al., 2010) shows areas in which ALFF shows higher amplitude than fALFF, as well as the relative sensitivity of these measures to gray matter.</p>
+<div class="figure">
+<img alt="_images/alff_zuo_difference.png" src="_images/alff_zuo_difference.png" />
+</div>
+<p>Both ALFF and fALFF show moderate to high test-retest reliability in gray matter regions, but reliability for ALFF tends to be higher than for fALFF. As it is more reliable, ALFF may be more sensitive for discerning differences between groups and individuals. The figure below (also from Zuo et al., 2010) shows differences in test-retest reliability as measured by Interclass Correlation (ICC, Shrout and Fleiss, 1979).</p>
+<div class="figure">
+<img alt="_images/alff_zuo_trt.png" src="_images/alff_zuo_trt.png" />
+</div>
+<p>Finally, as these measures require a constant timecourse on which to do frequency and power analyses, they can not be run on scrubbed data in which volumes with excessive movement have been removed.</p>
+</div>
+<div class="section" id="applications-and-recommendations">
+<h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
+<p>[DESCRIBE ADHD PAPER AND OTHERS HERE]</p>
+<p>The greater specificity fALFF for gray matter appears to favor its use ofer ALFF. However, there is a cost, since ALFF has somewhat higher test-retest reliability. As such, it is advisable to report findings for both measures.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Amplitude of Low Frequency Fluctuations (ALFF)</a><ul>
+<li><a class="reference internal" href="#introduction-background">Introduction &amp; Background</a></li>
+<li><a class="reference internal" href="#computation-and-analysis-considerations">Computation and Analysis Considerations</a></li>
+<li><a class="reference internal" href="#applications-and-recommendations">Applications and Recommendations</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/alff.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, C-PAC Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
