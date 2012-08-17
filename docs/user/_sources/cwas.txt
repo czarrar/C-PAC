@@ -1,0 +1,52 @@
+Connectome-wide Association Studies (CWAS)
+------------------------------------------
+
+Introduction & Background
+^^^^^^^^^^^^^^^^^^^^^^^^^
+A key challenge for neuroscience is to understand the relationship between patterns of functional connectivity in the brain (the functional connectome) and environmental and phenotypic factors. Connectome-wide Association Studies (CWAS) permit the exploration of brain-behavior relationships across the entire functional connectome (Shehzad et al., 2012). 
+
+Due to the massive number of comparisons required for such studies (e.g., investigating 25,000 voxels requires evaluating the connectivity of more than 300 million voxel pairs), traditional univariate analysis approaches would result in an unreasonably high number of false positives and require stringent correction for multiple comparisons (Shehzad et al., 2012).
+
+Multivariate approaches such as Multi-voxel pattern analysis (MVPA) are more appropriate for application in CWAS. Whereas in univariate comparisons a phenotypic measure is related to only a single functional connection, MVPA relates the simultaneous contribution of multiple functional connections to a phenotype. This vastly reduces the number of connectivity-phenotype comparisons(Shehzad et al., 2012). The CWAS method implemented in C-PAC examines the correlation among patterns of functional connectivity and phenotypes using an MVPA approach and multivariate distance matric regression (MDMR; Reiss et al., 2010).
+
+Computation and Analysis Considerations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Computation steps for CWAS are listed below as described by Shehzad and colleages (2012). For more detailed informationa about how C-PAC makes these calculations, please see the CWAS section of the developer documentation.
+
+#. For each subject, C-PAC computes the correlation of BOLD signals between every possible pair of gray matter voxels, resulting in a V x V correlation matrix for each subject (where V is the number of gray matter voxels). 
+
+#. To determine individual differences, patterns of whole-brain connectivity for each voxel are compared to the connectivity pattern for the same voxel between all possible pairs of subjects. A distance matrix is then computed which represents the dissimilarity between whole-brain connectivity patterns for any pair of subjects.
+
+#. MDMR is then used to test whether, for each voxel, whole-brain connectivity patterns tended to be more similar for individuals with like phenotypes (within-group) than individuals with unlike phenotypes (between-group). This quantifies how well phenotypic variables explain the distances between participants in the distance matrix. 
+
+#. The significance of these similarities and diffierences is assessed with a permutation test. This identifies brain regions whose whole-brain pattern of connectivity is significantlly prediced by a particular phenotpic variable.
+
+The figure below (taken from Shehzad et al., 2010) outlines these steps.
+
+.. figure:: /images/cwas_shehzad_schematic.png
+
+For purposes of visualization and interpretation, clustering analysis can then be run on the CWAS results to examine differences in large-scale network activity.
+
+In contrast to other data-driven approaches, MDMR has minimal *a-priori* requirements, and relatively little decision making is required in choosing analytic parameters (Shehzad et al., 2012). [DISCUSS RELEVANT PAREMETERS: IS PERMUTATION # THE ONLY SIGNIFICANT ONE?]
+
+It is important to note that the results from the MDMR analysis do not provide information about what specific connections for a given region are driving connectome-wide associations, nor the direction of the connectivity-phenotype association. Coupling CWAS maps with follow-up seed-based correlation analysis (or similar methods) is required to determine this information (Shehzad et al., 2012)
+
+Applications and Recommendations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+As C-PAC is one of the first public software packages implement CWAS, it has yet to be utilized by more than a few researchers. The most notable use to date is the analysis performed by Shehezad and colleagues, who found a robust associations between a number of phenotypic characteristics including age, ADHD diagnosis, IQ, and *L-dopa* administration.
+
+.. figure:: /images/cwas_shehzad_brains.png
+
+Many researchers will perform follow-up analyses to determine the specific connections responsible for connectome-wide associations and their valence. To avoid bias caused by 'double-dipping' your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample. Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., 2012).
+
+Further, as CWAS examines connectivity associations across the entire brain, it may have decreased sensitivity to highly-localized sets of connections related to a phenotype. This issue can be addressed by limiting analysis to patterns of connectivity between specific anatomical regions and networks (Shehzad et al., 2012), which can be accomplished by defining an ROI mask during C-PAC setup.
+
+References
+^^^^^^^^^^
+Reiss, P.T., Stevens, M.H.H., Shehzad, Z., Petkova, E. & Milham, M.P. On
+distance-based permutation tests for between-group comparisons. Biometrics 66,
+636–643 (2010).
+
+Shehzad, Z., Kelly, C., Reiss, P.T., Emerson, J.W., McMahon, K., Copland, D.A., Castellanos, F.X., & Milham, M.P. An Analytic Framework for Connectome-Wide Association Studies
+
+Kriegeskorte, N., Simmons, W.K., Bellgowan, P.S.F. & Baker, C.I. Circularanalysis in systems neuroscience: the dangers of double dipping. Nat Neurosci 12, 535–540 (2009)

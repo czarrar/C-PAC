@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Connectome-wide Association Studies (CWAS) &mdash; C-PAC 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="connectome-wide-association-studies-cwas">
+<h1>Connectome-wide Association Studies (CWAS)<a class="headerlink" href="#connectome-wide-association-studies-cwas" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-background">
+<h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
+<p>A key challenge for neuroscience is to understand the relationship between patterns of functional connectivity in the brain (the functional connectome) and environmental and phenotypic factors. Connectome-wide Association Studies (CWAS) permit the exploration of brain-behavior relationships across the entire functional connectome (Shehzad et al., 2012).</p>
+<p>Due to the massive number of comparisons required for such studies (e.g., investigating 25,000 voxels requires evaluating the connectivity of more than 300 million voxel pairs), traditional univariate analysis approaches would result in an unreasonably high number of false positives and require stringent correction for multiple comparisons (Shehzad et al., 2012).</p>
+<p>Multivariate approaches such as Multi-voxel pattern analysis (MVPA) are more appropriate for application in CWAS. Whereas in univariate comparisons a phenotypic measure is related to only a single functional connection, MVPA relates the simultaneous contribution of multiple functional connections to a phenotype. This vastly reduces the number of connectivity-phenotype comparisons(Shehzad et al., 2012). The CWAS method implemented in C-PAC examines the correlation among patterns of functional connectivity and phenotypes using an MVPA approach and multivariate distance matric regression (MDMR; Reiss et al., 2010).</p>
+</div>
+<div class="section" id="computation-and-analysis-considerations">
+<h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
+<p>Computation steps for CWAS are listed below as described by Shehzad and colleages (2012). For more detailed informationa about how C-PAC makes these calculations, please see the CWAS section of the developer documentation.</p>
+<ol class="arabic simple">
+<li>For each subject, C-PAC computes the correlation of BOLD signals between every possible pair of gray matter voxels, resulting in a V x V correlation matrix for each subject (where V is the number of gray matter voxels).</li>
+<li>To determine individual differences, patterns of whole-brain connectivity for each voxel are compared to the connectivity pattern for the same voxel between all possible pairs of subjects. A distance matrix is then computed which represents the dissimilarity between whole-brain connectivity patterns for any pair of subjects.</li>
+<li>MDMR is then used to test whether, for each voxel, whole-brain connectivity patterns tended to be more similar for individuals with like phenotypes (within-group) than individuals with unlike phenotypes (between-group). This quantifies how well phenotypic variables explain the distances between participants in the distance matrix.</li>
+<li>The significance of these similarities and diffierences is assessed with a permutation test. This identifies brain regions whose whole-brain pattern of connectivity is significantlly prediced by a particular phenotpic variable.</li>
+</ol>
+<p>The figure below (taken from Shehzad et al., 2010) outlines these steps.</p>
+<div class="figure">
+<img alt="_images/cwas_shehzad_schematic.png" src="_images/cwas_shehzad_schematic.png" />
+</div>
+<p>For purposes of visualization and interpretation, clustering analysis can then be run on the CWAS results to examine differences in large-scale network activity.</p>
+<p>In contrast to other data-driven approaches, MDMR has minimal <em>a-priori</em> requirements, and relatively little decision making is required in choosing analytic parameters (Shehzad et al., 2012). [DISCUSS RELEVANT PAREMETERS: IS PERMUTATION # THE ONLY SIGNIFICANT ONE?]</p>
+<p>It is important to note that the results from the MDMR analysis do not provide information about what specific connections for a given region are driving connectome-wide associations, nor the direction of the connectivity-phenotype association. Coupling CWAS maps with follow-up seed-based correlation analysis (or similar methods) is required to determine this information (Shehzad et al., 2012)</p>
+</div>
+<div class="section" id="applications-and-recommendations">
+<h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
+<p>As C-PAC is one of the first public software packages implement CWAS, it has yet to be utilized by more than a few researchers. The most notable use to date is the analysis performed by Shehezad and colleagues, who found a robust associations between a number of phenotypic characteristics including age, ADHD diagnosis, IQ, and <em>L-dopa</em> administration.</p>
+<div class="figure">
+<img alt="_images/cwas_shehzad_brains.png" src="_images/cwas_shehzad_brains.png" />
+</div>
+<p>Many researchers will perform follow-up analyses to determine the specific connections responsible for connectome-wide associations and their valence. To avoid bias caused by &#8216;double-dipping&#8217; your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample. Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., 2012).</p>
+<p>Further, as CWAS examines connectivity associations across the entire brain, it may have decreased sensitivity to highly-localized sets of connections related to a phenotype. This issue can be addressed by limiting analysis to patterns of connectivity between specific anatomical regions and networks (Shehzad et al., 2012), which can be accomplished by defining an ROI mask during C-PAC setup.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Reiss, P.T., Stevens, M.H.H., Shehzad, Z., Petkova, E. &amp; Milham, M.P. On
+distance-based permutation tests for between-group comparisons. Biometrics 66,
+636–643 (2010).</p>
+<p>Shehzad, Z., Kelly, C., Reiss, P.T., Emerson, J.W., McMahon, K., Copland, D.A., Castellanos, F.X., &amp; Milham, M.P. An Analytic Framework for Connectome-Wide Association Studies</p>
+<p>Kriegeskorte, N., Simmons, W.K., Bellgowan, P.S.F. &amp; Baker, C.I. Circularanalysis in systems neuroscience: the dangers of double dipping. Nat Neurosci 12, 535–540 (2009)</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Connectome-wide Association Studies (CWAS)</a><ul>
+<li><a class="reference internal" href="#introduction-background">Introduction &amp; Background</a></li>
+<li><a class="reference internal" href="#computation-and-analysis-considerations">Computation and Analysis Considerations</a></li>
+<li><a class="reference internal" href="#applications-and-recommendations">Applications and Recommendations</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cwas.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, C-PAC Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

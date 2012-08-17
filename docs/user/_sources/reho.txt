@@ -1,0 +1,34 @@
+Amplitude of Low Frequency Fluctuations (ALFF)
+----------------------------------------------
+
+Introduction & Background
+^^^^^^^^^^^^^^^^^^^^^^^^^
+Regional Homogeneity (ReHo) is a measure of brain activity proposed by Zang et al. (2004). ReHo is calculated using Kendall's coefficient of concordance (KCC) on a voxel-by-voxel basis (Kendall and Gibbons, 1990), which evaluates the similarity or synchronization between the time series of a given voxel and its nearest neighbors. Different from the functional connectivity analysis, ReHo requires no a priori definition of ROIs and can provide information about the local activity of separate brain regions.
+
+Computation and Analysis Considerations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Please see Zang. et al.,(2004) for the formula to calculate KCC. The KCC value ranged from 0 to 1. A greater value is associated with a higher similarity of the local activity between the given voxel and its nearest neighbors.
+
+Some parameters have been shown to have a significant effect on the results of ReHo, such as the number of neighbors and the amplitude of spatial smoothing. The number of nearest neighboring voxels can be defined using the side, edge, or corner, resulting in 6, 18, or 26 neighbors respectively. A Larger number of neighbors and larger smoothing kernel have been shown to yield greater differences between two conditions of a motor task (Zang et al., 2004). 
+
+Applications and Recommendations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ReHo as an index of ongoing activity was widely used in the resting-state study. Specifically, increased ReHo and decreased ReHo have been observed within the DMN during resting (Long et al., 2008) and task (Zang et a., 2004), respectively. ReHo can also predict individual differences in behavioral inhibition in healthy controls (Tian et al., 2012). Furthermore, altered ReHo has been observed in normal aging  (Wu et al., 2007) and different patient group, such as Alzheimer (Liu et al., 2008), ADHD (Cao et al., 2006), and schizophrenia (Liu et al., 2006), suggesting its potential as biomarkers of aging and diseases.
+
+Although ReHo has been widely used in resting state fMRI signals, it can be used to evoked fMRI data. It is appropriate for blocked design and slow event-related design, but may not for the rapid event-related design. This is because the hemodynamic response at a single time point is a combination of different trials in a rapid event-related design and this trial overlapping can not be differentiated by ReHo.
+
+References
+^^^^^^^^^^
+Kendall, M.G., Gibbons, J.D., 1990. Rank Correlation Methods, 5th ed. Oxford University Press.
+
+Zang, Y., Jiang, T., Lu, Y., He, Y., Tian, L., 2004. Regional homogeneity approach to fMRI data analysis. Neuroimage 22, 394-400. 
+
+Cao, Q., Zang, Y., Sun, L., Sui, M., Long, X., Zou, Q., Wang, Y., 2006. Abnormal neural activity in children with attention deficit hyperactivity disorder: a resting-state functional magnetic resonance imaging study. Neuroreport 17, 1033-1036. 
+
+He, Y., Wang, L., Zang, Y., Tian, L., Zhang, X., Li, K., Jiang, T., 2007. Regional coherence changes in the early stages of Alzheimer's disease: a combined structural and resting-state functional MRI study. Neuroimage 35, 488-500. 
+
+Liu, H., Liu, Z., Liang, M., Hao, Y., Tan, L., Kuang, F., Yi, Y., Xu, L., Jiang, T., 2006. Decreased regional homogeneity in schizophrenia: a resting state functional magnetic resonance imaging study. Neuroreport 17, 19-22. 
+
+Wu, T., Zang, Y., Wang, L., Long, X., Hallett, M., Chen, Y., Li, K., Chan, P., 2007. Aging influence on functional connectivity of the motor network in the resting state. Neurosci Lett 422, 164-168. 
+
+Xiang-Yu Long, Xi-Nian Zuo, Vesa Kiviniemi, Yihong Yang, Qi-Hong Zou, Chao-Zhe Zhu, Tian-Zi Jiang, Hong Yang, Qi-Yong Gong, LiangWang, Kun-Cheng Li, Sheng Xie, Yu-Feng Zang. Default mode network as revealed with multiple methods for resting-state functional MRI analysis, J Neurosci Methods (2008), 171(2):349-55
