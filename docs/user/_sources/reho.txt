@@ -3,19 +3,21 @@ Amplitude of Low Frequency Fluctuations (ALFF)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Regional Homogeneity (ReHo) is a measure of brain activity proposed by Zang et al. (2004). ReHo is calculated using Kendall's coefficient of concordance (KCC) on a voxel-by-voxel basis (Kendall and Gibbons, 1990), which evaluates the similarity or synchronization between the time series of a given voxel and its nearest neighbors. Different from the functional connectivity analysis, ReHo requires no a priori definition of ROIs and can provide information about the local activity of separate brain regions.
+Regional Homogeneity (ReHo) is a voxel-based measure of brain activity, which evaluates the similarity or synchronization between the time series of a given voxel and its nearest neighbors (Zang et al., 2004). This measure is based on the hypothesis that brain activity is more likely to occur in clusters rather than a single voxel. Thus, a Kendall's coefficient of concordance (KCC) (Kendall and Gibbons, 1990) was used as an index to evaluate the similarity of the time series within a cluster. The cluster is composed of the given voxel and its nearest neighbors.
+
+Different from the functional connectivity analysis, ReHo requires no a priori definition of ROIs and can provide information about the local/regional activity of separate brain regions.
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Please see Zang. et al.,(2004) for the formula to calculate KCC. The KCC value ranged from 0 to 1. A greater value is associated with a higher similarity of the local activity between the given voxel and its nearest neighbors.
+For each individual subject, the time series of each voxel, the number of time points within a time series, and the size of the cluster are needed to calculate KCC. The cluster size can be 7, 19, or 27, respectively, depending on whether the nearest neighbor is defined using the side, edge, or corner. Please see Zang. et al.,(2004) for the formula to calculate KCC. The KCC value ranged from 0 to 1. A greater value is associated with a higher similarity of the local activity between the given voxel and its nearest neighbors. Voxel-based maps were then generated based on this measure and then standardized to z-scores for group analysis. 
 
-Some parameters have been shown to have a significant effect on the results of ReHo, such as the number of neighbors and the amplitude of spatial smoothing. The number of nearest neighboring voxels can be defined using the side, edge, or corner, resulting in 6, 18, or 26 neighbors respectively. A Larger number of neighbors and larger smoothing kernel have been shown to yield greater differences between two conditions of a motor task (Zang et al., 2004). 
+Some parameters have been shown to have a significant effect on the ReHo analysis results, such as the number of neighbors and the amplitude of spatial smoothing. A larger number of neighbors and larger smoothing kernel have been shown to yield greater differences between two conditions of a motor task (Zang et al., 2004). 
 
 Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ReHo as an index of ongoing activity was widely used in the resting-state study. Specifically, increased ReHo and decreased ReHo have been observed within the DMN during resting (Long et al., 2008) and task (Zang et a., 2004), respectively. ReHo can also predict individual differences in behavioral inhibition in healthy controls (Tian et al., 2012). Furthermore, altered ReHo has been observed in normal aging  (Wu et al., 2007) and different patient group, such as Alzheimer (Liu et al., 2008), ADHD (Cao et al., 2006), and schizophrenia (Liu et al., 2006), suggesting its potential as biomarkers of aging and diseases.
+ReHo as an index of ongoing activity was widely used in the resting-state study. Specifically, increased ReHo during resting (Long et al., 2008) and decreased ReHo during task (Zang et a., 2004) have been observed within the DMN. In healthy controls, ReHo can predict individual differences in behavioral inhibition (Tian et al., 2012) and normal aging (Wu et al., 2007). In the patient population, altered ReHo has been observed in various diseases, such as Alzheimer (Liu et al., 2008), ADHD (Cao et al., 2006), and schizophrenia (Liu et al., 2006). 
 
-Although ReHo has been widely used in resting state fMRI signals, it can be used to evoked fMRI data. It is appropriate for blocked design and slow event-related design, but may not for the rapid event-related design. This is because the hemodynamic response at a single time point is a combination of different trials in a rapid event-related design and this trial overlapping can not be differentiated by ReHo.
+Although ReHo has been widely used in resting state fMRI signals, it can also be used in evoked fMRI data. It is appropriate for blocked design and slow event-related design, but may not for the rapid event-related design. This is because the hemodynamic response at a single time point is a combination of different trials in a rapid event-related design and this trial overlapping can not be differentiated by ReHo.
 
 References
 ^^^^^^^^^^

@@ -47,7 +47,7 @@
 <h1>Voxel-Mirrored Homotopic Connectivity (VMHC)<a class="headerlink" href="#voxel-mirrored-homotopic-connectivity-vmhc" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction-background">
 <h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
-<p>Functional homotopy, the high degree of syncrhony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.</p>
+<p>Functional homotopy, the high degree of synchrony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.</p>
 <p>VMHC provides a voxel-wise measure of resting-state functional connectivity (RSFC) between hemispheres (Zuo et al., 2010), and thus functional homotopy. This is done by quantifying the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other.</p>
 <div class="figure">
 <img alt="_images/vmhc_schematic.png" src="_images/vmhc_schematic.png" />
@@ -58,7 +58,7 @@
 <h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
 <p>VMHC assumes symmetric morphology between hemispheres. As this is assumption does not hold for real brains, images must transformed before VMHC can be calculated. The initial transformation is applied to anatomical data, and consists of averaging an image with its left-right mirrored version to create identical mirrored hemispheres. Functional data is then transformed to fit the new symmetrical anatomical image. VMHC is computed as the resting-state functional connectivity between any pair of symmetric interhemispheric voxels.</p>
 <p>For a more detailed description of the way C-PAC computes VMHC, please see the <a class="reference external" href="http://openconnectome.github.com/C-PAC/docs/developer/workflows/vmhc.html">VMHC section of the developer documentation</a>.</p>
-<p>It is worth noting that VMHC is somewhat affected by the level of spatial smothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.</p>
+<p>It is worth noting that VMHC is somewhat affected by the level of spatial smoothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.</p>
 <div class="figure">
 <img alt="_images/vmhc_zuo_smoothing.png" src="_images/vmhc_zuo_smoothing.png" />
 </div>
@@ -67,7 +67,8 @@
 <div class="section" id="applications-and-recommendations">
 <h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
 <p>Despite being a relatively new analysis method, a number of studies have already utilized VMHC to investigate group differences in functional homotopy. Kelly et al. (2011) found reduced VMHC between prefrontal regions in patients with cocaine addiction compared to healthy controls, and Zuo and colleagues (2010) were able to chart changing functional homotopy across healthy aging.</p>
-<p>Future studies may benefit from using VMHC as an indicator of distrubed functional specialization in patient groups, as well as in longitudinal studies to investigate changes in functional homotopy over time due to treatment, intervention, or development.</p>
+<p>Other recent studies examining functional homotopy (but not using VMHC) have found reduced interhemispheric connectivity in patients with autism (Anderson et al., 2011), and [SUMMARIZE GEE PAPER]</p>
+<p>Future studies may benefit from using VMHC as an indicator of disturbed functional specialization in patient groups, as well as in longitudinal studies to investigate changes in functional homotopy over time due to treatment, intervention, or development.</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>

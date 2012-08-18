@@ -3,7 +3,7 @@ Voxel-Mirrored Homotopic Connectivity (VMHC)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Functional homotopy, the high degree of syncrhony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.
+Functional homotopy, the high degree of synchrony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.
 
 VMHC provides a voxel-wise measure of resting-state functional connectivity (RSFC) between hemispheres (Zuo et al., 2010), and thus functional homotopy. This is done by quantifying the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other.
 
@@ -17,7 +17,7 @@ VMHC assumes symmetric morphology between hemispheres. As this is assumption doe
 
 For a more detailed description of the way C-PAC computes VMHC, please see the `VMHC section of the developer documentation <http://openconnectome.github.com/C-PAC/docs/developer/workflows/vmhc.html>`_. 
 
-It is worth noting that VMHC is somewhat affected by the level of spatial smothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.
+It is worth noting that VMHC is somewhat affected by the level of spatial smoothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.
 
 .. figure:: /images/vmhc_zuo_smoothing.png
 
@@ -25,9 +25,11 @@ The image above (taken from Zuo et al., 2010) shows differences in VMHC due to s
 
 Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Despite being a relatively new analysis method, a number of studies have already utilized VMHC to investigate group differences in functional homotopy. Kelly et al. (2011) found reduced VMHC between prefrontal regions in patients with cocaine addiction compared to healthy controls, and Zuo and colleagues (2010) were able to chart changing functional homotopy across healthy aging.
+Despite being a relatively new analysis method, a number of studies have already utilized VMHC to investigate group differences in functional homotopy. Kelly et al. (2011) found reduced VMHC between prefrontal regions in patients with cocaine addiction compared to healthy controls, and Zuo and colleagues (2010) were able to chart changing functional homotopy across healthy aging. 
 
-Future studies may benefit from using VMHC as an indicator of distrubed functional specialization in patient groups, as well as in longitudinal studies to investigate changes in functional homotopy over time due to treatment, intervention, or development.
+Other recent studies examining functional homotopy (but not using VMHC) have found reduced interhemispheric connectivity in patients with autism (Anderson et al., 2011), and [SUMMARIZE GEE PAPER]
+
+Future studies may benefit from using VMHC as an indicator of disturbed functional specialization in patient groups, as well as in longitudinal studies to investigate changes in functional homotopy over time due to treatment, intervention, or development.
 
 References
 ^^^^^^^^^^

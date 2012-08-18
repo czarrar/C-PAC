@@ -1,0 +1,137 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Network Centrality &mdash; C-PAC 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="network-centrality">
+<h1>Network Centrality<a class="headerlink" href="#network-centrality" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-background">
+<h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
+<p>Nodes are the basic units of a network. Among the many nodes that form the whole-brain network (i.e. the functional connectome), some play a crucial role and are central within the network. Central nodes can be identified via various centrality metrics which belong to a class of graph theory-based network measures assessing the centrality or functional importance of a given node (Koschutzki et al. 2005). There are different centrality measures and each one captures different aspects of connectivity (Joyce et al., 2010; Zuo et al., 2011). C-PAC treats a voxel as a node and calculates two commonly used centrality indices: degree centrality (DC) and eigenvector centrality (EC).</p>
+<p>DC is a measure of local network connectivity and identifies the most connected nodes according to the number of direct connections that a node has with other nodes. A node with high DC indicates strong direct connections of this node to many other nodes in the network.</p>
+<p>EC is a measure of global network connectivity. The EC of a given node reflects the number of connections that a node has with other nodes with high centrality. Thus, EC not only depends on the centrality of other nodes but also on its own centrality. A node with high EG indicates strong connections of this node with many other nodes that are themselves central within the network.</p>
+<p>The figure below (taken from Zuo et al., 2012) shows differences in centrality across the brain.</p>
+<div class="figure">
+<img alt="_images/centrality_zuo_map.png" src="_images/centrality_zuo_map.png" />
+</div>
+<p>Unlike functional connectivity, centrality measures capture the complexity of the functional connectome as a whole and no <em>a priori</em> regions of interests are required for this method.</p>
+</div>
+<div class="section" id="computation-and-analysis-considerations">
+<h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
+<p>For each individual subject, the time series for each voxel were extracted to calculate a temporal correlation matrix. A threshold was then applied to this correlation matrix and resulted in an adjacency matrix. DC is the simplest centrality measure and is computed by counting the number of significant correlations between the time series of a given voxel and all other voxels in the adjacency matrix. EC was computed by identifying the first eigenvector of the adjacency matrix, which corresponds to the largest eigenvalue. Since EC is a recursive measure, the EC of a given voxel is proportional to the sum of the EC of all direct neighbors of this voxel. Voxel-based graphs were then generated based on these measures and standardized to z-scores for group analysis (Zuo et al., 2012)</p>
+<p>DC highlights the importance of higher order cortical association
+Regions and is less sensitive to paralimbic and subcortical regions. In contrast, EC is more sensitive to paralimbic and subcortical regions (Zuo et al., 2012). Different analytical strategies and graph theory approaches applied may also affect the analysis results. For example, various criteria used for thresholding a functional connectivity matrix to format a graph adjacency matrix may result in discrepancies in results (Zuo et al., 2012).</p>
+</div>
+<div class="section" id="applications-and-recommendations">
+<h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
+<p>Degree centrality has been widely used to identify &#8220;functional hubs&#8221; and examine node characteristics of ICNs (Buckner et al. 2009; Bullmore and Sporns 2009; He et al. 2009; Wang et al. 2010; Fransson et al. 2011). The topography of hubs has also been shown changing with age. Specifically, cortical hubs were largely confined to primary sensory and motor brain regions in the infant brain (Fransson et al. 2011) and to the heteromodal high-order association cortex in the adult brain (Buckner et al. 2009).</p>
+<p>Beyond &#8220;detecting functional hubs&#8221;, both centrality measures have been used as a way of characterizing information flow through the full brain connectome at the voxel level. These voxel-wise network centrality analyses showed short-term and long-term test-retest reliability and were modulated by age and sex (Zuo et al., 2012). In addition, eigenvector centality has also been shown to be modulated by subjects’ states of hungry or satiety (Lohmann et al. 2010).</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Buckner RL, Sepulcre J, Talukdar T, Krienen FM, Liu H, Hedden T, Andrews-Hanna JR, Sperling RA, Johnson KA. 2009. Cortical hubs revealed by intrinsic functional connectivity: mapping, assessment of stability, and relation to Alzheimer’s disease. J Neurosci. 29:1860&#8211;1873.</p>
+<p>Bullmore E, Sporns O. 2009. Complex brain networks: graph theoretical analysis of structural and functional systems. Nat Rev Neurosci. 10:186&#8211;198.</p>
+<p>Fransson P, Aden U, Blennow M, Lagercrantz H. 2011. The functional architecture of the infant brain as revealed by resting-state fMRI. Cereb Cortex. 21:145&#8211;154.</p>
+<p>Joyce KE, Laurienti PJ, Burdette JH, Hayasaka S. 2010. A new measure of centrality for brain networks. PLoS One. 5:e12200.</p>
+<p>He Y, Wang J, Wang L, Chen ZJ, Yan C, Yang H, Tang H, Zhu C, Gong Q, Zang Y, et al. 2009. Uncovering intrinsic modular organization of spontaneous brain activity in humans. PLoS One. 4:e5226.</p>
+<p>Koschu tzki D, Lehmann KA, Peeters L, Richter S, Tenfelde-Podehl D, Zlotowski O. 2005. Centrality indices. In: Brandes U, Erlebach T, editors. Network analysis: methodological foundations. New York: Springer-Verlag. p. 16&#8211;61.</p>
+<p>Lohmann G, Margulies DS, Horstmann A, Pleger B, Lepsien J, Goldhahn D, Schloegl H, Stumvoll M, Villringer A, Turner R. 2010. Eigenvector centrality mapping for analyzing connectivity patterns in fMRI data of the human brain. PLoS One. 5:e10232</p>
+<p>Wang J, Zuo X, He Y. 2010. Graph-based network analysis of restingstate functional MRI. Front Syst Neurosci. 4:16.</p>
+<p>Zuo XN, Ehmke R, Mennes M, Imperati D, Castellanos X, Sporns O, Milham MP. 2012. Network centrality in the human functional connectome. Cerebral cortex. 22:1862-1875.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Network Centrality</a><ul>
+<li><a class="reference internal" href="#introduction-background">Introduction &amp; Background</a></li>
+<li><a class="reference internal" href="#computation-and-analysis-considerations">Computation and Analysis Considerations</a></li>
+<li><a class="reference internal" href="#applications-and-recommendations">Applications and Recommendations</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/centrality.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, C-PAC Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

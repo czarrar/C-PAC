@@ -19,11 +19,11 @@ Features
 
 * :doc:`Bootstrap Analysis of Stable Clusters (BASC) </basc>`
 
-* Connectome Wide Association Studies (CWAS)
+* :doc:`Connectome Wide Association Studies (CWAS) </cwas>`
 
 * :doc:`Amplitude of Low Frequency Fluctuations (ALFF) </alff>`
 
-* Network Centrality
+* :doc:`Network Centrality </centrality>`
 
 * FSL Group Analysis
 
