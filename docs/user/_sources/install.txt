@@ -1,16 +1,16 @@
 Installing C-PAC
 ----------------
 
-C-PAC utilizes a number of existing software tools, and these must be installed before running any analysis with C-PAC. Like C-PAC itself, all of the required tools are open-source and free to use for non-commercial purposes.
-
 
 System Requirements
 ^^^^^^^^^^^^^^^^^^^
+C-PAC is designed to run in a Unix-like environment such as Linux or Mac OS X, and thus does not support Windows.
 
+[WAITING ON PROGRAMMERS FOR MIN SYS REQS]
 
 Python
 ^^^^^^
-Python is the glue (Bloom, 2012) that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the `C-PAC developer documentation <http://INSERT URL HERE.com>`_.
+Python is the glue (Bloom, 2012) that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the C-PAC developer documentation [ASK DEVS RE: FINDING THIS LIST]
 
 For most users, it is easier to install a pre-compiled Python distribution than to install each library manually. We recommend using the `Enthought Python Distribution <http://www.enthought.com/products/epd.php>`_ (EPD). If you are an academic user, you can `download EPD for free <http://www.enthought.com/products/edudownload.php>`_.
 
@@ -31,14 +31,15 @@ C-PAC harnesses the power of two leading neuroimaging software packages to perfo
 
 * `AFNI <http://afni.nimh.nih.gov/afni/>`_  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data (Cox, 2011). `Click here for instructions on how to download and install AFNI <http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml>`_.
 
-
 * `FSL <http://www.fmrib.ox.ac.uk/fsl/index.html>`_ (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data (Jenkinson et al., 2012). `Click here for instructions on how to download and install FSL <http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html>`_.
 
 C-PAC
 ^^^^^
+Once you have installed all of the dependencies, simply download C-PAC and place it in the location of your choice.
 
-Ediging .bashrc
+Editing .bashrc
 ^^^^^^^^^^^^^^^
+[DO WE NEED THIS SECTION IF AFNI/FSL INSTRUCTIONS ALREADY HAVE PEOPLE EDITING BASHRC?]
 
 References
 ^^^^^^^^^^
