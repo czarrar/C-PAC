@@ -1,35 +1,49 @@
 Installing C-PAC
-================
+----------------
+
 C-PAC utilizes a number of existing software tools, and these must be installed before running any analysis with C-PAC. Like C-PAC itself, all of the required tools are open-source and free to use for non-commercial purposes.
 
 
 System Requirements
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 
 Python
-------
-Python is the glue that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the `C-PAC developer documentation <http://INSERT URL HERE.com>`_. 
+^^^^^^
+Python is the glue (Bloom, 2012) that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the `C-PAC developer documentation <http://INSERT URL HERE.com>`_.
 
-EPD
-^^^
 For most users, it is easier to install a pre-compiled Python distribution than to install each library manually. We recommend using the `Enthought Python Distribution <http://www.enthought.com/products/epd.php>`_ (EPD). If you are an academic user, you can `download EPD for free <http://www.enthought.com/products/edudownload.php>`_.
 
 `Click here for instructions on how to install EPD <http://www.enthought.com/products/epdgetstart.php>`_.
 
 Nibabel & Nipype
 ^^^^^^^^^^^^^^^^
+C-PAC relies heavily on tools developed as part of the `Neuroimaging in Python (NiPy) <http://nipy.sourceforge.net/nipy/stable/faq/why.html>`_ project. Specifically, Nipype and Nibabel must be installed for C-PAC to run. If you have installed EPD, simply open up a new terminal session and type::
+
+    easy_install nibabel
+    easy_install nipype 
+
+This will automatically install both tools. Alernate installation instructions can be found in the `NiPy documentation <http://nipy.sourceforge.net/nipype/users/install.html>`_.
+
+AFNI and FSL
+^^^^^^^^^^^^
+C-PAC harnesses the power of two leading neuroimaging software packages to perform key analyses. 
+
+* `AFNI <http://afni.nimh.nih.gov/afni/>`_  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data (Cox, 2011). `Click here for instructions on how to download and install AFNI <http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml>`_.
 
 
-AFNI
-----
-`AFNI <http://afni.nimh.nih.gov/afni/>`_  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data. C-PAC uses AFNI for [INSERT SPECIFICS HERE]. AFNI is maintained by the `Scientific and Statistical Computing Core <http://afni.nimh.nih.gov/sscc>`_ at the NIMH.
+* `FSL <http://www.fmrib.ox.ac.uk/fsl/index.html>`_ (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data (Jenkinson et al., 2012). `Click here for instructions on how to download and install FSL <http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html>`_.
 
-`Click here for instructions on how to download and install AFNI <http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml>`_.
+C-PAC
+^^^^^
 
+Ediging .bashrc
+^^^^^^^^^^^^^^^
 
-FSL
----
-`FSL <http://www.fmrib.ox.ac.uk/fsl/index.html>`_ (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data. C-PAC uses FSL for [INSERT SPECIFICS HERE]. FSL is maintaned by the is maintained by the `Oxford Center for Functional MRI of the Brain <http://www.fmrib.ox.ac.uk/>`_.
+References
+^^^^^^^^^^
+Bloom, J. `Python as Super Glue for the Modern Scientific Workflow <http://www.youtube.com/watch?v=mLuIB8aW2KA>`_, video of a talk given at the SciPy2012 conference.
 
-`Click here for instructions on how to download and install FSL <http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html>`_.
+Cox, R.W., `AFNI: What a long strange trip it's been <http://afni.nimh.nih.gov/sscc/rwcox/papers/AFNIpaper2011.pdf>`_, NeuroImage, vol. 62, no 2, pp. 743-747, August 2012 
+
+Jenkinson, M., Beckmann, C.F., Behrens, T.E.J., Woolrich, M.W., Smith, S.M., `FSL <http://www.ncbi.nlm.nih.gov/pubmed/21979382>`_, NeuroImage, vol. 62, no 2, pp. 782-790, August 2012,

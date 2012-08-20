@@ -59,25 +59,37 @@
 </div>
 <div class="section" id="python">
 <h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
-<p>Python is the glue that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the <a class="reference external" href="http://INSERTURLHERE.com">C-PAC developer documentation</a>.</p>
-<div class="section" id="epd">
-<h3>EPD<a class="headerlink" href="#epd" title="Permalink to this headline">¶</a></h3>
+<p>Python is the glue (Bloom, 2012) that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the <a class="reference external" href="http://INSERTURLHERE.com">C-PAC developer documentation</a>.</p>
 <p>For most users, it is easier to install a pre-compiled Python distribution than to install each library manually. We recommend using the <a class="reference external" href="http://www.enthought.com/products/epd.php">Enthought Python Distribution</a> (EPD). If you are an academic user, you can <a class="reference external" href="http://www.enthought.com/products/edudownload.php">download EPD for free</a>.</p>
 <p><a class="reference external" href="http://www.enthought.com/products/epdgetstart.php">Click here for instructions on how to install EPD</a>.</p>
 </div>
 <div class="section" id="nibabel-nipype">
-<h3>Nibabel &amp; Nipype<a class="headerlink" href="#nibabel-nipype" title="Permalink to this headline">¶</a></h3>
+<h2>Nibabel &amp; Nipype<a class="headerlink" href="#nibabel-nipype" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC relies heavily on tools developed as part of the <a class="reference external" href="http://nipy.sourceforge.net/nipy/stable/faq/why.html">Neuroimaging in Python (NiPy)</a> project. Specifically, Nipype and Nibabel must be installed for C-PAC to run. If you have installed EPD, simply open up a new terminal session and type:</p>
+<div class="highlight-python"><pre>easy_install nibabel
+easy_install nipype</pre>
 </div>
+<p>This will automatically install both tools. Alernate installation instructions can be found in the <a class="reference external" href="http://nipy.sourceforge.net/nipype/users/install.html">NiPy documentation</a>.</p>
 </div>
-<div class="section" id="afni">
-<h2>AFNI<a class="headerlink" href="#afni" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://afni.nimh.nih.gov/afni/">AFNI</a>  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data. C-PAC uses AFNI for [INSERT SPECIFICS HERE]. AFNI is maintained by the <a class="reference external" href="http://afni.nimh.nih.gov/sscc">Scientific and Statistical Computing Core</a> at the NIMH.</p>
-<p><a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml">Click here for instructions on how to download and install AFNI</a>.</p>
+<div class="section" id="afni-and-fsl">
+<h2>AFNI and FSL<a class="headerlink" href="#afni-and-fsl" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC harnesses the power of two leading neuroimaging software packages to perform key analyses.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://afni.nimh.nih.gov/afni/">AFNI</a>  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data (Cox, 2011). <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml">Click here for instructions on how to download and install AFNI</a>.</li>
+<li><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/index.html">FSL</a> (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data (Jenkinson et al., 2012). <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html">Click here for instructions on how to download and install FSL</a>.</li>
+</ul>
 </div>
-<div class="section" id="fsl">
-<h2>FSL<a class="headerlink" href="#fsl" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/index.html">FSL</a> (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data. C-PAC uses FSL for [INSERT SPECIFICS HERE]. FSL is maintaned by the is maintained by the <a class="reference external" href="http://www.fmrib.ox.ac.uk/">Oxford Center for Functional MRI of the Brain</a>.</p>
-<p><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html">Click here for instructions on how to download and install FSL</a>.</p>
+<div class="section" id="c-pac">
+<h2>C-PAC<a class="headerlink" href="#c-pac" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="ediging-bashrc">
+<h2>Ediging .bashrc<a class="headerlink" href="#ediging-bashrc" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Bloom, J. <a class="reference external" href="http://www.youtube.com/watch?v=mLuIB8aW2KA">Python as Super Glue for the Modern Scientific Workflow</a>, video of a talk given at the SciPy2012 conference.</p>
+<p>Cox, R.W., <a class="reference external" href="http://afni.nimh.nih.gov/sscc/rwcox/papers/AFNIpaper2011.pdf">AFNI: What a long strange trip it&#8217;s been</a>, NeuroImage, vol. 62, no 2, pp. 743-747, August 2012</p>
+<p>Jenkinson, M., Beckmann, C.F., Behrens, T.E.J., Woolrich, M.W., Smith, S.M., <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/21979382">FSL</a>, NeuroImage, vol. 62, no 2, pp. 782-790, August 2012,</p>
 </div>
 </div>
 
@@ -91,13 +103,12 @@
   <ul>
 <li><a class="reference internal" href="#">Installing C-PAC</a><ul>
 <li><a class="reference internal" href="#system-requirements">System Requirements</a></li>
-<li><a class="reference internal" href="#python">Python</a><ul>
-<li><a class="reference internal" href="#epd">EPD</a></li>
+<li><a class="reference internal" href="#python">Python</a></li>
 <li><a class="reference internal" href="#nibabel-nipype">Nibabel &amp; Nipype</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#afni">AFNI</a></li>
-<li><a class="reference internal" href="#fsl">FSL</a></li>
+<li><a class="reference internal" href="#afni-and-fsl">AFNI and FSL</a></li>
+<li><a class="reference internal" href="#c-pac">C-PAC</a></li>
+<li><a class="reference internal" href="#ediging-bashrc">Ediging .bashrc</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>
