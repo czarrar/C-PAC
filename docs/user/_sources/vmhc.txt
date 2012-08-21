@@ -3,11 +3,11 @@ Voxel-Mirrored Homotopic Connectivity (VMHC)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Functional homotopy, the high degree of synchrony in spontaneous activity between geometrically corresponding interhemispheric (i.e. homotopic) regions, is a key characteristic of the intrinsic functional architecture of the brain (Salvador et al., 2008; Stark et al., 2008). Although homotopic RSFC is observed ubiquitously in the brain, systematic regional regional variation exists (Salvador et al., 2008) and is thought to reflect hemispheric specialization in information processing.
+Functional homotopy, the synchrony in patterns of spontaneous activity between homotopic (geometrically corresponding) regions in each heisphere, is a fundamental characteristic of the brain's functional architecture (Salvador et al., 2008; Stark et al., 2008). Homotopic patterns of Resting State Functional Connectivity (RSFC) have been observed across the brain, though the strength of this relationship varies by region (Salvador et al., 2008). This variation is thought to reflect hemispheric and regional specialization in information processing. 
 
-VMHC provides a voxel-wise measure of resting-state functional connectivity (RSFC) between hemispheres (Zuo et al., 2010), and thus functional homotopy. This is done by quantifying the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other.
+VMHC measures functional homotopy by providing a voxel-wise measure of RSFC between hemispheres. This is done by quantifying the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other (Zuo et al., 2010).
 
-.. figure:: /images/vmhc_schematic.png
+[.. figure:: /images/vmhc_schematic.png]
 
 The schematic above illustrates how VMHC compares mirrored voxels across hemispheres in a symmetrical brain.
 
@@ -27,7 +27,7 @@ Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Despite being a relatively new analysis method, a number of studies have already utilized VMHC to investigate group differences in functional homotopy. Kelly et al. (2011) found reduced VMHC between prefrontal regions in patients with cocaine addiction compared to healthy controls, and Zuo and colleagues (2010) were able to chart changing functional homotopy across healthy aging. 
 
-Other recent studies examining functional homotopy (but not using VMHC) have found reduced interhemispheric connectivity in patients with autism (Anderson et al., 2011), and [SUMMARIZE GEE PAPER]
+Other recent studies examining functional homotopy (but not using VMHC) have found reduced interhemispheric connectivity in patients with autism (Anderson et al., 2011), as well as differences in functional homotopy between sensory-motor, unimodal and heteromodal assocation areas (Gee et al., 2008)
 
 Future studies may benefit from using VMHC as an indicator of disturbed functional specialization in patient groups, as well as in longitudinal studies to investigate changes in functional homotopy over time due to treatment, intervention, or development.
 
@@ -43,4 +43,4 @@ specific functional connectivity measure. Neuroimage 39:279 –289. <http://www.
 Stark DE, Margulies DS, Shehzad ZE, Reiss P, Kelly AM, Uddin LQ, Gee DG,
 Roy AK, Banich MT, Castellanos FX, Milham MP (2008) `Regional variation in interhemispheric coordination of intrinsic hemodynamic fluctuations. J Neurosci 28:13754–13764. <http://www.jneurosci.org/content/28/51/13754.long>`_
 
-Note: Parts of this section have been copied from Zuo et al, with the permission of the authors.
+Stark, D. E., Margulies, D. S., Shehzad, Z. E., Reiss, P., Kelly, A. M. C., Uddin, L. Q., Gee, D. G., et al. (2008). Regional variation in interhemispheric coordination of intrinsic hemodynamic fluctuations. The Journal of Neuroscience, 28(51), 13754–13764. doi:10.1523/JNEUROSCI.4544-08.2008

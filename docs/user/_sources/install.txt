@@ -1,7 +1,6 @@
 Installing C-PAC
 ----------------
 
-
 System Requirements
 ^^^^^^^^^^^^^^^^^^^
 C-PAC is designed to run in a Unix-like environment such as Linux or Mac OS X, and thus does not support Windows.
@@ -35,11 +34,11 @@ C-PAC harnesses the power of two leading neuroimaging software packages to perfo
 
 C-PAC
 ^^^^^
-Once you have installed all of the dependencies, simply download C-PAC and place it in the location of your choice.
+Once you have installed all of the dependencies, simply download C-PAC and place it in the location of your choice. [IS THIS TRUE? DO WE HAVE A PACKAGE TO INSTALL?]
 
 Editing .bashrc
 ^^^^^^^^^^^^^^^
-[DO WE NEED THIS SECTION IF AFNI/FSL INSTRUCTIONS ALREADY HAVE PEOPLE EDITING BASHRC?]
+[DO WE NEED THIS SECTION IF AFNI/FSL INSTRUCTIONS ALREADY HAVE PEOPLE EDITING .BASHRC?]
 
 References
 ^^^^^^^^^^

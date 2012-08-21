@@ -13,7 +13,8 @@ Contents:
 
    Introduction <intro>
    Installing C-PAC <install>
-   Using C-PAC <use>
+   Data Pre-Processing <preproc>
+   Data Analysis <derivs
 
 
 Indices and tables
