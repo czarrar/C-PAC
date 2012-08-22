@@ -7,46 +7,42 @@ Boostrap Analysis of Stable Clusters (BASC) is a statistical framework that quan
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-BASC can be applied to 4-D timeseries data in nifti format after preprocessing and being normalized to MNI space. Masks of region of interests (ROIs) are selected according to the primary interests of the user.
+Note: Though they are computed together, it is possible to specify different numbers of bootsraps for individual and group analysis. Additionally, BASC analysis can be limited to ROIs by applying a mask during setup.
 
-Individual-level BASC Computation:
+**Individual-level BASC:**
+#. For each subject, bootstrapping is applied to the original data set. For each bootstrap, subjects multiple time windows are randomly [?] selected from the original timeseries to create a new timeseries of equal length. This results in *B* new timeseries where *B* is the number of bootstraps set by the user.
 
-#. For each subject, bootstrapping is applied to the original 4D dataset within the ROIs, resulting in B (number of bootstraps) replicated 4D dataset.
+#. A clustering algorithm is applied to each new timeseries. Clustering partitions the 4D data matrix into *C* clusters such that each voxel timeseries is a member of only one cluster. *C* is the number of clusters specified by the user. This results in *B* adjacency matrices which represent the cluster membership of each voxel.
 
-#. A clustering algorithm is then applied to each of the replicated dataset and resulted in B adjacency matrices.
+#. All adjacency matrices are then averaged to form a stability matrix which quantifies the stable features (voxel memberships) across sets.
 
-#. All adjacency matrices are then averaged to a stability matrix which quantifies the stabile features of the clustering process.
+**Group-level BASC:**
+#. Bootstrapping is applied to the individual stability matrices. For each bootstrap, subjects are drawn (with replacement) from the original data set to create *B* new sets, each of which have the same number of subjects at the original. This process is intended to mimic random variations in subject recruitment.
 
-Group-level BASC Computation:
-The group-level BASC is based on the results of the individual-level BASC.
+#. Within each new data set, individual stability matrices are averaged to create an average individul stability matrix.
 
-#. Bootstraping is applied to the individual stability matrices of the full sample (all subjects within that group) to mimic the random variations of the subject recruitment. Subjects were drawn with replacement from the real sample to generate a surrogate dataset featuring the same number of subjects as the original. This procedure resulted in C (number of bootstraps) replicated samples.
+#. A clustering algorithm is applied to each individual stability matrix to generate a group-level adjacency matrix.
 
-#. Within each replication sample, individual stability matrices of all subjects were averaged to an average individual stability matrix.
+#. All group-level adjacency matrices are averaged to create a group stability matrix.
 
-#. A clustering algorithm is then applied to each average individual stability matrix to generate a group-level adjacency matrix.
+#. The group stability matrix is fed into a clustering algorithm to derive stable clusters. 
 
-#. All group-level adjacency matrices are then averaged to a group stability matrix which depicts how stable two voxels belong to the same cluster.
-
-#. The group stability matrix is then fed in a clustering algorithm to derive stable clusters.
-The stable clusters do not convey by themselves any quantitative information regarding stability. A stability map can be constructed for a given cluster based on the stability matrix to depict how stable that a voxel belong to that cluster. The stability map can be derived both at the individual (Fig.1: Panel A) and group (Fig.1: Panel B) levels. 
-
-The figure below (taken from Garcia-Garcia et al.) shows a visual representation of these steps.
+The figure below (taken from Garcia-Garcia et al.) shows a visual representation of these steps. For more detail on how C-PAC computes these setps, please see the `BASC section of the developer documentation <http://openconnectome.github.com/C-PAC/docs/developer/workflows/basc.html>`_.
 
 .. figure:: /images/basc_manu_schematic.png
 
-Please see developer workflow documentation for detailed calculation steps.
+Note that clusters do not by themselves convey any quantitative information regarding stability. Based on a stability matrix, it is possible to construct a stability map for each cluster that will depict the stability of each voxel's membership to that cluster. This can be done at both the individual and group level.
 
 Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Recently, the reproducibility and test-retest reliability of BASC have been tested   (Garcia-Garcia et al., in preparation). This framework has also been used to examine similarities and differences in striatal organization between children with ADHD and typically developing children (TDC) (Garcia-Garcia et al., 2012).
+BASC has recently been used to investigate differences in striatal organization between children with ADHD and typically developing controls (Garcia-Garcia et al., 2012), and has been shown to have good test-retest reliability (Garcia-Garcia et al., in prep).
 
-The most important parameters are the individual and group level number of clusters. Other parameters include the number of bootstrap at the individual and group level and minimum threshold for similarity matrix based on correlation to create an edge. Please see Bellec et al., 2010 for choice of the BASC parameters.
+A number of parameters can influence the results of a BASC analysis, the most important of which is the number of clusters. Users are directed to Bellec et al. 2010 for an in-depth discussion of how each parameter influences calculation.
 
 References
 ^^^^^^^^^^
-Bellec, P. Rosa-Neto, O. C. Lyttelton, H. Benali, and A. C. Evans, “Multi-level bootstrap analysis of stable clusters in resting-state fMRI.,” NeuroImage, vol. 51, no. 3, pp. 1126-39, Jul. 2010.
+Bellec, P. Rosa-Neto, O. C. Lyttelton, H. Benali, and A. C. Evans, `Multi-level bootstrap analysis of stable clusters in resting-state fMRI <http://www.ncbi.nlm.nih.gov/pubmed/20226257>`_., NeuroImage, vol. 51, no. 3, pp. 1126-39, Jul. 2010.
 
-Manuel Garcia-Garcia, Brian Cheung, Adriana Di Martino, Pierre Bellec, Clare Kelly, F. Xavier Castellanos, Michael Milham. Stability of Functional Connectivity networks in the Basal Ganglia in ADHD. Poster. 2012.
+Manuel Garcia-Garcia, Brian Cheung, Adriana Di Martino, Pierre Bellec, Clare Kelly, F. Xavier Castellanos, Michael Milham. `Stability of Functional Connectivity networks in the Basal Ganglia in ADHD <http://ww4.aievolution.com/hbm1201/index.cfm?do=abs.viewAbs&abs=7010>`_. Poster. 2012.
 
 Garcia-Garcia, M., Bellec, P., Craddock, C., Cheung, B., Zuo, X-N., Kelly, C., Di Martino, A., Castellanos, F.X., and Milham, M.P. Individual stability of resting-state functional units: a new reliable tool.

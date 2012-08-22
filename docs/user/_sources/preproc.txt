@@ -1,0 +1,15 @@
+Data Pre-Processing
+--------------------
+
+Header and Timeseries Overrides
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Image Settings and Smoothing
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Automatic Tissue Segmentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Temporal Filtering
+^^^^^^^^^^^^^^^^^^

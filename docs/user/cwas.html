@@ -45,12 +45,9 @@
             
   <div class="section" id="connectome-wide-association-studies-cwas">
 <h1>Connectome-wide Association Studies (CWAS)<a class="headerlink" href="#connectome-wide-association-studies-cwas" title="Permalink to this headline">¶</a></h1>
-<p>[CHECK FOR CONTENT, THEN REPHRASE (some sections taken from Shehzad manuscript)]</p>
 <div class="section" id="introduction-background">
 <h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
-<p>A key challenge for neuroscience is to understand the relationship between patterns of functional connectivity in the brain (the functional connectome) and environmental, behavioral, and phenotypic factors. Utilizing techniques first used in genetics, Connectome-wide Association Studies (CWAS) allow researchers to explore brain-behavior relationships across the entire functional connectome (Shehzad et al., 2012).</p>
-<p>Due to the massive number of statistical comparisons required for such studies (e.g., investigating 25,000 voxels requires evaluating the connectivity of more than 300 million voxel pairs), traditional univariate analysis approaches would result in an unreasonably high number of false positives and require stringent correction for multiple comparisons (Shehzad et al., 2012).</p>
-<p>Multivariate approaches such as Multi-voxel pattern analysis (MVPA) are more appropriate for application in CWAS. Whereas in univariate comparisons a phenotypic measure is related to only a single functional connection, MVPA relates the simultaneous contribution of multiple functional connections to a phenotype. This vastly reduces the number of connectivity-phenotype comparisons (Shehzad et al., 2012). The CWAS method implemented in C-PAC examines the correlation among patterns of functional connectivity and phenotypes using an MVPA approach and multivariate distance matric regression (MDMR; Reiss et al., 2010).</p>
+<p>Connectome-wide Association Studies (CWAS) allow researchers to explore relationships between patterns of functional connectivity (the functional connectome), behavior, and phenotypic factors.The CWAS method implemented in C-PAC (Shehzad et al., in press) examines the correlation among patterns of functional connectivity and phenotypes using a combination of Multivariate Pattern Analysis (MVPA) and Multivariate Distance Matric Regression (MDMR; Reiss et al., 2010). Compared to traditional univariate techniques which require rigorous correction for multiple comparisons, a multivariate approach significantly reduces the number of connectivity-phenotype comparisons needed to run a CWAS (Shehzad et al., in press). [BRIAN/CAMERON SAY THIS ISNT REALLY MV]</p>
 </div>
 <div class="section" id="computation-and-analysis-considerations">
 <h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
@@ -61,13 +58,11 @@
 <li>MDMR is then used to test whether, for each voxel, whole-brain connectivity patterns tend to be more similar for individuals with like phenotypes (within-group) than individuals with unlike phenotypes (between-group). This quantifies how well phenotypic variables explain the distances between participants in the distance matrix.</li>
 <li>The significance of these similarities and diffierences is assessed with a permutation test. This identifies brain regions whose whole-brain pattern of connectivity is significantlly prediced by a particular phenotpic variable.</li>
 </ol>
-<p>The figure below (taken from Shehzad et al., 2010) outlines these steps.</p>
+<p>The figure below (taken from Shehzad et al., 2010) outlines these steps. For more detail on how C-PAC handles these computations, please see the CWAS section of the developer documentation.</p>
 <div class="figure">
 <img alt="_images/cwas_shehzad_schematic.png" src="_images/cwas_shehzad_schematic.png" />
 </div>
-<p>For purposes of visualization and interpretation, clustering analysis can then be run on the CWAS results to examine differences in large-scale network activity.</p>
-<p>In contrast to other data-driven approaches, MDMR has minimal <em>a-priori</em> requirements, and relatively little decision making is required in choosing analytic parameters (Shehzad et al., 2012). [DISCUSS RELEVANT PAREMETERS: IS PERMUTATION # THE ONLY SIGNIFICANT ONE? NEED TO CHAT WITH BRIAN]</p>
-<p>It is important to note that the results from the MDMR analysis do not provide information about what specific connections for a given region are driving connectome-wide associations, nor the direction of the connectivity-phenotype association. Coupling CWAS maps with follow-up seed-based correlation analysis (or similar methods) is required to determine this information (Shehzad et al., 2012)</p>
+<p>It is important to note that the results of MDMR analysis do not contain information about the direction of connectivity-phenotype relationships, nor the specific connections underlying these connectome-wide associations. Follow-up analysis using seed-based correlation analysis (or similar methods) are required to discover this information (Shehzad et al., in press). To avoid bias caused by &#8216;double-dipping&#8217; your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample (Shehzad et al., in press). Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., in press).</p>
 </div>
 <div class="section" id="applications-and-recommendations">
 <h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
@@ -75,16 +70,15 @@
 <div class="figure">
 <img alt="_images/cwas_shehzad_brains.png" src="_images/cwas_shehzad_brains.png" />
 </div>
-<p>Many researchers will perform follow-up analyses to determine the specific connections responsible for connectome-wide associations and their valence. To avoid bias caused by &#8216;double-dipping&#8217; your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample. Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., 2012).</p>
-<p>Further, as CWAS examines connectivity associations across the entire brain, it may have decreased sensitivity to highly-localized sets of connections related to a phenotype. This issue can be addressed by limiting analysis to patterns of connectivity between specific anatomical regions and networks (Shehzad et al., 2012), which can be accomplished by defining an ROI mask during C-PAC setup.</p>
+<p>As CWAS examines connectivity across the whole brain, it may have reduced sensitivity to highly-localized sets of connections related to a phenotype. This issue can be addressed by limiting analysis to connectivity between specific anatomical regions (Shehzad et al., 2012), which can be accomplished by defining an ROI mask during C-PAC setup.</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p>Reiss, P.T., Stevens, M.H.H., Shehzad, Z., Petkova, E. &amp; Milham, M.P. On
-distance-based permutation tests for between-group comparisons. Biometrics 66,
+<p>Reiss, P.T., Stevens, M.H.H., Shehzad, Z., Petkova, E. &amp; Milham, M.P. <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/19673867">On
+distance-based permutation tsts for between-group comparisons</a>. Biometrics 66,
 636–643 (2010).</p>
 <p>Shehzad, Z., Kelly, C., Reiss, P.T., Emerson, J.W., McMahon, K., Copland, D.A., Castellanos, F.X., &amp; Milham, M.P. An Analytic Framework for Connectome-Wide Association Studies</p>
-<p>Kriegeskorte, N., Simmons, W.K., Bellgowan, P.S.F. &amp; Baker, C.I. Circular analysis in systems neuroscience: the dangers of double dipping. Nat Neurosci 12, 535–540 (2009)</p>
+<p>Kriegeskorte, N., Simmons, W.K., Bellgowan, P.S.F. &amp; Baker, C.I. <a class="reference external" href="http://www.mrc-cbu.cam.ac.uk/people/nikolaus.kriegeskorte/Kriegeskorte%20Simmons%20Bellgowan%20&amp;%20Baker_Circular%20analysis%20in%20systems%20neuroscience_incl%20supplement_author%20version.pdf">Circular analysis in systems neuroscience: the dangers of double dipping</a>. Nat Neurosci 12, 535–540 (2009)</p>
 </div>
 </div>
 

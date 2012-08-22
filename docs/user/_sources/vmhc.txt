@@ -13,9 +13,7 @@ The schematic above illustrates how VMHC compares mirrored voxels across hemisph
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-VMHC assumes symmetric morphology between hemispheres. As this is assumption does not hold for real brains, images must transformed before VMHC can be calculated. The initial transformation is applied to anatomical data, and consists of averaging an image with its left-right mirrored version to create identical mirrored hemispheres. Functional data is then transformed to fit the new symmetrical anatomical image. VMHC is computed as the resting-state functional connectivity between any pair of symmetric interhemispheric voxels.
-
-For a more detailed description of the way C-PAC computes VMHC, please see the `VMHC section of the developer documentation <http://openconnectome.github.com/C-PAC/docs/developer/workflows/vmhc.html>`_. 
+VMHC assumes symmetric morphology between hemispheres. As this is assumption does not hold for real brains, images must transformed before VMHC can be calculated. The initial transformation is applied to anatomical data, and consists of averaging an image with its left-right mirrored version to create identical mirrored hemispheres. Functional data is then transformed to fit the new symmetrical anatomical image. VMHC is computed as the resting-state functional connectivity between any pair of symmetric interhemispheric voxels. For more detail on how C-PAC computes these steps, please see the `VMHC section of the developer documentation <http://openconnectome.github.com/C-PAC/docs/developer/workflows/vmhc.html>`_. 
 
 It is worth noting that VMHC is somewhat affected by the level of spatial smoothing used. Specifically, smoothing improves the correspondence between homotopic regions and results in greater VMHC strength across subjects. Importantly however, smoothing does not effect the overall pattern of VMHC.
 
