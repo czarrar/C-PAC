@@ -34,7 +34,7 @@ C-PAC harnesses the power of two leading neuroimaging software packages to perfo
 
 C-PAC
 ^^^^^
-Once you have installed all of the dependencies, simply download C-PAC and place it in the location of your choice. [IS THIS TRUE? DO WE HAVE A PACKAGE TO INSTALL?]
+Once you have installed all of the dependencies, simply download C-PAC and place it in the location of your choice. [IS THIS TRUE? DO WE HAVE A PACKAGE TO INSTALL? NOT CLEAR YET]
 
 Editing .bashrc
 ^^^^^^^^^^^^^^^

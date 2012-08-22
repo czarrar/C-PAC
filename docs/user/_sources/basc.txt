@@ -3,7 +3,7 @@ Bootstrap Analysis of Stable Clusters (BASC)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Bootstrap analysis of stable clusters (BASC) is a statistical framework to quantify the stability of resting state networks (RSNs) or how stable would the RSNs be during the following replication experiment (Bellec et al., 2010). The core of the method is bootstrapping the available datasets to replicate the clustering process a large number of times and quantify the stable features across all replications. It can be implemented in a multi-level fashion to investigate stable RSNs at the level of individual subjects and at the level of a group. 
+Boostrap Analysis of Stable Clusters (BASC) is a statistical framework that quantifies the stability of Resting State Networks (RSNs) by comparing the results of cluster analysis across replications (Bellec et al. 2010) As it is often impossible or impractical repeat data collection for an experiment multiple times, BASC utilizes bootstrapping to generate a large number of samples from the existing data. BASC can be used to charactarize stable RSNs at both the individual and group levels. 
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
