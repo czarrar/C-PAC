@@ -106,7 +106,9 @@ outputspec.gsmap: ndarray
 outputspec.gsclusters_img : string (nifti file)
     3-D volume of brain regions partitioned with gsclusters
 outputspec.gsmap_img : string (nifti file)
-    3-D volume of brain regions associated with gs_map</pre>
+    3-D volume of brain regions associated with gs_map
+outputspec.ismap_imgs : list of strings (nifti files)
+    3-D volumes of stability scores of each cluster based on group clustering</pre>
 </div>
 <p>BASC Procedure:</p>
 <ol class="arabic simple">
@@ -191,9 +193,9 @@ for time-series data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>indiv_stability_list</strong> : array_like</p>
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>indiv_stability_list</strong> : list of strings</p>
 <blockquote>
-<div><p>A length <cite>N</cite> list of matrices of shape (<cite>V</cite>, <cite>V</cite>), <cite>N</cite> subjects, <cite>V</cite> voxels</p>
+<div><p>A length <cite>N</cite> list of file paths to numpy matrices of shape (<cite>V</cite>, <cite>V</cite>), <cite>N</cite> subjects, <cite>V</cite> voxels</p>
 </div></blockquote>
 <p><strong>n_bootstraps</strong> : integer</p>
 <blockquote>
@@ -217,9 +219,9 @@ for time-series data.</p>
 <blockquote>
 <div><p>Length <cite>V</cite> array of cluster assignments for each voxel</p>
 </div></blockquote>
-<p><strong>voxel_scores</strong> : array_like</p>
+<p><strong>cluster_voxel_scores</strong> : array_like</p>
 <blockquote class="last">
-<div><p>Length <cite>V</cite> array of within-cluster average values for each voxel</p>
+<div><p><cite>K</cite> by <cite>V</cite> matrix of within-cluster average values for each cluster of each voxel</p>
 </div></blockquote>
 </td>
 </tr>
