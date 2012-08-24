@@ -3,7 +3,9 @@ Voxel-Mirrored Homotopic Connectivity (VMHC)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Functional homotopy, the synchrony in patterns of spontaneous activity between homotopic (geometrically corresponding) regions in each heisphere, is a fundamental characteristic of the brain's functional architecture (Salvador et al., 2008; Stark et al., 2008). Though homotopic patterns of Resting State Functional Connectivity (RSFC) have been observed across the brain,  the strength of this connectivity can vary between regions (Salvador et al., 2008). This variation is thought to reflect hemispheric and regional specialization in information processing.
+Functional homotopy, the synchrony in patterns of spontaneous activity between homotopic (geometrically corresponding) regions in each hemisphere, is a fundamental characteristic of the brain's functional architecture (Salvador et al., 2005). Though homotopic patterns of Resting State Functional Connectivity (RSFC) have been observed across the brain,  the strength of this connectivity can vary between regions (Stark et al., 2008). This variation (seen in the figure below taken from Stark et al., 2008) is thought to reflect hemispheric and regional specialization in information processing.
+
+.. figure:: /images/vmhc_stark_regions.png
 
 VMHC quantifies functional homotopy by providing a voxel-wise measure of RSFC between hemispheres. This is done by computing the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other (Zuo et al., 2010).
 
@@ -35,7 +37,7 @@ Gee, D. G., Biswal, B. B., Kelly, C., Stark, D. E., Margulies, D. S., Shehzad, Z
 
 Kelly, C., Zuo, X.-N., Gotimer, K., Cox, C. L., Lynch, L., Brock, D., Imperati, D., et al. (2011). `Reduced interhemispheric resting state functional connectivity in cocaine addiction <http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3056937/>`_. Biological Psychiatry, 69(7), 684–692.
 
-Salvador R, Martínez A, Pomarol-Clotet E, Gomar J, Vila F, Sarro S, Capdevila A, Bullmore E (2008) `A simple view of the brain through a frequency-specific functional connectivity measure <http://www-bmu.psychiatry.cam.ac.uk/publications/salvador08sim.pdf>`_. Neuroimage 39:279 –289. 
+Salvador R, Suckling J, Coleman MR, Pickard JD, Menon D, Bullmore E (2005) Neurophysiological architecture of functional magnetic resonance images of human brain. Cereb Cortex 15:1332–1342. 
 
 Stark, D. E., Margulies, D. S., Shehzad, Z. E., Reiss, P., Kelly, A. M. C., Uddin, L. Q., Gee, D. G., et al. (2008). `Regional variation in interhemispheric coordination of intrinsic hemodynamic fluctuations <http://www.jneurosci.org/content/28/51/13754.long>`_. The Journal of Neuroscience, 28(51), 13754–13764.
 

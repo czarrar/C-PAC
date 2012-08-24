@@ -47,7 +47,7 @@
 <h1>Connectome-wide Association Studies (CWAS)<a class="headerlink" href="#connectome-wide-association-studies-cwas" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction-background">
 <h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
-<p>Connectome-wide Association Studies (CWAS) allow researchers to explore relationships between patterns of functional connectivity (the functional connectome), behavior, and phenotypic factors.The CWAS method implemented in C-PAC (Shehzad et al., in press) examines the correlation among patterns of functional connectivity and phenotypes using a combination of Multivariate Pattern Analysis (MVPA) and Multivariate Distance Matric Regression (MDMR; Reiss et al., 2010). Compared to traditional univariate techniques which require rigorous correction for multiple comparisons, a multivariate approach significantly reduces the number of connectivity-phenotype comparisons needed to run a CWAS (Shehzad et al., in press). [BRIAN/CAMERON SAY THIS ISNT REALLY MV]</p>
+<p>Connectome-wide Association Studies (CWAS) allow researchers to explore relationships between patterns of functional connectivity (the functional connectome), behavior, and phenotypic factors.The CWAS method implemented in C-PAC (Shehzad et al., in prep) examines the correlation among patterns of functional connectivity and phenotypes using a combination of Multivariate Pattern Analysis (MVPA) and Multivariate Distance Matric Regression (MDMR; Reiss et al., 2010). Compared to traditional univariate techniques which require rigorous correction for multiple comparisons, a multivariate approach significantly reduces the number of connectivity-phenotype comparisons needed to run a CWAS (Shehzad et al., in prep).</p>
 </div>
 <div class="section" id="computation-and-analysis-considerations">
 <h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
@@ -62,7 +62,7 @@
 <div class="figure">
 <img alt="_images/cwas_shehzad_schematic.png" src="_images/cwas_shehzad_schematic.png" />
 </div>
-<p>It is important to note that the results of MDMR analysis do not contain information about the direction of connectivity-phenotype relationships, nor the specific connections underlying these connectome-wide associations. Follow-up analysis using seed-based correlation analysis (or similar methods) are required to discover this information (Shehzad et al., in press). To avoid bias caused by &#8216;double-dipping&#8217; your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample (Shehzad et al., in press). Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., in press).</p>
+<p>It is important to note that the results of MDMR analysis do not contain information about the direction of connectivity-phenotype relationships, nor the specific connections underlying these connectome-wide associations. Follow-up analysis using seed-based correlation analysis (or similar methods) are required to discover this information (Shehzad et al., in prep). To avoid bias caused by &#8216;double-dipping&#8217; your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample (Shehzad et al., in prep). Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., in prep).</p>
 </div>
 <div class="section" id="applications-and-recommendations">
 <h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
@@ -88,6 +88,9 @@ distance-based permutation tsts for between-group comparisons</a>. Biometrics 66
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cpac_logo.jpg" alt="Logo"/>
+            </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Connectome-wide Association Studies (CWAS)</a><ul>
@@ -131,6 +134,9 @@ distance-based permutation tsts for between-group comparisons</a>. Biometrics 66
       </ul>
     </div>
     <div class="footer">
+      An open neuroscience initiative brought to you by the <a href="http://fcon_1000.projects.nitrc.org/">International Neuroimaging Data-sharing Initiative (INDI)</a> <br/></br/>
+
+      <a href="http://fcon_1000.projects.nitrc.org/"><img src="_static/indi_logo.jpg"/></a><br/><br/>
         &copy; Copyright 2012, C-PAC Team.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>

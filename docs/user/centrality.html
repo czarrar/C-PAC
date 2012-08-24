@@ -47,37 +47,38 @@
 <h1>Network Centrality<a class="headerlink" href="#network-centrality" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction-background">
 <h2>Introduction &amp; Background<a class="headerlink" href="#introduction-background" title="Permalink to this headline">¶</a></h2>
-<p>Nodes are the basic units of a network. Among the many nodes that form the whole-brain network (i.e. the functional connectome), some play a crucial role and are central within the network. Central nodes can be identified via various centrality metrics which belong to a class of graph theory-based network measures assessing the centrality or functional importance of a given node (Koschutzki et al. 2005). There are different centrality measures and each one captures different aspects of connectivity (Joyce et al., 2010; Zuo et al., 2011). C-PAC treats a voxel as a node and calculates two commonly used centrality indices: degree centrality (DC) and eigenvector centrality (EC).</p>
-<p>DC is a measure of local network connectivity and identifies the most connected nodes according to the number of direct connections that a node has with other nodes. A node with high DC indicates strong direct connections of this node to many other nodes in the network.</p>
-<p>EC is a measure of global network connectivity. The EC of a given node reflects the number of connections that a node has with other nodes with high centrality. Thus, EC not only depends on the centrality of other nodes but also on its own centrality. A node with high EG indicates strong connections of this node with many other nodes that are themselves central within the network.</p>
-<p>The figure below (taken from Zuo et al., 2012) shows differences in centrality across the brain.</p>
+<p>Nodes are the basic units of a network. Among the many nodes that form the whole-brain network (the functional connectome), some play a crucial role and considered &#8220;central&#8221; within the network. These central nodes can be identified by applying various graph-theory based network analysis techniques which provide a measure of the &#8220;centrality&#8221; or functional importance of a each node (Koschutzki et al. 2005). Different centrality measures capture different aspects of connectivity (Joyce et al., 2010; Zuo et al., 2011), as is discussed below. C-PAC treats each voxel as a node and calculates two commonly used centrality indices: Degree Centrality (DC) and Eigenvector Centrality (EC). Unlike traditional functional connectivity analyses, centrality measures capturel the complexity of the entire functional connectome, and do not require the selection of any <em>a priori</em> regions of interest.</p>
+<p>Degree centrality is a measure of local network connectivity and identifies the most connected nodes by counting the number of direct connections to all other nodes. As such, a node with high DC will have strong, direct connections to many other nodes in the network. Degree centrality analysis tends to emphasize higher order cortical association areas while showing reduced sensitivity for paralimbic and subcortical regions (Zuo et al., 2012).</p>
+<p>Eigenvector centrality is a measure of global network connectivity. The EC of a given node reflects the number of direct connections it has with nodes that have high centrality. Thus, the EC of a given node depends not only on its own centrality, but the centrality of the nodes it connects to. A node with high EC has strong connections to many other nodes that are themselves highly connected and central within the network. In contrast to DC, EC is more sensitive to paralimbic and subcortical regions (Zuo et al., 2012).</p>
+<p>The figure below (taken from Zuo et al., 2012) shows differences in centrality across the brain, as well as differences between EC and DC measures.</p>
 <div class="figure">
 <img alt="_images/centrality_zuo_map.png" src="_images/centrality_zuo_map.png" />
 </div>
-<p>Unlike functional connectivity, centrality measures capture the complexity of the functional connectome as a whole and no <em>a priori</em> regions of interests are required for this method.</p>
 </div>
 <div class="section" id="computation-and-analysis-considerations">
 <h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
-<p>For each individual subject, the time series for each voxel were extracted to calculate a temporal correlation matrix. A threshold was then applied to this correlation matrix and resulted in an adjacency matrix. DC is the simplest centrality measure and is computed by counting the number of significant correlations between the time series of a given voxel and all other voxels in the adjacency matrix. EC was computed by identifying the first eigenvector of the adjacency matrix, which corresponds to the largest eigenvalue. Since EC is a recursive measure, the EC of a given voxel is proportional to the sum of the EC of all direct neighbors of this voxel. Voxel-based graphs were then generated based on these measures and standardized to z-scores for group analysis (Zuo et al., 2012)</p>
-<p>DC highlights the importance of higher order cortical association
-Regions and is less sensitive to paralimbic and subcortical regions. In contrast, EC is more sensitive to paralimbic and subcortical regions (Zuo et al., 2012). Different analytical strategies and graph theory approaches applied may also affect the analysis results. For example, various criteria used for thresholding a functional connectivity matrix to format a graph adjacency matrix may result in discrepancies in results (Zuo et al., 2012).</p>
+<p>For each subject, the timeseries for each voxel is extracted and used to calculate a temporal correlation matrix which represents the connectivity between all voxels. A threshold is then applied to the correlation matrix to create an adjacency matrix which describes all nodes that have survived thresholding. In C-PAC, users can choose to apply a threshold based on either sparsity, significance, or correlation strength. Threshold values should be chosen carefully, as they can strongly influence the results of centrality analysis (Zuo et al., 2012).</p>
+<p>Of the two centrality measures computed by C-PAC, Degree Centrality is the simplest, and is computed by counting the number of significant correlations between the timeseries of a given voxel and all other voxels in the adjacency matrix. Eigenvector Centrality is computed by identifying the first eigenvector of the adjacency matrix, which corresponds to the largest eigenvalue. Since EC is a recursive measure that takes into account the properties of connected nodes, the EC of a given voxel is proportional to the sum of the EC of all directly neighboring voxels. After computing the centrality measures, voxel-based graphs are generated and standardized using Z-scores for use in group analysis (Zuo et al., 2012).</p>
 </div>
 <div class="section" id="applications-and-recommendations">
 <h2>Applications and Recommendations<a class="headerlink" href="#applications-and-recommendations" title="Permalink to this headline">¶</a></h2>
-<p>Degree centrality has been widely used to identify &#8220;functional hubs&#8221; and examine node characteristics of ICNs (Buckner et al. 2009; Bullmore and Sporns 2009; He et al. 2009; Wang et al. 2010; Fransson et al. 2011). The topography of hubs has also been shown changing with age. Specifically, cortical hubs were largely confined to primary sensory and motor brain regions in the infant brain (Fransson et al. 2011) and to the heteromodal high-order association cortex in the adult brain (Buckner et al. 2009).</p>
-<p>Beyond &#8220;detecting functional hubs&#8221;, both centrality measures have been used as a way of characterizing information flow through the full brain connectome at the voxel level. These voxel-wise network centrality analyses showed short-term and long-term test-retest reliability and were modulated by age and sex (Zuo et al., 2012). In addition, eigenvector centality has also been shown to be modulated by subjects’ states of hungry or satiety (Lohmann et al. 2010).</p>
+<p>Degree centrality has been widely used to identify &#8220;functional hubs&#8221; and examine node characteristics of intrinsic connectivity networks (Buckner et al. 2009; Bullmore and Sporns 2009; He et al. 2009; Wang et al. 2010; Fransson et al. 2011). Centrality measures have also been used to show that the topology of these hub structures changes with age. Specifically, cortical hubs are largely confined to primary sensory and motor areas in infants (Fransson et al. 2011), but are localized to heteromodal higher-order association regions in adults (Buckner et al. 2009).</p>
+<div class="figure">
+<img alt="_images/centrality_zuo_cover.png" src="_images/centrality_zuo_cover.png" />
+</div>
+<p>Beyond detecting functional hubs, both DC and EC have been used as a way of characterizing information flow through the functional connectome at the voxel level. These voxel-wise centrality analyses (depicted in the figure above, taken from Zuo et al., 2012) showed both short and long-term test-retest reliability, and appear to be modulated by age and sex (Zuo et al., 2012). Additionally, EC has been shown to be modulated by subjects&#8217; states of hunger or satiety (Lohmann et al. 2010).</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p>Buckner RL, Sepulcre J, Talukdar T, Krienen FM, Liu H, Hedden T, Andrews-Hanna JR, Sperling RA, Johnson KA. 2009. Cortical hubs revealed by intrinsic functional connectivity: mapping, assessment of stability, and relation to Alzheimer’s disease. J Neurosci. 29:1860&#8211;1873.</p>
-<p>Bullmore E, Sporns O. 2009. Complex brain networks: graph theoretical analysis of structural and functional systems. Nat Rev Neurosci. 10:186&#8211;198.</p>
-<p>Fransson P, Aden U, Blennow M, Lagercrantz H. 2011. The functional architecture of the infant brain as revealed by resting-state fMRI. Cereb Cortex. 21:145&#8211;154.</p>
-<p>Joyce KE, Laurienti PJ, Burdette JH, Hayasaka S. 2010. A new measure of centrality for brain networks. PLoS One. 5:e12200.</p>
-<p>He Y, Wang J, Wang L, Chen ZJ, Yan C, Yang H, Tang H, Zhu C, Gong Q, Zang Y, et al. 2009. Uncovering intrinsic modular organization of spontaneous brain activity in humans. PLoS One. 4:e5226.</p>
+<p>Buckner RL, Sepulcre J, Talukdar T, Krienen FM, Liu H, Hedden T, Andrews-Hanna JR, Sperling RA, Johnson KA. 2009. <a class="reference external" href="http://www.jneurosci.org/content/29/6/1860.long">Cortical hubs revealed by intrinsic functional connectivity: mapping, assessment of stability, and relation to Alzheimer’s disease</a>. J Neurosci. 29:1860&#8211;1873.</p>
+<p>Bullmore E, Sporns O. 2009. <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/19190637">Complex brain networks: graph theoretical analysis of structural and functional systems</a>. Nat Rev Neurosci. 10:186&#8211;198.</p>
+<p>Fransson P, Aden U, Blennow M, Lagercrantz H. 2011. <a class="reference external" href="http://cercor.oxfordjournals.org/content/21/1/145.abstract">The functional architecture of the infant brain as revealed by resting-state fMRI</a>. Cereb Cortex. 21:145&#8211;154.</p>
+<p>Joyce KE, Laurienti PJ, Burdette JH, Hayasaka S. 2010. <a class="reference external" href="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0012200">A new measure of centrality for brain networks</a>. PLoS One. 5:e12200.</p>
+<p>He Y, Wang J, Wang L, Chen ZJ, Yan C, Yang H, Tang H, Zhu C, Gong Q, Zang Y, et al. 2009. <a class="reference external" href="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0005226">Uncovering intrinsic modular organization of spontaneous brain activity in humans</a>. PLoS One. 4:e5226.</p>
 <p>Koschu tzki D, Lehmann KA, Peeters L, Richter S, Tenfelde-Podehl D, Zlotowski O. 2005. Centrality indices. In: Brandes U, Erlebach T, editors. Network analysis: methodological foundations. New York: Springer-Verlag. p. 16&#8211;61.</p>
-<p>Lohmann G, Margulies DS, Horstmann A, Pleger B, Lepsien J, Goldhahn D, Schloegl H, Stumvoll M, Villringer A, Turner R. 2010. Eigenvector centrality mapping for analyzing connectivity patterns in fMRI data of the human brain. PLoS One. 5:e10232</p>
-<p>Wang J, Zuo X, He Y. 2010. Graph-based network analysis of restingstate functional MRI. Front Syst Neurosci. 4:16.</p>
-<p>Zuo XN, Ehmke R, Mennes M, Imperati D, Castellanos X, Sporns O, Milham MP. 2012. Network centrality in the human functional connectome. Cerebral cortex. 22:1862-1875.</p>
+<p>Lohmann G, Margulies DS, Horstmann A, Pleger B, Lepsien J, Goldhahn D, Schloegl H, Stumvoll M, Villringer A, Turner R. 2010. <a class="reference external" href="http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0010232">Eigenvector centrality mapping for analyzing connectivity patterns in fMRI data of the human brain</a>. PLoS One. 5:e10232</p>
+<p>Wang J, Zuo X, He Y. 2010. <a class="reference external" href="http://www.frontiersin.org/systems_neuroscience/10.3389/fnsys.2010.00016/abstract">Graph-based network analysis of restingstate functional MRI</a>. Front Syst Neurosci. 4:16.</p>
+<p>Zuo XN, Ehmke R, Mennes M, Imperati D, Castellanos X, Sporns O, Milham MP. 2012. <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/21968567">Network centrality in the human functional connectome</a>. Cerebral cortex. 22:1862-1875.</p>
 </div>
 </div>
 
@@ -87,6 +88,9 @@ Regions and is less sensitive to paralimbic and subcortical regions. In contrast
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cpac_logo.jpg" alt="Logo"/>
+            </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Network Centrality</a><ul>
@@ -130,6 +134,9 @@ Regions and is less sensitive to paralimbic and subcortical regions. In contrast
       </ul>
     </div>
     <div class="footer">
+      An open neuroscience initiative brought to you by the <a href="http://fcon_1000.projects.nitrc.org/">International Neuroimaging Data-sharing Initiative (INDI)</a> <br/></br/>
+
+      <a href="http://fcon_1000.projects.nitrc.org/"><img src="_static/indi_logo.jpg"/></a><br/><br/>
         &copy; Copyright 2012, C-PAC Team.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>

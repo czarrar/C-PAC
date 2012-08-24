@@ -3,7 +3,7 @@ Connectome-wide Association Studies (CWAS)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Connectome-wide Association Studies (CWAS) allow researchers to explore relationships between patterns of functional connectivity (the functional connectome), behavior, and phenotypic factors.The CWAS method implemented in C-PAC (Shehzad et al., in press) examines the correlation among patterns of functional connectivity and phenotypes using a combination of Multivariate Pattern Analysis (MVPA) and Multivariate Distance Matric Regression (MDMR; Reiss et al., 2010). Compared to traditional univariate techniques which require rigorous correction for multiple comparisons, a multivariate approach significantly reduces the number of connectivity-phenotype comparisons needed to run a CWAS (Shehzad et al., in press). [BRIAN/CAMERON SAY THIS ISNT REALLY MV]
+Connectome-wide Association Studies (CWAS) allow researchers to explore relationships between patterns of functional connectivity (the functional connectome), behavior, and phenotypic factors.The CWAS method implemented in C-PAC (Shehzad et al., in prep) examines the correlation among patterns of functional connectivity and phenotypes using a combination of Multivariate Pattern Analysis (MVPA) and Multivariate Distance Matric Regression (MDMR; Reiss et al., 2010). Compared to traditional univariate techniques which require rigorous correction for multiple comparisons, a multivariate approach significantly reduces the number of connectivity-phenotype comparisons needed to run a CWAS (Shehzad et al., in prep).
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -21,7 +21,7 @@ The figure below (taken from Shehzad et al., 2010) outlines these steps. For mor
 
 .. figure:: /images/cwas_shehzad_schematic.png
 
-It is important to note that the results of MDMR analysis do not contain information about the direction of connectivity-phenotype relationships, nor the specific connections underlying these connectome-wide associations. Follow-up analysis using seed-based correlation analysis (or similar methods) are required to discover this information (Shehzad et al., in press). To avoid bias caused by 'double-dipping' your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample (Shehzad et al., in press). Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., in press).
+It is important to note that the results of MDMR analysis do not contain information about the direction of connectivity-phenotype relationships, nor the specific connections underlying these connectome-wide associations. Follow-up analysis using seed-based correlation analysis (or similar methods) are required to discover this information (Shehzad et al., in prep). To avoid bias caused by 'double-dipping' your data (Kriegeskorte et al., 2009), this analysis should always be performed on an independent sample (Shehzad et al., in prep). Further, the results of these follow-up analyses should take into account existing knowledge about brian anatomy and physiology before being considered definitive (Shehzad et al., in prep).
 
 Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
