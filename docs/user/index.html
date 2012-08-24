@@ -49,37 +49,23 @@
             
   <div class="section" id="welcome-to-c-pac-s-documentation">
 <h1>Welcome to C-PAC&#8217;s documentation!<a class="headerlink" href="#welcome-to-c-pac-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Once a distant goal, discovery science for the human connectome is now a reality. Researchers who previously struggled to obtain neuroimaging data from 20-30 participants are now exploring the functional connectome using data acquired from thousands of participants, made publicly available through the 1000 Functional Connectomes Project and the International Neuroimaging Data-sharing Initiative (INDI.) However, in addition to access to data, scientists need access to tools that will facilitate data exploration. Such tools are particularly important for those who are inexperienced with the nuances of fMRI image analysis, or those who lack the programming support necessary for handling and analyzing large-scale datasets.</p>
+<p>The Configurable Pipeline for the Analysis of Connectomes (C-PAC) is a configurable, open-source, Nipype-based, automated processing pipeline for resting state functional MRI (R-fMRI) data, for use by both novice and expert users. C-PAC was designed to bring the power, flexibility and elegance of the Nipype platform to users in a plug and play fashion—without requiring the ability to program in python. Using an easy to read, text-editable configuration file, C-PAC users can rapidly orchestrate automated R-fMRI processing procedures, including:</p>
+<ul class="simple">
+<li>standard quality assurance measurements</li>
+<li>standard image preprocessing based upon user specified preferences</li>
+<li>generation of functional connectivity maps (e.g., seed-based correlation analyses)</li>
+<li>customizable extraction of time-series data</li>
+<li>generation of graphical representations of the connectomes at various scales (e.g., voxel, parcellation unit)</li>
+<li>generation of local R-fMRI measures (e.g., regional homogeneity, voxel-matched homotopic connectivity, frequency amplitude measures)</li>
+</ul>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#goals">Goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#features">Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#key-concepts">Key Concepts</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installing C-PAC</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#system-requirements">System Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#python">Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#nibabel-nipype">Nibabel &amp; Nipype</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#afni-and-fsl">AFNI and FSL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#c-pac">C-PAC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#editing-bashrc">Editing .bashrc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#references">References</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="preproc.html">Data Pre-Processing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="preproc.html#header-and-timeseries-overrides">Header and Timeseries Overrides</a></li>
-<li class="toctree-l2"><a class="reference internal" href="preproc.html#image-settings-and-smoothing">Image Settings and Smoothing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="preproc.html#automatic-tissue-segmentation">Automatic Tissue Segmentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="preproc.html#temporal-filtering">Temporal Filtering</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="use.html">Using C-PAC</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="use.html#the-configuration-file">The Configuration File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="use.html#running-c-pac">Running C-PAC</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing C-PAC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preproc.html">Data Pre-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use.html">Using C-PAC</a></li>
 </ul>
 </div>
 </div>
