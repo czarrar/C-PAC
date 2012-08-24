@@ -25,7 +25,10 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" />
+    <link rel="up" title="Data Pre-Processing" href="preproc.html" />
+    <link rel="next" title="Temporal Filtering" href="temporal.html" />
+    <link rel="prev" title="Image Settings" href="image_settings.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,7 +37,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="temporal.html" title="Temporal Filtering"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="image_settings.html" title="Image Settings"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li>
+          <li><a href="preproc.html" accesskey="U">Data Pre-Processing</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,7 +68,8 @@
 </div>
 <div class="section" id="smoothing-guidelines">
 <h2>Smoothing Guidelines<a class="headerlink" href="#smoothing-guidelines" title="Permalink to this headline">¶</a></h2>
-<p>The amount of smoothing applied should be the minimum necessary to achive the desired result. As a general rule, a FWHM of twice the voxel dimension is a good starting point (Poldrack et al., 2011). That being said, different situations will require adjustment of this value. In particular, the FWHM should never be larger than the smallest activation signal you are interested in detecting; any larger value may result in signal loss.</p>
+<p>The amount of smoothing applied should be the minimum necessary to achive the desired result.</p>
+<p>As a general rule, a FWHM of twice the voxel dimension is a good starting point (Poldrack et al., 2011). That being said, different situations will require adjustment of this value. In particular, the FWHM should never be larger than the smallest activation signal you are interested in detecting; any larger value may result in signal loss, either by smoothing away very small signals, or smoothing two independent signals into one (Ashby, 2011).</p>
 <p>Care must be taken when utilizing methods such as Regional Homogeneity (ReHo) and Multi-voxel Pattern Analysis (MVPA) which are sensitive to the activation of individual voxels, as smoothing prior to analysis may bias results by introducing artificial spatial correlation. In these cases, if smoothing is desired, such as in order to correct for multiple comparisons using Gaussian Random Field Theory, it must be applied after the fact.</p>
 </div>
 <div class="section" id="external-resources">
@@ -66,7 +77,8 @@
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p>Poldrack, R. A., Mumford, J., &amp; Nichols, T. (2011). Preprocessing fMRI data. In Handbook of Functional MRI Data Analysis. Cambridge: Cambridge University Press. doi:10.1017/CBO9780511895029</p>
+<p>Poldrack, R. A., Mumford, J., &amp; Nichols, T. (2011). Preprocessing fMRI data. In Handbook of Functional MRI Data Analysis. Cambridge: Cambridge University Press.</p>
+<p>Ashby, F.G., (2011). Preprocessing. Statistical Analysis of MRI Data. Cambridge, MA: MIT Press.</p>
 </div>
 </div>
 
@@ -91,6 +103,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="image_settings.html"
+                        title="previous chapter">Image Settings</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="temporal.html"
+                        title="next chapter">Temporal Filtering</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/smoothing.txt"
@@ -119,7 +137,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="temporal.html" title="Temporal Filtering"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="image_settings.html" title="Image Settings"
+             >previous</a> |</li>
+        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li>
+          <li><a href="preproc.html" >Data Pre-Processing</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

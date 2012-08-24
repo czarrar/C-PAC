@@ -14,7 +14,9 @@ Smoothing is accomplished by applying a Gaussian filter (also known as a kernel)
 
 Smoothing Guidelines
 ^^^^^^^^^^^^^^^^^^^^
-The amount of smoothing applied should be the minimum necessary to achive the desired result. As a general rule, a FWHM of twice the voxel dimension is a good starting point (Poldrack et al., 2011). That being said, different situations will require adjustment of this value. In particular, the FWHM should never be larger than the smallest activation signal you are interested in detecting; any larger value may result in signal loss.
+The amount of smoothing applied should be the minimum necessary to achive the desired result. 
+
+As a general rule, a FWHM of twice the voxel dimension is a good starting point (Poldrack et al., 2011). That being said, different situations will require adjustment of this value. In particular, the FWHM should never be larger than the smallest activation signal you are interested in detecting; any larger value may result in signal loss, either by smoothing away very small signals, or smoothing two independent signals into one (Ashby, 2011).
 
 Care must be taken when utilizing methods such as Regional Homogeneity (ReHo) and Multi-voxel Pattern Analysis (MVPA) which are sensitive to the activation of individual voxels, as smoothing prior to analysis may bias results by introducing artificial spatial correlation. In these cases, if smoothing is desired, such as in order to correct for multiple comparisons using Gaussian Random Field Theory, it must be applied after the fact.
 
@@ -23,4 +25,6 @@ External Resources
 
 References
 ^^^^^^^^^^
-Poldrack, R. A., Mumford, J., & Nichols, T. (2011). Preprocessing fMRI data. In Handbook of Functional MRI Data Analysis. Cambridge: Cambridge University Press. doi:10.1017/CBO9780511895029
+Poldrack, R. A., Mumford, J., & Nichols, T. (2011). Preprocessing fMRI data. In Handbook of Functional MRI Data Analysis. Cambridge: Cambridge University Press. 
+
+Ashby, F.G., (2011). Preprocessing. Statistical Analysis of MRI Data. Cambridge, MA: MIT Press. 

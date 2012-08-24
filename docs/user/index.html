@@ -49,8 +49,8 @@
             
   <div class="section" id="welcome-to-c-pac-s-documentation">
 <h1>Welcome to C-PAC&#8217;s documentation!<a class="headerlink" href="#welcome-to-c-pac-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Once a distant goal, discovery science for the human connectome is now a reality. Researchers who previously struggled to obtain neuroimaging data from 20-30 participants are now exploring the functional connectome using data acquired from thousands of participants, made publicly available through the 1000 Functional Connectomes Project and the International Neuroimaging Data-sharing Initiative (INDI.) However, in addition to access to data, scientists need access to tools that will facilitate data exploration. Such tools are particularly important for those who are inexperienced with the nuances of fMRI image analysis, or those who lack the programming support necessary for handling and analyzing large-scale datasets.</p>
-<p>The Configurable Pipeline for the Analysis of Connectomes (C-PAC) is a configurable, open-source, Nipype-based, automated processing pipeline for resting state functional MRI (R-fMRI) data, for use by both novice and expert users. C-PAC was designed to bring the power, flexibility and elegance of the Nipype platform to users in a plug and play fashion—without requiring the ability to program in python. Using an easy to read, text-editable configuration file, C-PAC users can rapidly orchestrate automated R-fMRI processing procedures, including:</p>
+<p>Once a distant goal, discovery science for the human connectome is now a reality. Researchers who previously struggled to obtain neuroimaging data from 20-30 participants are now exploring the functional connectome using data acquired from thousands of participants, made publicly available through the <a class="reference external" href="http://fcon_1000.projects.nitrc.org/">1000 Functional Connectomes Project and the International Neuroimaging Data-sharing Initiative (INDI)</a>. However, in addition to access to data, scientists need access to tools that will facilitate data exploration. Such tools are particularly important for those who are inexperienced with the nuances of fMRI image analysis, or those who lack the programming support necessary for handling and analyzing large-scale datasets.</p>
+<p>The Configurable Pipeline for the Analysis of Connectomes (C-PAC) is a configurable, open-source, Nipype-based, automated processing pipeline for resting state functional MRI (R-fMRI) data, for use by both novice and expert users. C-PAC was designed to bring the power, flexibility and elegance of the <a class="reference external" href="http://nipy.sourceforge.net/nipype/">Nipype platform</a> to users in a plug and play fashion—without requiring the ability to program in python. Using an easy to read, text-editable configuration file, C-PAC users can rapidly orchestrate automated R-fMRI processing procedures, including:</p>
 <ul class="simple">
 <li>standard quality assurance measurements</li>
 <li>standard image preprocessing based upon user specified preferences</li>
@@ -59,23 +59,30 @@
 <li>generation of graphical representations of the connectomes at various scales (e.g., voxel, parcellation unit)</li>
 <li>generation of local R-fMRI measures (e.g., regional homogeneity, voxel-matched homotopic connectivity, frequency amplitude measures)</li>
 </ul>
-<p>Contents:</p>
+<p>Importantly, C-PAC makes it possible to use a single configuration file to launch a factorial number of pipelines differing with respect to specific processing steps (e.g., spatial/temporal filter settings, global correction strategies, motion correction strategies, group analysis models). Additional noteworthy features include the ability to easily:</p>
+<ul class="simple">
+<li>customize the C-PAC to handle any systematic directory organization</li>
+<li>specify Nipype distributed processing settings</li>
+</ul>
+<p>C-PAC maintains key Nipype strengths, including the ability to:</p>
+<ul class="simple">
+<li>interface with different software packages (e.g., FSL, AFNI)</li>
+<li>protect against redundant computation and/or storage</li>
+<li>automatically carry out inputs checking, bug tracking and reporting</li>
+</ul>
+<p>Future updates will include a graphical user interface for C-PAC configuration, advanced analytic features (e.g., support vector machines, cluster analysis) and diffusion tensor imaging capabilities.</p>
+<div class="section" id="user-guide-index">
+<h2>User Guide Index<a class="headerlink" href="#user-guide-index" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing C-PAC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preproc.html">Data Pre-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derivs.html">Data Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use.html">Using C-PAC</a></li>
 </ul>
 </div>
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
-</ul>
 </div>
 
 
@@ -90,9 +97,11 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to C-PAC&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#user-guide-index">User Guide Index</a><ul>
 </ul>
 </li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
 </ul>
 
   <h4>Next topic</h4>
