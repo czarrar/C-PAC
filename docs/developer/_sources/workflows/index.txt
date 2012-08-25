@@ -13,19 +13,20 @@ Contents:
 
     anat_preproc
     func_preproc
+    registration
     seg_preproc
-    sca
-    basc
     nuisance
-    alff
-    vmhc
+    median_angle
     generate_motion_parameters
     scrubbing
-    group_analysis
-    easy_thresh     
+    sca
+    alff
+    vmhc
+    reho
+    basc
     cwas
-    median_angle
-    registration
+    easy_thresh     
+    group_analysis
 
 Indices and tables
 ==================
