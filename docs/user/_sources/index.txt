@@ -11,15 +11,15 @@ Once a distant goal, discovery science for the human connectome is now a reality
 The Configurable Pipeline for the Analysis of Connectomes (C-PAC) is a configurable, open-source, Nipype-based, automated processing pipeline for resting state functional MRI (R-fMRI) data, for use by both novice and expert users. C-PAC was designed to bring the power, flexibility and elegance of the `Nipype platform <http://nipy.sourceforge.net/nipype/>`_ to users in a plug and play fashion—without requiring the ability to program in python. Using an easy to read, text-editable configuration file, C-PAC users can rapidly orchestrate automated R-fMRI processing procedures, including:
 
 * standard quality assurance measurements
-* standard image preprocessing based upon user specified preferences
-* generation of functional connectivity maps (e.g., seed-based correlation analyses)
+* standard image :doc:`preprocessing </preproc>` based upon user specified preferences
+* generation of functional connectivity maps (e.g., :doc:`seed-based correlation analyses </sca>`)
 * customizable extraction of time-series data
 * generation of graphical representations of the connectomes at various scales (e.g., voxel, parcellation unit)
-* generation of local R-fMRI measures (e.g., regional homogeneity, voxel-matched homotopic connectivity, frequency amplitude measures)
+* generation of local R-fMRI measures (e.g., :doc:`regional homogeneity </reho>`, :doc:`voxel-matched homotopic connectivity </vmhc>`, :doc:`frequency amplitude measures </alff>`)
 
 Importantly, C-PAC makes it possible to use a single configuration file to launch a factorial number of pipelines differing with respect to specific processing steps (e.g., spatial/temporal filter settings, global correction strategies, motion correction strategies, group analysis models). Additional noteworthy features include the ability to easily:
 
-* customize the C-PAC to handle any systematic directory organization
+* customize C-PAC to handle any systematic directory organization
 * specify Nipype distributed processing settings
 
 C-PAC maintains key Nipype strengths, including the ability to:
@@ -37,6 +37,6 @@ User Guide Index
 
    Introduction <intro>
    Installing C-PAC <install>
+   Using C-PAC <use>
    Data Pre-Processing <preproc>
    Data Analysis <derivs>
-   Using C-PAC <use>

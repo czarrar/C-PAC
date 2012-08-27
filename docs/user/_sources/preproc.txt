@@ -17,6 +17,10 @@ Nuisance Signal Removal
 ^^^^^^^^^^^^^^^^^^^^^^^
 :doc:`Nuisance signal removal </nuisance>` removes...
 
+A note about Slice-Timing Correction
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[TK: WE DONT INCLUDE IT HERE ARE SOME REASONS]
+
 
 .. toctree::
    :hidden: 

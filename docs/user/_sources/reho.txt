@@ -13,6 +13,8 @@ Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 KCC is computed for every voxel in a subject, and is based on the time series of each voxel, the number of time points within a time series, and the number of voxels within a cluster (Zang et al, 2004). Depending on whether neighboring voxels are taken to include those on the side, edge, or corner of a given voxel, cluster size can be 7, 19, or 27 voxels, respectively. Values of KCC range from 0 to 1, with higher values indicating greater similarity between the activation pattern of a given voxel and that of its neighbors. Voxel-based maps are generated based on KCC values and then standardized using Z-scores in order to perform group analysis. For more detail on how C-PAC handles these computations, please see the ReHo section of the developer documentation.
 
+.. figure:: /images/reho_voxel_schematic.png
+
 The results of ReHo analysis have been shown to vary significantly depending on both the number of neighbors in a cluster and the amount of spatial smoothing applied to the data. For example, Zang and colleagues (2004) found more neighbors and greater smoothing to yeild greater differences between conditions in a motor task. 
 
 Applications and Recommendations

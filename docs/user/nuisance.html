@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Nuisance Signal Regression &mdash; C-PAC 1.0 documentation</title>
+    <title>Nuisance Signal Regression &mdash; C-PAC 0.1 Alpha documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.0',
+        VERSION:     '0.1 Alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,10 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+    <link rel="top" title="C-PAC 0.1 Alpha documentation" href="index.html" />
+    <link rel="up" title="Data Pre-Processing" href="preproc.html" />
+    <link rel="next" title="Connectivity Measures" href="derivs.html" />
+    <link rel="prev" title="Temporal Filtering" href="temporal.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,7 +37,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="derivs.html" title="Connectivity Measures"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="temporal.html" title="Temporal Filtering"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">C-PAC 0.1 Alpha documentation</a> &raquo;</li>
+          <li><a href="preproc.html" accesskey="U">Data Pre-Processing</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,17 +55,10 @@
             
   <div class="section" id="nuisance-signal-regression">
 <h1>Nuisance Signal Regression<a class="headerlink" href="#nuisance-signal-regression" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>A key step in preparing fMRI data for statistical analysis is the removal of nusiance signals or noise.</p>
-<p>C-PAC provides a number of options for removing nuisance signals. These methods can be combined as desired by the user, and are described below.</p>
-</div>
+<p>A key step in preparing fMRI data for statistical analysis is the removal of nusiance signals and noise. C-PAC provides a number of options for removing nuisance signals. These methods can be combined as desired by the user, and are described below.</p>
 <div class="section" id="white-matter-csf-regression">
 <h2>White Matter / CSF Regression<a class="headerlink" href="#white-matter-csf-regression" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>Introduction<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>Signal changes in the white matter (WM) and cerebrospinal fluid (CSF) primarily reflect non-neural fluctuations such as scanner instabilities, subject motion, and physiological artifacts (e.g. respiration and cardiac effects) (Dagli et al., 1999; Windischberger et al., 2002). These signals are largely independent from the BOLD signal fluctuations recorded in gray matter, and may introduce temporal coherences that lead to an overestimation of functional connectivity strength. Successful estimation and correction for this non-neural noise allows for the exclusion such confounding effects.</p>
-</div>
 <div class="section" id="calculation">
 <h3>Calculation<a class="headerlink" href="#calculation" title="Permalink to this headline">¶</a></h3>
 <p>The mean WM and CSF time series are calculated by averaging signal over all voxels within a WM or CSF mask for each time point. Mean WM and CSF time series are then used as temporal covariates and removed from the raw data through linear regression.</p>
@@ -63,44 +66,32 @@
 </div>
 <div class="section" id="compcor">
 <h2>CompCor<a class="headerlink" href="#compcor" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id2">
-<h3>Introduction<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>The term &#8220;noise region-of-interest&#8221; (noise ROI) refers to areas such as white matter (WM) and cerebral spinal fluid (CSF) in which temporal fluctuations are unlikely to be modulated by neural activity, and thus primarily reflect physiological noise (Behzadi et al., 2007). Based on the assumption that signal from a noise ROI can be used to accurately model physiological fluctuations in gray matter regions, a novel component based noise reduction method (CompCor) was proposed to correct for physiological noise by regressing out principal components from noise ROIs (Behzadi et al., 2007). Compared to the average signal from WM and CSF regions (i.e. WM/CSF regression methods), signals captured by principal components derived from these noise ROIs can better account for voxel-specific phase differences in physiological noise due to the potential of principle component analysis to identify temporal pattern of physiological noise (Tomas et al., 2002). Thus, preprocessing with CompCor can significantly reduce physiological noise as well as noise from other sources (Behzadi et al., 2007; Chai et al., 2012).</p>
-</div>
-<div class="section" id="id3">
-<h3>Calculation<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Calculation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>The first step of CompCor is to determine noise ROIs. This can be done either by using anatomical data to identify voxels that consist primarily of either WM or CSF, or by defining noise ROIs as voxels with high temporal standard deviation. A principal component analysis (PCA) is then applied to characterize the time series data from the noise ROIs. Significant principal components are then introduced as covariates in a general linear model (GLM) as an estimate of the physiological noise signal space (Behzadi et al., 2007).</p>
 </div>
 </div>
 <div class="section" id="global-signal-regression">
 <h2>Global Signal Regression<a class="headerlink" href="#global-signal-regression" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id4">
-<h3>Introduction<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>Global signal, the average signal across all voxels in the brain, is assumed to reflect a combination of resting-state fluctuations, physiological noise (e.g. respiratory and cardiac noise), and other noise signals with non-neural origin. Global signal regression (GSR) is a preprocessing technique for removing the spontaneous BOLD fluctuations common to the whole brain using a general linear model (GLM). Although GSR can potentially change functional connectivity distributions and result in increased negative correlations (Murphy et al., 2009; Saad et al., 2012; Weissenbacher et al., 2009), this technique has been shown to facilitate the detection of localized neuronal signals and improve the specificity of functional connectivity analysis (Fox et al., 2005; Fox et al., 2009). Thus, GSR remains a common and useful processing technique in some situations.</p>
-</div>
-<div class="section" id="id5">
-<h3>Calculation<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Calculation<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>A global mean (defined as the average signal over all voxels for each time point) is used as a temporal covariate and regressed out using linear regression.</p>
 </div>
 </div>
 <div class="section" id="median-angle-correction">
 <h2>Median Angle Correction<a class="headerlink" href="#median-angle-correction" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id6">
-<h3>Introduction<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <p>Median angle correction is a global signal correction approach. It is assumed that the global signal in resting-state fMRI can be viewed as the sum of two components: a component that reflects the intrinsic correlations of resting state fMRI signals between regions, and a nuisance component that reflects an additive global signal confound. Unlike the GSR method which removes both components, median angle correction can characterize the properties of the global signal and effectively minimize the effects of the additive global signal confound while preserving the desired components.</p>
-</div>
-<div class="section" id="id7">
-<h3>Calculation<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Calculation<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>Principal component analysis (PCA) is used to decompose the resting-state data. Median angle is computed by taking the inverse cosine of each voxel’s time series vector&#8217;s projection onto the first principal component (i.e. the global mean signal) and then calculating the median over the angles from all the vectors. If an inverse relation is found between the median angle and the mean BOLD signal amplitude, then an additive signal confound is present. As resting-state data sets with high median angles and low mean BOLD magnitudes are likely to be the least contaminated by an additive global confound (He and Liu, 2011), the inverse relation between median angle and mean BOLD magnitude is used to correct for differences in the additive confound. Specifically, the angular distributions of datasets with small median angles can be shifted to attain a larger target median angle to effectively minimize the effects of the global signal confound. The calculation of target angle for median angle correction is described in He and Liu (2011).</p>
 </div>
 </div>
 <div class="section" id="motion-correction">
 <h2>Motion Correction<a class="headerlink" href="#motion-correction" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id8">
-<h3>Introduction<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>Signal intensity changes that can arise from head motion and motion-related artifacts represent a serious confound in resting state fMRI studies. Although various devices can be used to minimize motion, and subjects can be specifically instructed to stay as still as they can, even the most cooperative subjects still show displacements of up to a millimeter. Head movements of several millimeters are not uncommon, especially in studies of hyperkinetic subjects such as young children, older adults, or in patient populations. Recent studies have shown that motion as small as 0.1 mm can systematically bias both the within and between-group effects of R-fMRI metrics (Power et al., 2011; Satterhwaite et al., 2012; Van Dijk et al., 2012). Thus, motion correction is a crucial preprocessing step for further data analysis.</p>
 <p>There are two main approaches to correct head motion: censoring of motion confounded time points (i.e. &#8220;scrubbing&#8221;), and using a general linear model to regress out the motion-related artifact (i.e. regression of motion parameters). Both approaches are implemented in C-PAC and a general description of each method is below.</p>
-</div>
 <div class="section" id="scrubbing">
 <h3>Scrubbing<a class="headerlink" href="#scrubbing" title="Permalink to this headline">¶</a></h3>
 <p>Scrubbing corrects for motion by censoring (removing) time points (and thus volumes) that are likely to be contaminated by head motion and are characterized a sudden, sharp movement (Power et al., 2011). Two measures are used to identify these contaminated volumes: framewise displacement (FD) and DVARS. These two measures capture the head displacements and the brain-wide BOLD signal displacements from volume to volume over all voxels within the brain (Power et al., 2011).</p>
@@ -145,29 +136,23 @@ change in fMRI</a>. NeuroImage 9, 407–415.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Nuisance Signal Regression</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#white-matter-csf-regression">White Matter / CSF Regression</a><ul>
-<li><a class="reference internal" href="#id1">Introduction</a></li>
 <li><a class="reference internal" href="#calculation">Calculation</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compcor">CompCor</a><ul>
-<li><a class="reference internal" href="#id2">Introduction</a></li>
-<li><a class="reference internal" href="#id3">Calculation</a></li>
+<li><a class="reference internal" href="#id1">Calculation</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#global-signal-regression">Global Signal Regression</a><ul>
-<li><a class="reference internal" href="#id4">Introduction</a></li>
-<li><a class="reference internal" href="#id5">Calculation</a></li>
+<li><a class="reference internal" href="#id2">Calculation</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#median-angle-correction">Median Angle Correction</a><ul>
-<li><a class="reference internal" href="#id6">Introduction</a></li>
-<li><a class="reference internal" href="#id7">Calculation</a></li>
+<li><a class="reference internal" href="#id3">Calculation</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#motion-correction">Motion Correction</a><ul>
-<li><a class="reference internal" href="#id8">Introduction</a></li>
 <li><a class="reference internal" href="#scrubbing">Scrubbing</a></li>
 <li><a class="reference internal" href="#regression-of-motion-parameters">Regression of Motion Parameters</a></li>
 </ul>
@@ -177,6 +162,12 @@ change in fMRI</a>. NeuroImage 9, 407–415.</p>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="temporal.html"
+                        title="previous chapter">Temporal Filtering</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="derivs.html"
+                        title="next chapter">Connectivity Measures</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/nuisance.txt"
@@ -205,7 +196,14 @@ change in fMRI</a>. NeuroImage 9, 407–415.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="derivs.html" title="Connectivity Measures"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="temporal.html" title="Temporal Filtering"
+             >previous</a> |</li>
+        <li><a href="index.html">C-PAC 0.1 Alpha documentation</a> &raquo;</li>
+          <li><a href="preproc.html" >Data Pre-Processing</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

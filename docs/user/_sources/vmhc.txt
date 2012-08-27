@@ -9,9 +9,9 @@ Functional homotopy, the synchrony in patterns of spontaneous activity between h
 
 VMHC quantifies functional homotopy by providing a voxel-wise measure of RSFC between hemispheres. This is done by computing the connectivity between each voxel in one hemisphere and its mirrored counterpart in the other (Zuo et al., 2010).
 
-.. figure:: /images/vmhc_schematic_alt.png
+.. figure:: /images/vmhc_gee_schematic.png
 
-The schematic above illustrates how VMHC compares mirrored voxels across hemispheres in a symmetrical brain.
+The schematic above (adapted from Gee et al., 2011) illustrates how VMHC compares mirrored voxels across hemispheres in a symmetrical brain.
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

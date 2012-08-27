@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Connectivity Measures &mdash; C-PAC 1.0 documentation</title>
+    <title>Data Analysis &mdash; C-PAC 0.1 Alpha documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.0',
+        VERSION:     '0.1 Alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" />
+    <link rel="top" title="C-PAC 0.1 Alpha documentation" href="index.html" />
     <link rel="next" title="Seed-based Correlation Analysis (SCA)" href="sca.html" />
     <link rel="prev" title="Nuisance Signal Regression" href="nuisance.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="nuisance.html" title="Nuisance Signal Regression"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">C-PAC 0.1 Alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -51,35 +51,28 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="connectivity-measures">
-<h1>Connectivity Measures<a class="headerlink" href="#connectivity-measures" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="seed-based-correlation-analysis-sca">
-<h2>Seed-based Correlation Analysis (SCA)<a class="headerlink" href="#seed-based-correlation-analysis-sca" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="sca.html"><em>Seed-based Correlation Analysis</em></a> ...</p>
+  <div class="section" id="data-analysis">
+<h1>Data Analysis<a class="headerlink" href="#data-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="connectivity-measures">
+<h2>Connectivity Measures<a class="headerlink" href="#connectivity-measures" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC provides users a full suite of connectivity measures, including:</p>
+<ul class="simple">
+<li><a class="reference internal" href="sca.html"><em>Seed-based Correlation Analysis (SCA)</em></a> - Analyze the connectivity between brain regions.</li>
+<li><a class="reference internal" href="alff.html"><em>Amplitude of Low Frequency Fluctuations (ALFF) and fractional ALFF (fALFF)</em></a> - Measure the power of slow fluctuations in brain activity.</li>
+<li><a class="reference internal" href="vmhc.html"><em>Voxel-mirrored Homotopic Connectivity (VMHC)</em></a> - Investigate connectivity between hemispheres.</li>
+<li><a class="reference internal" href="basc.html"><em>Boostrap Analysis of Stable Clusters (BASC)</em></a> - Quantify the stable characteristics of networks.</li>
+<li><a class="reference internal" href="reho.html"><em>Regional Homogeneity (ReHo)</em></a> - Measure the similarity of activity patterns across neighboring voxels.</li>
+<li><a class="reference internal" href="centrality.html"><em>Network centrality</em></a> - Analyze the structure of functional networks.</li>
+<li><a class="reference internal" href="cwas.html"><em>Connectome-wide Association Studies (CWAS)</em></a> - Explore the examines the relationship between patterns of functional connectivity and phenotypes.</li>
+</ul>
 </div>
-<div class="section" id="amplitude-of-low-frequency-fluctuations-alff-and-fractional-alff">
-<h2>Amplitude of Low Frequency Fluctuations (ALFF) and fractional ALFF<a class="headerlink" href="#amplitude-of-low-frequency-fluctuations-alff-and-fractional-alff" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="alff.html"><em>Amplitude of Low Frequency Fluctuations (ALFF) and fractional ALFF</em></a>...</p>
+<div class="section" id="timeseries-extraction">
+<h2>Timeseries Extraction<a class="headerlink" href="#timeseries-extraction" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC makes it easy to export timeseries information from your data. Users can choose to extract timeseries from regions of interest, all voxels, and even surface vertices (requires <a class="reference external" href="http://surfer.nmr.mgh.harvard.edu/">FreeSurfer</a>).</p>
 </div>
-<div class="section" id="voxel-mirrored-homotopic-connectivity-vmhc">
-<h2>Voxel-mirrored Homotopic Connectivity (VMHC)<a class="headerlink" href="#voxel-mirrored-homotopic-connectivity-vmhc" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="vmhc.html"><em>Voxel-mirrored Homotopic Connectivity</em></a>...</p>
-</div>
-<div class="section" id="boostrap-analysis-of-stable-clusters-basc">
-<h2>Boostrap Analysis of Stable Clusters (BASC)<a class="headerlink" href="#boostrap-analysis-of-stable-clusters-basc" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="basc.html"><em>Boostrap Analysis of Stable Clusters</em></a>...</p>
-</div>
-<div class="section" id="regional-homogeneity-reho">
-<h2>Regional Homogeneity (ReHo)<a class="headerlink" href="#regional-homogeneity-reho" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="reho.html"><em>Regional Homogeneity</em></a> ...</p>
-</div>
-<div class="section" id="network-centrality">
-<h2>Network Centrality<a class="headerlink" href="#network-centrality" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="centrality.html"><em>Network centrality</em></a> ...</p>
-</div>
-<div class="section" id="connectome-wide-association-studies-cwas">
-<h2>Connectome-wide Association Studies (CWAS)<a class="headerlink" href="#connectome-wide-association-studies-cwas" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="cwas.html"><em>Connectome-wide Association Studies</em></a> ...</p>
+<div class="section" id="group-analysis">
+<h2>Group Analysis<a class="headerlink" href="#group-analysis" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC utilizes the <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/feat5/detail.html#higher">powerful statistical tools in FSL</a> to compare findings across groups.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -96,14 +89,10 @@
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Connectivity Measures</a><ul>
-<li><a class="reference internal" href="#seed-based-correlation-analysis-sca">Seed-based Correlation Analysis (SCA)</a></li>
-<li><a class="reference internal" href="#amplitude-of-low-frequency-fluctuations-alff-and-fractional-alff">Amplitude of Low Frequency Fluctuations (ALFF) and fractional ALFF</a></li>
-<li><a class="reference internal" href="#voxel-mirrored-homotopic-connectivity-vmhc">Voxel-mirrored Homotopic Connectivity (VMHC)</a></li>
-<li><a class="reference internal" href="#boostrap-analysis-of-stable-clusters-basc">Boostrap Analysis of Stable Clusters (BASC)</a></li>
-<li><a class="reference internal" href="#regional-homogeneity-reho">Regional Homogeneity (ReHo)</a></li>
-<li><a class="reference internal" href="#network-centrality">Network Centrality</a></li>
-<li><a class="reference internal" href="#connectome-wide-association-studies-cwas">Connectome-wide Association Studies (CWAS)</a><ul>
+<li><a class="reference internal" href="#">Data Analysis</a><ul>
+<li><a class="reference internal" href="#connectivity-measures">Connectivity Measures</a></li>
+<li><a class="reference internal" href="#timeseries-extraction">Timeseries Extraction</a></li>
+<li><a class="reference internal" href="#group-analysis">Group Analysis</a><ul>
 </ul>
 </li>
 </ul>
@@ -150,7 +139,7 @@
         <li class="right" >
           <a href="nuisance.html" title="Nuisance Signal Regression"
              >previous</a> |</li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">C-PAC 0.1 Alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

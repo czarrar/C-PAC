@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Regional Homotopy &mdash; C-PAC 1.0 documentation</title>
+    <title>Regional Homotopy &mdash; C-PAC 0.1 Alpha documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.0',
+        VERSION:     '0.1 Alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,10 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="C-PAC 1.0 documentation" href="index.html" /> 
+    <link rel="top" title="C-PAC 0.1 Alpha documentation" href="index.html" />
+    <link rel="up" title="Data Analysis" href="derivs.html" />
+    <link rel="next" title="Network Centrality" href="centrality.html" />
+    <link rel="prev" title="Bootstrap Analysis of Stable Clusters (BASC)" href="basc.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,7 +37,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="centrality.html" title="Network Centrality"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="basc.html" title="Bootstrap Analysis of Stable Clusters (BASC)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">C-PAC 0.1 Alpha documentation</a> &raquo;</li>
+          <li><a href="derivs.html" accesskey="U">Data Analysis</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,6 +66,9 @@
 <div class="section" id="computation-and-analysis-considerations">
 <h2>Computation and Analysis Considerations<a class="headerlink" href="#computation-and-analysis-considerations" title="Permalink to this headline">¶</a></h2>
 <p>KCC is computed for every voxel in a subject, and is based on the time series of each voxel, the number of time points within a time series, and the number of voxels within a cluster (Zang et al, 2004). Depending on whether neighboring voxels are taken to include those on the side, edge, or corner of a given voxel, cluster size can be 7, 19, or 27 voxels, respectively. Values of KCC range from 0 to 1, with higher values indicating greater similarity between the activation pattern of a given voxel and that of its neighbors. Voxel-based maps are generated based on KCC values and then standardized using Z-scores in order to perform group analysis. For more detail on how C-PAC handles these computations, please see the ReHo section of the developer documentation.</p>
+<div class="figure">
+<img alt="_images/reho_voxel_schematic.png" src="_images/reho_voxel_schematic.png" />
+</div>
 <p>The results of ReHo analysis have been shown to vary significantly depending on both the number of neighbors in a cluster and the amount of spatial smoothing applied to the data. For example, Zang and colleagues (2004) found more neighbors and greater smoothing to yeild greater differences between conditions in a motor task.</p>
 </div>
 <div class="section" id="applications-and-recommendations">
@@ -96,6 +109,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="basc.html"
+                        title="previous chapter">Bootstrap Analysis of Stable Clusters (BASC)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="centrality.html"
+                        title="next chapter">Network Centrality</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/reho.txt"
@@ -124,7 +143,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="index.html">C-PAC 1.0 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="centrality.html" title="Network Centrality"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="basc.html" title="Bootstrap Analysis of Stable Clusters (BASC)"
+             >previous</a> |</li>
+        <li><a href="index.html">C-PAC 0.1 Alpha documentation</a> &raquo;</li>
+          <li><a href="derivs.html" >Data Analysis</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
