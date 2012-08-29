@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Group Analysis &mdash; CPAC v0.1 documentation</title>
+    <title>Group Analysis &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,9 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
-    <link rel="prev" title="Easy thresh" href="easy_thresh.html" /> 
+    <link rel="next" title="Easy thresh" href="easy_thresh.html" />
+    <link rel="prev" title="Scrubbing" href="scrubbing.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,8 +45,11 @@
              >modules</a> |</li>
         <li class="right" >
           <a href="easy_thresh.html" title="Easy thresh"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scrubbing.html" title="Scrubbing"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -63,7 +70,7 @@ BASED Group Analysis</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>ftest</strong> : boolean, optional(default=False)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>ftest</strong> : boolean, optional(default=False)</p>
 <blockquote>
 <div><p>Ftest help investigate several contrasts at the same time
 for example to see whether any of them (or any combination of them) is 
@@ -77,7 +84,7 @@ and non-significant ones</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>grp_analysis</strong> : workflow object</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>grp_analysis</strong> : workflow object</p>
 <blockquote class="last">
 <div><p>Group Analysis workflow object</p>
 </div></blockquote>
@@ -239,19 +246,19 @@ for fslmaths</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : file</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : file</p>
 <blockquote>
 <div><p>input volume</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>op_string</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>op_string</strong> : string</p>
 <blockquote>
 <div><p>operation string for fslmaths</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>IOError</strong> :</p>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>IOError</strong> :</p>
 <blockquote class="last">
 <div><p>If unable to load the input volume</p>
 </div></blockquote>
@@ -270,8 +277,11 @@ for fslmaths</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
+  <p class="topless"><a href="scrubbing.html"
+                        title="previous chapter">Scrubbing</a></p>
+  <h4>Next topic</h4>
   <p class="topless"><a href="easy_thresh.html"
-                        title="previous chapter">Easy thresh</a></p>
+                        title="next chapter">Easy thresh</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/group_analysis.txt"
@@ -280,7 +290,7 @@ for fslmaths</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -308,14 +318,17 @@ for fslmaths</p>
              >modules</a> |</li>
         <li class="right" >
           <a href="easy_thresh.html" title="Easy thresh"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scrubbing.html" title="Scrubbing"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

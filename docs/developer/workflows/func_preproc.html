@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Functional Preprocessing &mdash; CPAC v0.1 documentation</title>
+    <title>Functional Preprocessing &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,9 +25,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
-    <link rel="next" title="Registration" href="registration.html" />
+    <link rel="next" title="Segmentation Workflow" href="seg_preproc.html" />
     <link rel="prev" title="Anatomical Preprocessing" href="anat_preproc.html" /> 
   </head>
   <body>
@@ -41,12 +44,12 @@
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="registration.html" title="Registration"
+          <a href="seg_preproc.html" title="Segmentation Workflow"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="anat_preproc.html" title="Anatomical Preprocessing"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -69,7 +72,7 @@ obtained to use it further in Image analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>func_preproc</strong> : workflow object</p>
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>func_preproc</strong> : workflow object</p>
 <blockquote class="last">
 <div><p>Functional Preprocessing workflow object</p>
 </div></blockquote>
@@ -249,7 +252,7 @@ calculates and returns the very first and the last slice</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string (nifti file)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string (nifti file)</p>
 <blockquote>
 <div><p>Path to input functional run</p>
 </div></blockquote>
@@ -265,7 +268,7 @@ in the configuration file</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>stop_idx</strong> :  int</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>stop_idx</strong> :  int</p>
 <blockquote>
 <div><p>Value of first slice to consider for the functional run</p>
 </div></blockquote>
@@ -291,8 +294,8 @@ in the configuration file</p>
   <p class="topless"><a href="anat_preproc.html"
                         title="previous chapter">Anatomical Preprocessing</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="registration.html"
-                        title="next chapter">Registration</a></p>
+  <p class="topless"><a href="seg_preproc.html"
+                        title="next chapter">Segmentation Workflow</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/func_preproc.txt"
@@ -301,7 +304,7 @@ in the configuration file</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -328,18 +331,18 @@ in the configuration file</p>
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="registration.html" title="Registration"
+          <a href="seg_preproc.html" title="Segmentation Workflow"
              >next</a> |</li>
         <li class="right" >
           <a href="anat_preproc.html" title="Anatomical Preprocessing"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

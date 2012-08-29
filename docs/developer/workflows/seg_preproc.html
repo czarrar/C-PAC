@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Segmentation Workflow &mdash; CPAC v0.1 documentation</title>
+    <title>Segmentation Workflow &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,10 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
-    <link rel="next" title="Nuisance Signal Removal" href="nuisance.html" />
-    <link rel="prev" title="Registration" href="registration.html" /> 
+    <link rel="next" title="Seed Based Correlation Analysis" href="sca.html" />
+    <link rel="prev" title="Functional Preprocessing" href="func_preproc.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,12 +44,12 @@
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="nuisance.html" title="Nuisance Signal Removal"
+          <a href="sca.html" title="Seed Based Correlation Analysis"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="registration.html" title="Registration"
+          <a href="func_preproc.html" title="Functional Preprocessing"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -60,17 +63,20 @@
 <span id="segmentation-workflow"></span><h1>Segmentation Workflow<a class="headerlink" href="#module-CPAC.seg_preproc" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="CPAC.seg_preproc.create_seg_preproc">
-<tt class="descclassname">CPAC.seg_preproc.</tt><tt class="descname">create_seg_preproc</tt><big>(</big><big>)</big><a class="headerlink" href="#CPAC.seg_preproc.create_seg_preproc" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.seg_preproc.</tt><tt class="descname">create_seg_preproc</tt><big>(</big><em>wf_name='seg_preproc'</em><big>)</big><a class="headerlink" href="#CPAC.seg_preproc.create_seg_preproc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Segment the Subject&#8217;s Anatomical brain into cerebral spinal fluids, white matter and gray matter.
 Threshold and binarize them.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>None</strong> : None</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>wf_name</strong> : string</p>
+<blockquote>
+<div><p>name of the workflow</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>seg_preproc</strong> : workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>seg_preproc</strong> : workflow</p>
 <blockquote class="last">
 <div><p>Workflow Object for Segmentation Workflow</p>
 </div></blockquote>
@@ -166,12 +172,6 @@ outputspec.partial_volume_files : string (nifti file)
 -p
 -o segment
 mprage_brain.nii.gz</pre>
-</div>
-</li>
-<li><p class="first">Get Inverse Linear Transformation matrix to convert prior to T1 space.For details see <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/flirt/index.html">convert_xfm</a>:</p>
-<div class="highlight-python"><pre>convert_xfm 
--in highres2standard_mat
--invert_xfm</pre>
 </div>
 </li>
 <li><p class="first">Register CSF template in MNI space to t1 space. For details see <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/flirt/index.html">flirt</a>:</p>
@@ -296,13 +296,13 @@ it and creating a mask thst is used in further analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>wf_name</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>wf_name</strong> : string</p>
 <blockquote>
 <div><p>Workflow Name</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>preproc</strong> : workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>preproc</strong> : workflow</p>
 <blockquote>
 <div><p>Workflow Object for process_segment_map Workflow</p>
 </div></blockquote>
@@ -355,9 +355,9 @@ it and creating a mask thst is used in further analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">width:</th><td class="field-body">1100</td>
+<tr class="field-odd field"><th class="field-name">width:</th><td class="field-body">1100</td>
 </tr>
-<tr class="field"><th class="field-name">height:</th><td class="field-body">480</td>
+<tr class="field-even field"><th class="field-name">height:</th><td class="field-body">480</td>
 </tr>
 </tbody>
 </table>
@@ -369,9 +369,9 @@ it and creating a mask thst is used in further analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">width:</th><td class="field-body">1100</td>
+<tr class="field-odd field"><th class="field-name">width:</th><td class="field-body">1100</td>
 </tr>
-<tr class="field"><th class="field-name">height:</th><td class="field-body">480</td>
+<tr class="field-even field"><th class="field-name">height:</th><td class="field-body">480</td>
 </tr>
 </tbody>
 </table>
@@ -390,13 +390,13 @@ it and creating a mask thst is used in further analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>probability_maps</strong> : list (string)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>probability_maps</strong> : list (string)</p>
 <blockquote>
 <div><p>List of Probability Maps</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>file</strong> : string</p>
 <blockquote class="last">
 <div><p>Path to segment_prob_0.nii.gz is returned</p>
 </div></blockquote>
@@ -414,13 +414,13 @@ it and creating a mask thst is used in further analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>probability_maps</strong> : list (string)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>probability_maps</strong> : list (string)</p>
 <blockquote>
 <div><p>List of Probability Maps</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>file</strong> : string</p>
 <blockquote class="last">
 <div><p>Path to segment_prob_1.nii.gz is returned</p>
 </div></blockquote>
@@ -438,13 +438,13 @@ it and creating a mask thst is used in further analysis.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>probability_maps</strong> : list (string)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>probability_maps</strong> : list (string)</p>
 <blockquote>
 <div><p>List of Probability Maps</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>file</strong> : string</p>
 <blockquote class="last">
 <div><p>Path to segment_prob_2.nii.gz is returned</p>
 </div></blockquote>
@@ -463,11 +463,11 @@ it and creating a mask thst is used in further analysis.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="registration.html"
-                        title="previous chapter">Registration</a></p>
+  <p class="topless"><a href="func_preproc.html"
+                        title="previous chapter">Functional Preprocessing</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="nuisance.html"
-                        title="next chapter">Nuisance Signal Removal</a></p>
+  <p class="topless"><a href="sca.html"
+                        title="next chapter">Seed Based Correlation Analysis</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/seg_preproc.txt"
@@ -476,7 +476,7 @@ it and creating a mask thst is used in further analysis.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -503,18 +503,18 @@ it and creating a mask thst is used in further analysis.</p>
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="nuisance.html" title="Nuisance Signal Removal"
+          <a href="sca.html" title="Seed Based Correlation Analysis"
              >next</a> |</li>
         <li class="right" >
-          <a href="registration.html" title="Registration"
+          <a href="func_preproc.html" title="Functional Preprocessing"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

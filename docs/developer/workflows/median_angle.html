@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Median Angle Correction &mdash; CPAC v0.1 documentation</title>
+    <title>Median Angle Correction &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,10 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
-    <link rel="next" title="Generate Motion and Power Parameters" href="generate_motion_parameters.html" />
-    <link rel="prev" title="Nuisance Signal Removal" href="nuisance.html" /> 
+    <link rel="next" title="Registration" href="registration.html" />
+    <link rel="prev" title="Connectome Wide Association Studies" href="cwas.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,12 +44,12 @@
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="generate_motion_parameters.html" title="Generate Motion and Power Parameters"
+          <a href="registration.html" title="Registration"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="nuisance.html" title="Nuisance Signal Removal"
+          <a href="cwas.html" title="Connectome Wide Association Studies"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -66,13 +69,13 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
 <blockquote>
 <div><p>Name of the workflow.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>median_angle_correction</strong> : nipype.pipeline.engine.Workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>median_angle_correction</strong> : nipype.pipeline.engine.Workflow</p>
 <blockquote class="last">
 <div><p>Median Angle Correction workflow.</p>
 </div></blockquote>
@@ -113,13 +116,13 @@ outputspec.pc_angles : string (.npy file)
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
 <blockquote>
 <div><p>Name of the workflow.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>target_angle</strong> : nipype.pipeline.engine.Workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>target_angle</strong> : nipype.pipeline.engine.Workflow</p>
 <blockquote class="last">
 <div><p>Target angle workflow.</p>
 </div></blockquote>
@@ -158,7 +161,7 @@ based on <a class="reference internal" href="#r15">[R15]</a>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>target_angle_deg</strong> : float</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>target_angle_deg</strong> : float</p>
 <blockquote>
 <div><p>Target median angle to adjust the time-series data.</p>
 </div></blockquote>
@@ -168,7 +171,7 @@ based on <a class="reference internal" href="#r15">[R15]</a>.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>corrected_file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>corrected_file</strong> : string</p>
 <blockquote>
 <div><p>Path of corrected file (nifti file).</p>
 </div></blockquote>
@@ -201,13 +204,13 @@ the 5 largest principal components.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject</strong> : string</p>
 <blockquote>
 <div><p>Path of a subject&#8217;s nifti file.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>mean_bold</strong> : float</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>mean_bold</strong> : float</p>
 <blockquote>
 <div><p>Mean bold amplitude of a subject.</p>
 </div></blockquote>
@@ -230,7 +233,7 @@ the group.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>mean_bolds</strong> : list (floats)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>mean_bolds</strong> : list (floats)</p>
 <blockquote>
 <div><p>List of mean bold amplitudes of the group</p>
 </div></blockquote>
@@ -240,7 +243,7 @@ the group.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>target_angle</strong> : float</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>target_angle</strong> : float</p>
 <blockquote class="last">
 <div><p>Calculated target angle of the given group</p>
 </div></blockquote>
@@ -259,11 +262,11 @@ the group.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="nuisance.html"
-                        title="previous chapter">Nuisance Signal Removal</a></p>
+  <p class="topless"><a href="cwas.html"
+                        title="previous chapter">Connectome Wide Association Studies</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="generate_motion_parameters.html"
-                        title="next chapter">Generate Motion and Power Parameters</a></p>
+  <p class="topless"><a href="registration.html"
+                        title="next chapter">Registration</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/median_angle.txt"
@@ -272,7 +275,7 @@ the group.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -299,18 +302,18 @@ the group.</p>
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="generate_motion_parameters.html" title="Generate Motion and Power Parameters"
+          <a href="registration.html" title="Registration"
              >next</a> |</li>
         <li class="right" >
-          <a href="nuisance.html" title="Nuisance Signal Removal"
+          <a href="cwas.html" title="Connectome Wide Association Studies"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

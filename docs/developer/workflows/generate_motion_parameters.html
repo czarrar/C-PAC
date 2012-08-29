@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Generate Motion and Power Parameters &mdash; CPAC v0.1 documentation</title>
+    <title>Generate Motion and Power Parameters &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,10 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
     <link rel="next" title="Scrubbing" href="scrubbing.html" />
-    <link rel="prev" title="Median Angle Correction" href="median_angle.html" /> 
+    <link rel="prev" title="Regional Homogeneity Approach to fMRI data analysis" href="reho.html" /> 
   </head>
   <body>
     <div class="related">
@@ -44,9 +47,9 @@
           <a href="scrubbing.html" title="Scrubbing"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="median_angle.html" title="Median Angle Correction"
+          <a href="reho.html" title="Regional Homogeneity Approach to fMRI data analysis"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -68,7 +71,7 @@ movement/motion parameters obtained in functional preprocessing. These parameter
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>param_wf</strong> : workflow object</p>
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>param_wf</strong> : workflow object</p>
 <blockquote class="last">
 <div><p>Workflow object containing various movement/motion and power parameters estimates.</p>
 </div></blockquote>
@@ -79,14 +82,20 @@ movement/motion parameters obtained in functional preprocessing. These parameter
 <p class="rubric">Notes</p>
 <p><a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/CPAC/generate_parmeters/generate_parmeters.py">Source</a></p>
 <p>Workflow Inputs:</p>
-<div class="highlight-python"><pre>inputspec.rest : func/rest file or a list of func/rest nifti file 
-    User input functional(T2) Image, in any of the 8 orientations
-
-inputspec.subject_id : string 
+<div class="highlight-python"><pre>inputspec.subject_id : string 
     Subject name or id
 
 inputspec.scan_id : string
     Functional Scan id or name
+
+inputspec.rest : string (func/rest file or a list of func/rest nifti file) 
+    Path to user input functional(T2) Image, in any of the 8 orientations
+
+inputspec.motion_correct : string (func/rest file or a list of func/rest nifti file) 
+    Path to motion corrected functional data
+
+inputspec.mask : string (nifti file)
+    Path to fiel contianing brain-only mask for the functional data
 
 inputspec.max_displacement : string (Mat file)
     maximum displacement (in mm) vector for brain voxels in each volume.
@@ -96,46 +105,26 @@ inputspec.movement_parameters : string (Mat file)
     1D file containing six movement/motion parameters(3 Translation, 3 Rotations) 
     in different columns (roll pitch yaw dS  dL  dP), obtained in functional preprocessing step
 
-threshold_input.threshold : float
+threshold_input.threshold : string (float)
     scrubbing threshold</pre>
 </div>
 <p>Workflow Outputs:</p>
-<div class="highlight-python"><pre>outputspec.mean_deriv_sq_1D : string (1D file)
-  Mean over the masked brain region
-  of the derivative of the raw data  
-
-outputspec.mean_raw_sq_1D: string (1D file)
-  Mean over the masked brain region 
-  for the raw data 
-
-outputspec.FD_1D : 1D file
+<div class="highlight-python"><pre>outputspec.FD_1D : 1D file
     mean Framewise Displacement (FD)
-
-outputspec.sqrt_mean_deriv_sq_1D : 1D file
-    RMS values for each volume of the 
-    derivative file of the raw data
-
-outputspec.sqrt_mean_raw_sq_1D : 1D file
-    RMS values for each volume of 
-    the raw data
 
 outputspec.frames_ex_1D : 1D file
     Number of frames that would be censored ("scrubbed")
     also removing the offending time frames (i.e., those exceeding the threshold), 
     the preceeding frame, and the two subsequent frames
 
-outputspec.frames_in_1D :
+outputspec.frames_in_1D : 1d file
     Number of frames left after removing for scrubbing
 
 outputspec.power_params : txt file
     Text file various power parameters for scrubbing.
 
 outputspec.motion_params : txt file
-   Text file containing various movement parameters
-
-outputspec.ftof_percent_change_1D : 1D file
-    The frame-wise RMS of the temporal derivative of the RAW (unprocessed) 
-    data as a percentage of the RMS of the first of the two time points.</pre>
+   Text file containing various movement parameters</pre>
 </div>
 <p>Order of commands:</p>
 <ul>
@@ -155,54 +144,7 @@ the rate of change of BOLD signal across the entire brain at each frame of data.
 DVARS, the volumetric timeseries is differentiated (by backwards differences) and RMS signal 
 change is calculated over the whole brain.DVARS is thus a measure of how much the intensity 
 of a brain image changes in comparison to the previous timepoint (as opposed to the global 
-signal, which is the average value of a brain image at a timepoint).</p>
-<blockquote>
-<div><ul>
-<li><p class="first">Create a dilated brain mask:</p>
-<div class="highlight-python"><pre>3dAutomask -dilate 1  
-           -prefix mask 
-            rest.nii.gz</pre>
-</div>
-</li>
-<li><p class="first">Calculate the difference in Image intensities between I and I-1 frame:</p>
-<div class="highlight-python"><pre>3dcalc -a rest.nii.gz[4..299]  
-       -b rest.nii.gz[3..298] 
-       -expr '(a-b)' 
-       -prefix temp_deriv</pre>
-</div>
-</li>
-<li><p class="first">Square the Intensity values of the derivative file obtained in above step:</p>
-<div class="highlight-python"><pre>3dcalc -a temp_deriv 
-       -expr 'a*a' 
-       -prefix temp_deriv_sq</pre>
-</div>
-</li>
-<li><p class="first">Calculate the mean intensity statistics over masked(whole brain) region
-for each volume of the squared derivative file:</p>
-<div class="highlight-python"><pre>3dROIstats -quiet 
-           -mask mask
-           temp_deriv_sq</pre>
-</div>
-</li>
-<li><p class="first">Square the intensity values of raw image:</p>
-<div class="highlight-python"><pre>3dcalc -a rest.nii.gz[3..298] 
-       -expr 'a*a' 
-       -prefix raw_sq</pre>
-</div>
-</li>
-<li><p class="first">Get the mean intensity over masked region for each volume of the
-squared raw file:</p>
-<div class="highlight-python"><pre>3dROIstats -quiet 
-           -mask mask
-            raw_sq</pre>
-</div>
-</li>
-<li><p class="first">calculate Square root of Mean value for derivative Image</p>
-</li>
-<li><p class="first">calculate square root of Mean for the Raw Image</p>
-</li>
-</ul>
-</div></blockquote>
+signal, which is the average value of a brain image at a timepoint).[R5]</p>
 </li>
 <li><p class="first">Calculate Power parameters:</p>
 <div class="highlight-python"><pre>MeanFD : Mean (across time/frames) of the absolute values for Framewise Displacement (FD), 
@@ -219,22 +161,12 @@ FDquartile(top 1/4th FD) : Mean of the top 25% highest FD values
 PercentFD( &gt; threshold) : Number of frames (time points) where movement (FD) exceeded threshold 
                           expressed as a percentage of the total number of frames (time points)
 
-Num5 : Number of frames (time points) where modDVARS exceeded 5%, expressed as a percentage of 
-       the total number of frames (time points)
-
-Num10 : Number of frames (time points) where modDVARS exceeded 10%, expressed as a percentage of 
-        the total number of frames (time points)
-
-MeanDVARS : The mean (across time) of a measure similar to DVARS as described by Power et al., 2012a. 
-            The frame-wise RMS of the temporal derivative of the RAW (unprocessed) data as a percentage of the 
-            RMS of the first of the two time points
-
-MeanDVARS_POW : MeanDVARS as mean of frame wise RMS of the RAW data. </pre>
+MeanDVARS : Mean of voxel DVARS</pre>
 </div>
 </li>
 <li><p class="first">Calculate Motion Parameters</p>
 <p>Following motion parameters are calculated:</p>
-<div class="highlight-python"><pre>Subject, Scan, Mean Relative RMS Displacement, Max Relative RSM Displacement,
+<div class="highlight-python"><pre>Subject, Scan, Mean Relative RMS Displacement, Max Relative RMS Displacement,
 Movements &gt;threshold, Mean Relative Mean Rotation, Mean Relative Maxdisp,
 Max Relative Maxdisp, Max Abs Maxdisp, Max Relative Roll,Max Relative Pitch,
 Max Relative Yaw, Max Relative dS-I, Max Relative dL-R,Max Relative dP-A,
@@ -270,6 +202,9 @@ NeuroImage. doi:10.1016/j.neuroimage.2012.03.017</td></tr>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span> <span class="o">=</span> <span class="n">generate_motion_parameters</span><span class="o">.</span><span class="n">motion_power_parameters</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">movement_parameters</span> <span class="o">=</span> <span class="s">&#39;CPAC_outupts/sym_link/sub01/rest_1/func/rest_mc.1D&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">max_displacement</span> <span class="o">=</span> <span class="s">&#39;CPAC_outputs/sym_link/sub01/rest_1/func/max_disp.1D&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">rest</span> <span class="o">=</span> <span class="s">&#39;sub01/rest_1/rest.nii.gz&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">motion_correct</span> <span class="o">=</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">subject_id</span> <span class="o">=</span> <span class="s">&#39;sub01&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">scan_id</span> <span class="o">=</span> <span class="s">&#39;rest_1&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wf</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">threshold_input</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.5</span>
@@ -280,54 +215,6 @@ NeuroImage. doi:10.1016/j.neuroimage.2012.03.017</td></tr>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.generate_motion_parameters.last_vol">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">last_vol</tt><big>(</big><em>nvols</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.last_vol" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the last volume of the image</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>nvols</strong> : int</p>
-<blockquote>
-<div><p>no of scans</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>last_volume</strong> : int</p>
-<blockquote class="last">
-<div><p>last scan</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="CPAC.generate_motion_parameters.trend_minus1">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">trend_minus1</tt><big>(</big><em>nvols</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.trend_minus1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the second to last volume of the image</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>nvols</strong> : int</p>
-<blockquote>
-<div><p>no of scans</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>last_vol_minus_one</strong> : int</p>
-<blockquote class="last">
-<div><p>second to last scan</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="CPAC.generate_motion_parameters.set_FD">
 <tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">set_FD</tt><big>(</big><em>in_file</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.set_FD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to calculate Framewise Displacement (FD) calculations</p>
@@ -335,13 +222,13 @@ NeuroImage. doi:10.1016/j.neuroimage.2012.03.017</td></tr>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
 <blockquote>
 <div><p>movement parameters vector file path</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
 <blockquote class="last">
 <div><p>Frame -wise displalcement mat 
 file path</p>
@@ -363,7 +250,7 @@ and the two subsequent frames</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
 <blockquote>
 <div><p>framewise displacement(FD) file path</p>
 </div></blockquote>
@@ -373,7 +260,7 @@ and the two subsequent frames</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
 <blockquote class="last">
 <div><p>path to file containing offending time frames</p>
 </div></blockquote>
@@ -392,7 +279,7 @@ after censoring for scrubbing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
 <blockquote>
 <div><p>framewise displacement(FD) file path</p>
 </div></blockquote>
@@ -406,95 +293,9 @@ after censoring for scrubbing.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
 <blockquote class="last">
 <div><p>path of file containing remaining uncensored timepoints</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="CPAC.generate_motion_parameters.set_sqrtmean_deriv">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">set_sqrtmean_deriv</tt><big>(</big><em>in_file</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.set_sqrtmean_deriv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to calculate mean of 
-rms of temporal derivative of raw data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
-<blockquote>
-<div><p>path to 1D file containing rms of temporal 
-derivative of raw data</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
-<blockquote class="last">
-<div><p>path to 1D file containing mean of rms of
-temporal derivative of raw data</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="CPAC.generate_motion_parameters.set_sqrtmean_raw">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">set_sqrtmean_raw</tt><big>(</big><em>in_file</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.set_sqrtmean_raw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to calculate mean of 
-rms of raw data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_file</strong> : string</p>
-<blockquote>
-<div><p>path to 1D file containing rms 
-of raw data</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
-<blockquote class="last">
-<div><p>path to 1D file containing mean of rms 
-of raw data</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="CPAC.generate_motion_parameters.set_ftof_percent_change">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">set_ftof_percent_change</tt><big>(</big><em>infile_a</em>, <em>infile_b</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.set_ftof_percent_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to calculate percentage change in the 
-RMS value of the timepoints</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>infile_a</strong> : string</p>
-<blockquote>
-<div><p>path to 1D file containing rms of temporal 
-derivative of raw data</p>
-</div></blockquote>
-<p><strong>infile_b</strong> : string</p>
-<blockquote>
-<div><p>path to 1D file containing mean of rms 
-of raw data</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
-<blockquote class="last">
-<div><p>path to file containing percentage change in
-RMS value of timepoints</p>
 </div></blockquote>
 </td>
 </tr>
@@ -510,7 +311,7 @@ RMS value of timepoints</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject_id</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject_id</strong> : string</p>
 <blockquote>
 <div><p>subject name or id</p>
 </div></blockquote>
@@ -533,7 +334,7 @@ RMS value of timepoints</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string</p>
 <blockquote class="last">
 <div><p>path to csv file contianing various motion parameters</p>
 </div></blockquote>
@@ -545,23 +346,19 @@ RMS value of timepoints</p>
 
 <dl class="function">
 <dt id="CPAC.generate_motion_parameters.gen_power_parameters">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">gen_power_parameters</tt><big>(</big><em>subject_id</em>, <em>scan_id</em>, <em>rest</em>, <em>FD_1D</em>, <em>threshold</em>, <em>ftof_percent</em>, <em>sqrt_mean_raw</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.gen_power_parameters" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">gen_power_parameters</tt><big>(</big><em>subject_id</em>, <em>scan_id</em>, <em>FD_1D</em>, <em>threshold</em>, <em>DVARS</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.gen_power_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to generate Power parameters for scrubbing</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject_id</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject_id</strong> : string</p>
 <blockquote>
 <div><p>subject name or id</p>
 </div></blockquote>
 <p><strong>scan_id</strong> : string</p>
 <blockquote>
 <div><p>scan name or id</p>
-</div></blockquote>
-<p><strong>rest</strong> : string</p>
-<blockquote>
-<div><p>functional file path</p>
 </div></blockquote>
 <p><strong>FD_ID: string</strong> :</p>
 <blockquote>
@@ -571,17 +368,13 @@ RMS value of timepoints</p>
 <blockquote>
 <div><p>scrubbing threshold set in the configuration</p>
 </div></blockquote>
-<p><strong>ftof_percent</strong> : string</p>
+<p><strong>DVARS</strong> : string</p>
 <blockquote>
-<div><p>path to 1D file containing percentage change in RMS value of the time points.</p>
-</div></blockquote>
-<p><strong>sqrt_mean_raw</strong> : string</p>
-<blockquote>
-<div><p>path to 1D file containing mean rms value of raw data for each scan</p>
+<div><p>path to numpy file containing DVARS</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string (csv file)</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string (csv file)</p>
 <blockquote class="last">
 <div><p>path to csv file containing all the pow parameters</p>
 </div></blockquote>
@@ -592,25 +385,28 @@ RMS value of timepoints</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.generate_motion_parameters.get_img_nvols">
-<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">get_img_nvols</tt><big>(</big><em>in_files</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.get_img_nvols" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to get number of volumes
-in the image</p>
+<dt id="CPAC.generate_motion_parameters.calculate_DVARS">
+<tt class="descclassname">CPAC.generate_motion_parameters.</tt><tt class="descname">calculate_DVARS</tt><big>(</big><em>rest</em>, <em>mask</em><big>)</big><a class="headerlink" href="#CPAC.generate_motion_parameters.calculate_DVARS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate DVARS as per
+power&#8217;s method</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_files: string, list</strong> :</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>rest</strong> : string (nifti file)</p>
 <blockquote>
-<div><p>file path or list of file paths for 
-functional runs</p>
+<div><p>path to motion correct functional data</p>
+</div></blockquote>
+<p><strong>mask</strong> : string (nifti file)</p>
+<blockquote>
+<div><p>path to brain only mask for functional data</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : list</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : string (numpy mat file)</p>
 <blockquote class="last">
-<div><p>list containing no of scans of 
-each functional run</p>
+<div><p>path to file containing  array of DVARS 
+calculation for each voxel</p>
 </div></blockquote>
 </td>
 </tr>
@@ -627,8 +423,8 @@ each functional run</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="median_angle.html"
-                        title="previous chapter">Median Angle Correction</a></p>
+  <p class="topless"><a href="reho.html"
+                        title="previous chapter">Regional Homogeneity Approach to fMRI data analysis</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="scrubbing.html"
                         title="next chapter">Scrubbing</a></p>
@@ -640,7 +436,7 @@ each functional run</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -670,15 +466,15 @@ each functional run</p>
           <a href="scrubbing.html" title="Scrubbing"
              >next</a> |</li>
         <li class="right" >
-          <a href="median_angle.html" title="Median Angle Correction"
+          <a href="reho.html" title="Regional Homogeneity Approach to fMRI data analysis"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Seed Based Correlation Analysis &mdash; CPAC v0.1 documentation</title>
+    <title>Seed Based Correlation Analysis &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,10 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
-    <link rel="next" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF" href="alff.html" />
-    <link rel="prev" title="Scrubbing" href="scrubbing.html" /> 
+    <link rel="next" title="Bootstrap Analysis of Stable Clusters" href="basc.html" />
+    <link rel="prev" title="Segmentation Workflow" href="seg_preproc.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,12 +44,12 @@
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="alff.html" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF"
+          <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="scrubbing.html" title="Scrubbing"
+          <a href="seg_preproc.html" title="Segmentation Workflow"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -60,21 +63,20 @@
 <span id="seed-based-correlation-analysis"></span><h1>Seed Based Correlation Analysis<a class="headerlink" href="#module-CPAC.sca" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="CPAC.sca.create_sca">
-<tt class="descclassname">CPAC.sca.</tt><tt class="descname">create_sca</tt><big>(</big><em>extraction_space</em><big>)</big><a class="headerlink" href="#CPAC.sca.create_sca" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.sca.</tt><tt class="descname">create_sca</tt><big>(</big><em>name_sca='sca'</em><big>)</big><a class="headerlink" href="#CPAC.sca.create_sca" title="Permalink to this definition">¶</a></dt>
 <dd><p>Map of the correlations of the Region of Interest(Seed in native or MNI space) with the rest of brain voxels.
 The map is normalized to contain Z-scores, mapped in standard space and treated with spatial smoothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>extraction_space</strong> : a string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name_sca</strong> : a string</p>
 <blockquote>
-<div><p>Options are &#8216;mni&#8217; or &#8216;native&#8217;.
-Extract time series from ROI in MNI space or extract it in subjects native space.</p>
+<div><p>Name of the SCA workflow</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>sca_workflow</strong> : workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>sca_workflow</strong> : workflow</p>
 <blockquote class="last">
 <div><p>Seed Based Correlation Analysis Workflow</p>
 </div></blockquote>
@@ -85,188 +87,61 @@ Extract time series from ROI in MNI space or extract it in subjects native space
 <p class="rubric">Notes</p>
 <p><a class="reference external" href="https://github.com/ssikka/NKI_NYU_Nipype/blob/development/base.py#L1540">Source</a></p>
 <p>Workflow Inputs:</p>
-<div class="highlight-python"><pre>seed_list_input.seed_list : list (string existing nifti file) 
-    A list of seeds/ ROI iin MNI space.
-
-inputspec.rest_res_filt : string (existing nifti file)
+<div class="highlight-python"><pre>inputspec.rest_res_filt : string (existing nifti file)
     Band passed Image with Global Signal , white matter, csf and motion regression. Recommended bandpass filter (0.001,0.1) )
 
-inputspec.rest_mask2standard : string (existing nifti file)
-    A mask volume(derived from the functional volume) in standard in standard space.
-    Used in spatial smoothing the Z-transformed correlations in MNI space
-
-inputspec.premat : string (existing affine transformation .mat file)
-                Transformation from native functional space to T1 space
-    Specifies an affine transform that should be applied to the data prior to the non-linear warping.
-
-inputspec.postmat : string (existing affine transformation .mat file)
-                Transformation from T1 space to native functional space
-    Specifies an affine transform that should be applied to the data following to the non-linear warping.
-
-inputspec.fieldcoeff_file : string (existing nifti file)
-    File with warp coefficients/fields.
-    This typically the output given by the -cout parameter of fnirt during registration step
-
-inputspec.ref : string (existing nifti file)
-    When Registering from MNI space to native space use the mean functional image in native space is used.
-    When registering from native to MNI MNI152_T1_STANDARD_RES nifti file is used(target space).
-
-fwhm_input.fwhm : list (float)
-    For spatial smoothing the Z-transformed correlations in MNI space.
-    Generally the value of this parameter is 1.5 or 2 times the voxel size of the input Image.</pre>
+inputspec.timeseries_one_d : string (existing nifti file)
+    1D 3dTcorr1D compatible timeseries file. 1D file can be timeseries from a mask or from a parcellation containing ROIs</pre>
 </div>
 <p>Workflow Outputs:</p>
 <div class="highlight-python"><pre>outputspec.correlations : string (nifti file)
-    Correlations for the seed 
+    Correlations of the functional file and the input time series 
 
 outputspec.z_trans_correlations : string (nifti file)
-    Fisher Z transformed correlations of the seed 
-
-outputspec.z_2standard : string (nifti file)
-    Registered Z-Transformed Correlations to Standard Space
-
-outputspec.z_2standard_FWHM : string (nifti file)
-    Spatially smoothed corr_Z_2standard.nii.gz</pre>
+    Fisher Z transformed correlations of the seed </pre>
 </div>
-<p>Order of commands:</p>
-<p>When Extracting Time Series from ROI in standard space</p>
-<ul>
-<li><p class="first">Register rest_res_filt to standard space. For details see <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/fnirt/warp_utils.html#applywarp">applywarp</a>:</p>
-<div class="highlight-python"><pre>applywarp 
--ref=${FSLDIR}/data/standard/MNI152_T1_STANDARD_RES.nii.gz
--in=rest_res_bandpassed.nii.gz
--out=rest_res2standard.nii.gz 
--warp= highres2standard_warp.nii.gz
--premat= example_func2highres.mat</pre>
-</div>
-</li>
-<li><p class="first">Extract the mean TimeSeries from ROI in standard space. For details see <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/doc/program_help/3dROIstats.html">3dROIstats</a>:</p>
-<div class="highlight-python"><pre>3dROIstats 
--quiet
--mask_f2short
--mask SEED_IN_MNI.nii.gz
-rest_res2standard.nii.gz &gt; TimeSeries.1D</pre>
-</div>
-</li>
-<li><p class="first">Compute voxel-wise correlation with Seed Time Series. For details see  <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/doc/program_help/3dfim+.html">3dfim+</a>:</p>
-<div class="highlight-python"><pre>3dfim+ 
--input rest_res_bandpassed.nii.gz
--ideal_file TimeSeries.1D
--fim_thr 0.0009
--out Correlation
--bucket corr.nii.gz</pre>
-</div>
-</li>
-</ul>
-<p>When Extracting Time Series from ROI in Native Space</p>
-<ul>
-<li><p class="first">Register Seed template in MNI to native space</p>
-<div class="highlight-python"><pre>applywarp 
--ref=example_func.nii.gz
--in=SEED_IN_MNI.nii.gz
--warp=stand2highres_warp.nii.gz
--postmat=highres2example_func.mat
--out=SEED_IN_Native.nii.gz
--interp=nn</pre>
-</div>
-</li>
-<li><p class="first">Extract the mean TimeSeries from ROI in standard space</p>
-<div class="highlight-python"><pre>3dROIstats 
--quiet
--mask_f2short
--mask SEED_IN_Native.nii.gz
-rest_res_bandpassed.nii.gz &gt; TimeSeries_NATIVE.1D</pre>
-</div>
-</li>
-<li><p class="first">Compute voxel-wise correlation with Seed Time Series</p>
-<div class="highlight-python"><pre>3dfim+ 
--input rest_res_bandpassed.nii.gz
--ideal_file TimeSeries.1D
--fim_thr 0
--out Correlation
--bucket corr.nii.gz</pre>
-</div>
-</li>
-</ul>
-<p>Common Steps</p>
-<ul>
-<li><p class="first">Fisher Z Transform the correlation. For details see <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/doc/program_help/3dcalc.html">3dcalc</a>:</p>
-<div class="highlight-python"><pre>3dcalc
--a corr.nii.gz
--expr 'log((a+1)/(1-a))/2'
--prefix corr_Z.nii.gz</pre>
-</div>
-</li>
-<li><p class="first">Registering Z-transformed map to standard space (NONLINEAR)</p>
-<div class="highlight-python"><pre>applywarp
--ref=MNI152_T1_STANDARD_RES.nii.gz
--in=corr_Z.nii.gz
--out=corr_Z_2standard.nii.gz
--warp=highres2standard_warp.nii.gz
--premat=example_func2highres.mat</pre>
-</div>
-</li>
-<li><p class="first">Spatially Smooth the Z-transformed map in standard space. For details see <a class="reference external" href="http://imaging.mrc-cbu.cam.ac.uk/imaging/PrinciplesSmoothing">PrinciplesSmoothing</a> <a class="reference external" href="http://www.fmrib.ox.ac.uk/fslcourse/lectures/practicals/intro/index.htm">fslmaths</a></p>
-<div class="highlight-python"><pre>fslmaths
-corr_Z_2standard.nii.gz
--kernel gauss FWHM/ sqrt(8-ln(2))
--fmean
--mas rest_mask2standard.nii.gz
-corr_Z_2standard_FWHM.nii.gz</pre>
-</div>
-</li>
-</ul>
-<p>Workflow Seed in MNI Space:</p>
-<img alt="../_images/sca_preproc_graph.dot.png" src="../_images/sca_preproc_graph.dot.png" style="width: 500px;" />
-<p>Workflow Seed in Native Space:</p>
-<img alt="../_images/sca_preproc_graph_native.dot.png" src="../_images/sca_preproc_graph_native.dot.png" style="width: 500px;" />
+<p>SCA Workflow Procedure:</p>
+<ol class="arabic simple">
+<li>Compute pearson correlation between input timeseries 1D file and input functional file
+Use 3dTcorr1D to compute that. Input timeseries can be a 1D file containing parcellation ROI&#8217;s
+or a 3D mask</li>
+<li>Compute Fisher Z score of the correlation computed in step above. If a mask is provided then a 
+a single Z score file is returned, otherwise z-scores for all ROIs are returned as a list of 
+nifti files</li>
+</ol>
+<p>Workflow:</p>
+<img alt="../_images/sca_graph.dot.png" src="../_images/sca_graph.dot.png" style="width: 500px;" />
+<p>Detailed Workflow:</p>
+<img alt="../_images/sca_detailed_graph.dot.png" src="../_images/sca_detailed_graph.dot.png" style="width: 500px;" />
 <p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span> <span class="o">=</span> <span class="n">create_sca</span><span class="p">(</span><span class="s">&quot;mni&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">fwhm_input</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="s">&#39;fwhm_input&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iterables</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;fwhm&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">4.5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">seed_list_input</span><span class="o">.</span><span class="n">seed_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;seed_pcc.nii.gz&#39;</span><span class="p">,</span> <span class="s">&#39;seed_dMPFC.nii.gz&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">premat</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/example_func2highres.mat&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">postmat</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/highres2example_func.mat&#39;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span> <span class="o">=</span> <span class="n">create_sca</span><span class="p">(</span><span class="s">&quot;sca_wf&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">rest_res_filt</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/rest_bandpassed.nii.gz&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">fieldcoeff_file</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/highres2standard_warp.nii.gz&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">rest_mask2standard</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/rest_mask2standard.nii.gz&#39;</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">ref</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/example_func.nii.gz&#39;</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">timeseries_one_d</span> <span class="o">=</span> <span class="s">&#39;/home/data/subject/func/ts.1D&#39;</span> 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sca_w</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> 
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.sca.set_gauss">
-<tt class="descclassname">CPAC.sca.</tt><tt class="descname">set_gauss</tt><big>(</big><em>fwhm</em><big>)</big><a class="headerlink" href="#CPAC.sca.set_gauss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the sigma value, given Full Width Half Max. 
-Further it builds an operand string and returns it</p>
+<dt id="CPAC.sca.compute_fisher_z_score">
+<tt class="descclassname">CPAC.sca.</tt><tt class="descname">compute_fisher_z_score</tt><big>(</big><em>correlation_file</em><big>)</big><a class="headerlink" href="#CPAC.sca.compute_fisher_z_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the fisher z transform of the input correlation map
+If the correlation map contains data for multiple ROIs then 
+the function returns z score for each ROI as a seperate nifti 
+file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><strong>fwhm</strong> : float</td>
-</tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><strong>op_string</strong> : string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="CPAC.sca.pToFile">
-<tt class="descclassname">CPAC.sca.</tt><tt class="descname">pToFile</tt><big>(</big><em>time_series</em><big>)</big><a class="headerlink" href="#CPAC.sca.pToFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write Timeseries values in an emty time series file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>time_series</strong> : list (float)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>correlation_file: string</strong> :</p>
+<blockquote>
+<div><p>Input correlations file</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>ts_oneD</strong> : string (.txt file)</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : list (nifti files)</p>
 <blockquote class="last">
-<div><p>file contains timeseries values, one value per line</p>
+<div><p>list of z_scores for mask or ROI</p>
 </div></blockquote>
 </td>
 </tr>
@@ -283,11 +158,11 @@ Further it builds an operand string and returns it</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="scrubbing.html"
-                        title="previous chapter">Scrubbing</a></p>
+  <p class="topless"><a href="seg_preproc.html"
+                        title="previous chapter">Segmentation Workflow</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="alff.html"
-                        title="next chapter">Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF</a></p>
+  <p class="topless"><a href="basc.html"
+                        title="next chapter">Bootstrap Analysis of Stable Clusters</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/sca.txt"
@@ -296,7 +171,7 @@ Further it builds an operand string and returns it</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -323,18 +198,18 @@ Further it builds an operand string and returns it</p>
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="alff.html" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF"
+          <a href="basc.html" title="Bootstrap Analysis of Stable Clusters"
              >next</a> |</li>
         <li class="right" >
-          <a href="scrubbing.html" title="Scrubbing"
+          <a href="seg_preproc.html" title="Segmentation Workflow"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Voxel Mirrored Homotopic Connectivity Analysis &mdash; CPAC v0.1 documentation</title>
+    <title>Voxel Mirrored Homotopic Connectivity Analysis &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
     <link rel="next" title="Regional Homogeneity Approach to fMRI data analysis" href="reho.html" />
     <link rel="prev" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF" href="alff.html" /> 
@@ -46,7 +49,7 @@
         <li class="right" >
           <a href="alff.html" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -66,10 +69,10 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>None</strong> :</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>None</strong> :</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>vmhc_workflow</strong> : workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>vmhc_workflow</strong> : workflow</p>
 <blockquote class="last">
 <div><p>Voxel Mirrored Homotopic Connectivity Analysis Workflow</p>
 </div></blockquote>
@@ -222,6 +225,8 @@ tmp_LRflipped.nii.gz</pre>
 </ul>
 <p>Workflow:</p>
 <img alt="../_images/vmhc_graph.dot.png" src="../_images/vmhc_graph.dot.png" style="width: 500px;" />
+<p>Workflow Detailed:</p>
+<img alt="../_images/vmhc_detailed_graph.dot.png" src="../_images/vmhc_detailed_graph.dot.png" style="width: 500px;" />
 <p class="rubric">References</p>
 <table class="docutils citation" frame="void" id="r17" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -250,18 +255,18 @@ tmp_LRflipped.nii.gz</pre>
 
 <dl class="function">
 <dt id="CPAC.vmhc.getImgNVols">
-<tt class="descclassname">CPAC.vmhc.</tt><tt class="descname">getImgNVols</tt><big>(</big><em>in_files</em>, <em>stopIdx</em>, <em>startIdx</em><big>)</big><a class="headerlink" href="#CPAC.vmhc.getImgNVols" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the number of volumes in the given nifti images</p>
+<tt class="descclassname">CPAC.vmhc.</tt><tt class="descname">getImgNVols</tt><big>(</big><em>in_files</em><big>)</big><a class="headerlink" href="#CPAC.vmhc.getImgNVols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the number of volumes in the given nifti image</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_files</strong> : list (nifti files)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>in_files</strong> : string (nifti file)</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : list (int)</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : int</p>
 <blockquote class="last">
-<div><p>number of volumes of each input nifti file</p>
+<div><p>number of volumes of input nifti file</p>
 </div></blockquote>
 </td>
 </tr>
@@ -272,14 +277,14 @@ tmp_LRflipped.nii.gz</pre>
 <dl class="function">
 <dt id="CPAC.vmhc.getEXP">
 <tt class="descclassname">CPAC.vmhc.</tt><tt class="descname">getEXP</tt><big>(</big><em>nvols</em><big>)</big><a class="headerlink" href="#CPAC.vmhc.getEXP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a list of operand strings/expressions</p>
+<dd><p>Generates operand string</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><strong>nvols</strong> : list (int)</td>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><strong>nvols</strong> : int</td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><strong>expr</strong> : list (string)</td>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><strong>expr</strong> : string</td>
 </tr>
 </tbody>
 </table>
@@ -307,7 +312,7 @@ tmp_LRflipped.nii.gz</pre>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -339,13 +344,13 @@ tmp_LRflipped.nii.gz</pre>
         <li class="right" >
           <a href="alff.html" title="Amplitude of Low Frequency Fluctuations(ALFF) and fractional ALFF"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

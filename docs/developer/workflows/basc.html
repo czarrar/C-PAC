@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Bootstrap Analysis of Stable Clusters &mdash; CPAC v0.1 documentation</title>
+    <title>Bootstrap Analysis of Stable Clusters &mdash; CPAC 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,10 +25,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPAC v0.1 documentation" href="../index.html" />
+    <link rel="top" title="CPAC 0.1 documentation" href="../index.html" />
     <link rel="up" title="Workflows" href="index.html" />
-    <link rel="next" title="Connectome Wide Association Studies" href="cwas.html" />
-    <link rel="prev" title="Regional Homogeneity Approach to fMRI data analysis" href="reho.html" /> 
+    <link rel="next" title="Nuisance Signal Removal" href="nuisance.html" />
+    <link rel="prev" title="Seed Based Correlation Analysis" href="sca.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,12 +44,12 @@
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cwas.html" title="Connectome Wide Association Studies"
+          <a href="nuisance.html" title="Nuisance Signal Removal"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="reho.html" title="Regional Homogeneity Approach to fMRI data analysis"
+          <a href="sca.html" title="Seed Based Correlation Analysis"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Workflows</a> &raquo;</li> 
       </ul>
     </div>  
@@ -67,13 +70,13 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>name</strong> : string, optional</p>
 <blockquote>
 <div><p>Name of the workflow.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>basc</strong> : nipype.pipeline.engine.Workflow</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>basc</strong> : nipype.pipeline.engine.Workflow</p>
 <blockquote class="last">
 <div><p>BASC workflow.</p>
 </div></blockquote>
@@ -93,7 +96,7 @@ inputspec.timeseries_bootstraps : integer
     Number of bootstraps of each subject's timeseries
 inputspec.k_clusters : integer
     Number of clusters at both the individiual and group level
-inputspec.affinity_threshold : float
+inputspec.affinity_threshold : list (floats)
     Minimum threshold for similarity matrix based on correlation to create an edge</pre>
 </div>
 <p>Workflow Outputs:</p>
@@ -149,7 +152,7 @@ for time-series data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject_file</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>subject_file</strong> : string</p>
 <blockquote>
 <div><p>Nifti file of a subject</p>
 </div></blockquote>
@@ -175,7 +178,7 @@ for time-series data.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>ism</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>ism</strong> : array_like</p>
 <blockquote class="last">
 <div><p>Individual stability matrix of shape (<cite>V</cite>, <cite>V</cite>), <cite>V</cite> voxels</p>
 </div></blockquote>
@@ -193,7 +196,7 @@ for time-series data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>indiv_stability_list</strong> : list of strings</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>indiv_stability_list</strong> : list of strings</p>
 <blockquote>
 <div><p>A length <cite>N</cite> list of file paths to numpy matrices of shape (<cite>V</cite>, <cite>V</cite>), <cite>N</cite> subjects, <cite>V</cite> voxels</p>
 </div></blockquote>
@@ -211,7 +214,7 @@ for time-series data.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>G</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>G</strong> : array_like</p>
 <blockquote>
 <div><p>Group stability matrix of shape (<cite>V</cite>, <cite>V</cite>), <cite>V</cite> voxels</p>
 </div></blockquote>
@@ -237,7 +240,7 @@ for time-series data.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>tseries</strong> : array_like</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>tseries</strong> : array_like</p>
 <blockquote>
 <div><p>A matrix of shapes (<cite>M</cite>, <cite>N</cite>) with <cite>M</cite> timepoints and <cite>N</cite> variables</p>
 </div></blockquote>
@@ -247,7 +250,7 @@ for time-series data.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>bseries</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>bseries</strong> : array_like</p>
 <blockquote class="last">
 <div><p>Bootstrap sample of the input timeseries</p>
 </div></blockquote>
@@ -290,13 +293,13 @@ special issue on Statistical Challenges and Advances in Brain Science,
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>dataset</strong> : array_like</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>dataset</strong> : array_like</p>
 <blockquote>
 <div><p>A matrix of where dimension-0 represents samples</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>bdataset</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>bdataset</strong> : array_like</p>
 <blockquote class="last">
 <div><p>A bootstrap sample of the input dataset</p>
 </div></blockquote>
@@ -314,7 +317,7 @@ special issue on Statistical Challenges and Advances in Brain Science,
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array_like</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array_like</p>
 <blockquote>
 <div><p>A matrix of shape (<cite>N</cite>, <cite>M</cite>) with <cite>N</cite> samples and <cite>M</cite> dimensions</p>
 </div></blockquote>
@@ -335,7 +338,7 @@ symmetric)</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y_pred</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y_pred</strong> : array_like</p>
 <blockquote class="last">
 <div><p>Predicted cluster labels</p>
 </div></blockquote>
@@ -360,13 +363,13 @@ symmetric)</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>cluster_pred</strong> : array_like</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>cluster_pred</strong> : array_like</p>
 <blockquote>
 <div><p>A matrix of shape (<cite>N</cite>, <cite>1</cite>) with <cite>N</cite> samples</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>A</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>A</strong> : array_like</p>
 <blockquote class="last">
 <div><p>Adjacency matrix of shape (<cite>N</cite>,`N`)</p>
 </div></blockquote>
@@ -397,11 +400,11 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>M</strong> : array_like</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>M</strong> : array_like</p>
 <p><strong>cluster_assignments</strong> : array_like</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last"><strong>s</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last"><strong>s</strong> : array_like</p>
 </td>
 </tr>
 </tbody>
@@ -425,7 +428,7 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>Y</strong> : array_like</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>Y</strong> : array_like</p>
 <blockquote>
 <div><p>A matrix of shape (<cite>N</cite>, <cite>V</cite>) with <cite>N</cite> timepoints and <cite>V</cite> voxels</p>
 </div></blockquote>
@@ -447,7 +450,7 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
 </div></blockquote>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>S</strong> : array_like</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>S</strong> : array_like</p>
 <blockquote class="last">
 <div><p>A matrix of shape (<cite>V</cite>, <cite>V</cite>), each element v_{ij} representing the stability of the adjacency of voxel i with voxel j</p>
 </div></blockquote>
@@ -466,11 +469,11 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="reho.html"
-                        title="previous chapter">Regional Homogeneity Approach to fMRI data analysis</a></p>
+  <p class="topless"><a href="sca.html"
+                        title="previous chapter">Seed Based Correlation Analysis</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="cwas.html"
-                        title="next chapter">Connectome Wide Association Studies</a></p>
+  <p class="topless"><a href="nuisance.html"
+                        title="next chapter">Nuisance Signal Removal</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workflows/basc.txt"
@@ -479,7 +482,7 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -506,18 +509,18 @@ of within cluster similarity.  Self similarity (diagonal of similarity matrix) i
           <a href="../np-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cwas.html" title="Connectome Wide Association Studies"
+          <a href="nuisance.html" title="Nuisance Signal Removal"
              >next</a> |</li>
         <li class="right" >
-          <a href="reho.html" title="Regional Homogeneity Approach to fMRI data analysis"
+          <a href="sca.html" title="Seed Based Correlation Analysis"
              >previous</a> |</li>
-        <li><a href="../index.html">CPAC v0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPAC 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Workflows</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
