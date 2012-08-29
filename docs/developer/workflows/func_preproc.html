@@ -120,7 +120,7 @@ outputspec.skullstrip : string (nifti file)
     Path to skull stripped Motion Corrected Image 
 
 outputspec.mask : string (nifti file)
-    Path to Dilated brain-only mask
+    Path to brain-only mask
 
 outputspec.example_func : string (nifti file)
     Mean, Skull Stripped, Motion Corrected output T2 Image path
@@ -197,8 +197,8 @@ For details see <a class="reference external" href="http://afni.nimh.nih.gov/pub
 For each volume in RPI-oriented T2 image, the command, aligns the image with the base mean image and calculates the motion, displacement 
 and movement parameters. It also outputs the aligned 4D volume and movement and displacement parameters for each volume.</p>
 </li>
-<li><p class="first">Create a dilated brain-only mask. For details see <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/doc/program_help/3dAutomask.html">3dautomask</a>:</p>
-<div class="highlight-python"><pre>3dAutomask -dilate 1 
+<li><p class="first">Create a  brain-only mask. For details see <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/doc/program_help/3dAutomask.html">3dautomask</a>:</p>
+<div class="highlight-python"><pre>3dAutomask  
            -prefix rest_3dc_RPI_3dv_automask.nii.gz 
            rest_3dc_RPI_3dv.nii.gz</pre>
 </div>

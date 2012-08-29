@@ -231,8 +231,8 @@ fALFF_Z.nii.gz</pre>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.alff.getImgNVols">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">getImgNVols</tt><big>(</big><em>in_files</em><big>)</big><a class="headerlink" href="#CPAC.alff.getImgNVols" title="Permalink to this definition">¶</a></dt>
+<dt id="CPAC.alff.get_img_nvols">
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_img_nvols</tt><big>(</big><em>in_files</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_img_nvols" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the number of volumes in the given nifti image</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -252,8 +252,8 @@ fALFF_Z.nii.gz</pre>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.alff.getImgTR">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">getImgTR</tt><big>(</big><em>in_files</em>, <em>TRa</em><big>)</big><a class="headerlink" href="#CPAC.alff.getImgTR" title="Permalink to this definition">¶</a></dt>
+<dt id="CPAC.alff.get_img_tr">
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_img_tr</tt><big>(</big><em>in_files</em>, <em>TRa</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_img_tr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Temporal Resolution parameter from the image header.
 If TRa is not None then it compares the computed TR and the supplied
 if the difference is greater than 0.001 then it returns supplied TRa as the
@@ -280,8 +280,8 @@ TR of the image and flashes a warning message else returns TRa</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.alff.getN1">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">getN1</tt><big>(</big><em>TR</em>, <em>nvols</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.getN1" title="Permalink to this definition">¶</a></dt>
+<dt id="CPAC.alff.get_N1">
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_N1</tt><big>(</big><em>TR</em>, <em>nvols</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_N1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the low frequency point</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -310,8 +310,8 @@ TR of the image and flashes a warning message else returns TRa</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.alff.getN2">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">getN2</tt><big>(</big><em>TR</em>, <em>nvols</em>, <em>LP</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.getN2" title="Permalink to this definition">¶</a></dt>
+<dt id="CPAC.alff.get_N2">
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_N2</tt><big>(</big><em>TR</em>, <em>nvols</em>, <em>LP</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_N2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the high frequency point</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -344,8 +344,8 @@ TR of the image and flashes a warning message else returns TRa</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="CPAC.alff.getOpString">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">getOpString</tt><big>(</big><em>mean</em>, <em>std_dev</em><big>)</big><a class="headerlink" href="#CPAC.alff.getOpString" title="Permalink to this definition">¶</a></dt>
+<dt id="CPAC.alff.get_operand_string">
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_operand_string</tt><big>(</big><em>mean</em>, <em>std_dev</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_operand_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate the Operand String to be used in workflow nodes to supply 
 mean and std deviation to alff workflow nodes</p>
 <table class="docutils field-list" frame="void" rules="none">
