@@ -85,7 +85,7 @@ and colour activation overlaying</p>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p><a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/CPAC/easy_thresh/easy_thresh.py">Source</a></p>
+<p><a class="reference external" href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/easy_thresh/easy_thresh.py">Source</a></p>
 <p>Workflow Inputs:</p>
 <div class="highlight-python"><pre>inputspec.z_stats : string (nifti file)
     z_score stats output for t or f contrast from flameo
@@ -198,12 +198,12 @@ maximum intensity).</p>
 </li>
 </ul>
 <p>High Level Workflow Graph:</p>
-<img alt="../_images/easy_thresh.dot.png" src="../_images/easy_thresh.dot.png" style="width: 1000px;" />
+<img alt="../_images/easy_thresh.dot.png" src="../_images/easy_thresh.dot.png" style="width: 800px;" />
 <p>Detailed Workflow Graph:</p>
-<img alt="../_images/easy_thresh_detailed.dot.png" src="../_images/easy_thresh_detailed.dot.png" style="width: 1000px;" />
+<img alt="../_images/easy_thresh_detailed.dot.png" src="../_images/easy_thresh_detailed.dot.png" style="width: 800px;" />
 <p class="rubric">Examples</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">easy_thresh</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span> <span class="o">=</span> <span class="n">easy_thresh</span><span class="p">(</span><span class="s">&quot;new_workflow&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span> <span class="o">=</span> <span class="n">easy_thresh</span><span class="o">.</span><span class="n">easy_thresh</span><span class="p">(</span><span class="s">&quot;new_workflow&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">z_stats</span><span class="o">=</span> <span class="s">&#39;flameo/stats/zstat1.nii.gz&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">merge_mask</span> <span class="o">=</span> <span class="s">&#39;merge_mask/alff_Z_fn2standard_merged_mask.nii.gz&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">z_threshold</span> <span class="o">=</span> <span class="mf">2.3</span>
@@ -236,9 +236,15 @@ orientation/origin or qform/sform info) from one image to another</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_file</strong> : nifti file</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Input volume infile_b with modified geometry information
 in the header.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>Exception</strong> :</p>
+<blockquote class="last">
+<div><p>If fslcpgeom fails</p>
 </div></blockquote>
 </td>
 </tr>
@@ -283,9 +289,10 @@ standard data directory</p>
 
 <dl class="function">
 <dt id="CPAC.easy_thresh.get_tuple">
-<tt class="descclassname">CPAC.easy_thresh.</tt><tt class="descname">get_tuple</tt><big>(</big><em>z_threshold</em>, <em>intensity_stat</em><big>)</big><a class="headerlink" href="#CPAC.easy_thresh.get_tuple" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.easy_thresh.</tt><tt class="descname">get_tuple</tt><big>(</big><em>infile_a</em>, <em>infile_b</em><big>)</big><a class="headerlink" href="#CPAC.easy_thresh.get_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple method to return tuple of z_threhsold
-maximum intensity values of Zstatistic image</p>
+maximum intensity values of Zstatistic image
+for input to the overlay.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -300,8 +307,11 @@ maximum intensity values of Zstatistic image</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>tuple of zthreshold and maximum intensity</strong> :</p>
-<p class="last"><strong>value of z statistic image</strong> :</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>img_min_max</strong> : tuple (float)</p>
+<blockquote class="last">
+<div><p>tuple of zthreshold and maximum intensity 
+value of z statistic image</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -368,7 +378,7 @@ maximum intensity values of Zstatistic image</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

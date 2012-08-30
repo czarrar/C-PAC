@@ -91,7 +91,7 @@
 inputpsec.subjects : list (nifti files)
     4-D timeseries of a group of subjects normalized to MNI space
 inputspec.regressor : list (float)
-    Corresponding list of the regressor variable for subjects
+    Corresponding list of the regressor variable of shape (`N`) or (`N`,`1`), `N` subjects
 inputspec.f_samples : int
     Number of permutation samples to draw from the pseudo F distribution
 inputspec.parallel_nodes : integer
@@ -279,7 +279,7 @@ and a provided mask</p>
 </div></blockquote>
 <p><strong>regressor</strong> : ndarray</p>
 <blockquote>
-<div><p>Matrix of shape (<cite>S</cite>, <cite>R</cite>), <cite>S</cite> subjects and <cite>R</cite> regressors</p>
+<div><p>Vector of shape (<cite>S</cite>) or (<cite>S</cite>, <cite>1</cite>), <cite>S</cite> subjects</p>
 </div></blockquote>
 <p><strong>f_samples</strong> : integer</p>
 <blockquote>
@@ -371,7 +371,7 @@ easier</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Brian.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
