@@ -85,7 +85,7 @@ Threshold and binarize them.</p>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p><a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/CPAC/seg_preproc/seg_preproc.py">Source</a></p>
+<p><a class="reference external" href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/seg_preproc/seg_preproc.py">Source</a></p>
 <p>Workflow Inputs:</p>
 <div class="highlight-python"><pre>csf_threshold.csf_threshold : list (float)
     Threshold of Cerebral Spinal Fluid probabilities 
@@ -303,83 +303,55 @@ it and creating a mask thst is used in further analysis.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>preproc</strong> : workflow</p>
-<blockquote>
-<div><p>Workflow Object for process_segment_map Workflow</p>
-</div></blockquote>
-<p><strong>Workflow Inputs: ::</strong> :</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>inputspec.brain <span class="classifier-delimiter">:</span> <span class="classifier">string (existing nifti file)</span></dt>
-<dd><p class="first last">Anatomical image(without skull)</p>
-</dd>
-<dt>inputspec.standard2highres_mat <span class="classifier-delimiter">:</span> <span class="classifier">string (existing affine transformation .mat file)</span></dt>
-<dd><p class="first last">File for transformation from mni space to anatomical space</p>
-</dd>
-<dt>inputspec.tissue_prior <span class="classifier-delimiter">:</span> <span class="classifier">string (existing nifti file)</span></dt>
-<dd><p class="first last">FSL Standard Tissue prior image</p>
-</dd>
-<dt>inputspec.threshold <span class="classifier-delimiter">:</span> <span class="classifier">string (float)</span></dt>
-<dd><p class="first last">Threshold of Segmentation Probaility Maps</p>
-</dd>
-<dt>inputspec.probability_map <span class="classifier-delimiter">:</span> <span class="classifier">string (nifti file)</span></dt>
-<dd><p class="first last">Tissue Probability map obtained from fsl FAST</p>
-</dd>
-</dl>
-</div></blockquote>
-<p><strong>Workflow Outputs: ::</strong> :</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>outputspec.segment_mni2t1 <span class="classifier-delimiter">:</span> <span class="classifier">string (nifti file)</span></dt>
-<dd><p class="first last">outputs CSF prior template(in MNI space) registered to anatomical space</p>
-</dd>
-<dt>outputspec.segment_combo <span class="classifier-delimiter">:</span> <span class="classifier">string (nifti file)</span></dt>
-<dd><p class="first last">outputs Image containing overlap between csf probability map and segment_mni2t1</p>
-</dd>
-<dt>outputspec.segment_bin <span class="classifier-delimiter">:</span> <span class="classifier">string (nifti file)</span></dt>
-<dd><p class="first last">outputs image after Thresholding and binarizing segment_combo</p>
-</dd>
-<dt>outputspec.segment_mask <span class="classifier-delimiter">:</span> <span class="classifier">string (nifti file)</span></dt>
-<dd><p class="first last">outputs image after masking segment_combo with its tissue prior in t1 space</p>
-</dd>
-</dl>
-</div></blockquote>
-<p><strong>Order of commands:</strong> :</p>
-<p><strong>- Register tissue prior in MNI space to t1 space.</strong> :</p>
-<p><strong>- Find overlap between segment probability map and tissue prior in t1 native space.</strong> :</p>
-<p><strong>- Threshold and binarize segment probability map</strong> :</p>
-<p><strong>- Generate segment mask, by applying tissue prior in t1 space to thresholded binarized segment probability map</strong> :</p>
-<p><strong>High Level Graph:</strong> :</p>
-<p><strong>.. image:: ../images/process_segment_map.dot.png</strong> :</p>
-<blockquote>
-<div><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">width:</th><td class="field-body">1100</td>
-</tr>
-<tr class="field-even field"><th class="field-name">height:</th><td class="field-body">480</td>
-</tr>
-</tbody>
-</table>
-</div></blockquote>
-<p><strong>Detailed Graph:</strong> :</p>
-<p><strong>.. image:: ../images/process_segment_map_detailed.dot.png</strong> :</p>
 <blockquote class="last">
-<div><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">width:</th><td class="field-body">1100</td>
-</tr>
-<tr class="field-even field"><th class="field-name">height:</th><td class="field-body">480</td>
-</tr>
-</tbody>
-</table>
+<div><p>Workflow Object for process_segment_map Workflow</p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p><a class="reference external" href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/seg_preproc/seg_preproc.py">Source</a></p>
+<p>Workflow Inputs:</p>
+<div class="highlight-python"><pre>inputspec.brain : string (existing nifti file)
+    Anatomical image(without skull)
+
+inputspec.standard2highres_mat : string (existing affine transformation .mat file)
+    File for transformation from mni space to anatomical space
+
+inputspec.tissue_prior : string (existing nifti file)
+    FSL Standard Tissue prior image 
+
+inputspec.threshold : string (float)
+    Threshold of Segmentation Probaility Maps
+
+inputspec.probability_map : string (nifti file)
+    Tissue Probability map obtained from fsl FAST</pre>
+</div>
+<p>Workflow Outputs:</p>
+<div class="highlight-python"><pre>outputspec.segment_mni2t1 : string (nifti file)
+    outputs CSF prior template(in MNI space) registered to anatomical space
+
+outputspec.segment_combo : string (nifti file)
+    outputs Image containing overlap between csf probability map and segment_mni2t1
+
+outputspec.segment_bin : string (nifti file)
+    outputs image after Thresholding and binarizing segment_combo
+
+outputspec.segment_mask : string (nifti file)
+    outputs image after masking segment_combo with its tissue prior in t1 space</pre>
+</div>
+<p>Order of commands:</p>
+<ul class="simple">
+<li>Register tissue prior in MNI space to t1 space.</li>
+<li>Find overlap between segment probability map and tissue prior in t1 native space.</li>
+<li>Threshold and binarize segment probability map</li>
+<li>Generate segment mask, by applying tissue prior in t1 space to thresholded binarized segment probability map</li>
+</ul>
+<p>High Level Graph:</p>
+<img alt="../_images/process_segment_map.dot.png" src="../_images/process_segment_map.dot.png" style="width: 1100px; height: 480px;" />
+<p>Detailed Graph:</p>
+<img alt="../_images/process_segment_map_detailed.dot.png" src="../_images/process_segment_map_detailed.dot.png" style="width: 1100px; height: 480px;" />
 </dd></dl>
 
 <dl class="function">
