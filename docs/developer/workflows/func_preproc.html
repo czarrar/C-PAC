@@ -64,9 +64,9 @@
 <dl class="function">
 <dt id="CPAC.func_preproc.create_func_preproc">
 <tt class="descclassname">CPAC.func_preproc.</tt><tt class="descname">create_func_preproc</tt><big>(</big><big>)</big><a class="headerlink" href="#CPAC.func_preproc.create_func_preproc" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main purpose of this workflow is to process T2 scans. Raw rest file is deobliqued and reoriented 
+<dd><p>The main purpose of this workflow is to process functional data. Raw rest file is deobliqued and reoriented 
 into RPI. Then take the mean intensity values over all time points for each voxel and use this image 
-to calaculate motion parameters. The image is then skullstripped, normalized and a processed mask is 
+to calculate motion parameters. The image is then skullstripped, normalized and a processed mask is 
 obtained to use it further in Image analysis.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -81,7 +81,7 @@ obtained to use it further in Image analysis.</p>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p><a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/CPAC/func_preproc/func_preproc.py">Source</a></p>
+<p><a class="reference external" href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/func_preproc/func_preproc.py">Source</a></p>
 <p>Workflow Inputs:</p>
 <div class="highlight-python"><pre>inputspec.rest : func/rest file or a list of func/rest nifti file 
     User input functional(T2) Image, in any of the 8 orientations
@@ -236,7 +236,7 @@ and movement parameters. It also outputs the aligned 4D volume and movement and 
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">func_preproc</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span> <span class="o">=</span> <span class="n">create_func_preproc</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">func</span><span class="o">=</span><span class="s">&#39;sub1/func/rest.nii.gz&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">preporc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preproc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> 
 </pre></div>
 </div>
 </dd></dl>

@@ -81,7 +81,7 @@
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p><a class="reference external" href="https://github.com/openconnectome/C-PAC/blob/master/CPAC/alff/alff.py">Source</a></p>
+<p><a class="reference external" href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/alff/alff.py">Source</a></p>
 <p>Workflow Inputs:</p>
 <div class="highlight-python"><pre>hp_input.hp : list (float) 
     high pass frequencies
@@ -281,7 +281,7 @@ TR of the image and flashes a warning message else returns TRa</p>
 
 <dl class="function">
 <dt id="CPAC.alff.get_N1">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_N1</tt><big>(</big><em>TR</em>, <em>nvols</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_N1" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_N1</tt><big>(</big><em>nvols</em>, <em>TR</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_N1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the low frequency point</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -311,7 +311,7 @@ TR of the image and flashes a warning message else returns TRa</p>
 
 <dl class="function">
 <dt id="CPAC.alff.get_N2">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_N2</tt><big>(</big><em>TR</em>, <em>nvols</em>, <em>LP</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_N2" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.alff.</tt><tt class="descname">get_N2</tt><big>(</big><em>nvols</em>, <em>TR</em>, <em>LP</em>, <em>HP</em><big>)</big><a class="headerlink" href="#CPAC.alff.get_N2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the high frequency point</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -406,23 +406,6 @@ mean and std deviation to alff workflow nodes</p>
 <div><p>operand string</p>
 </div></blockquote>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="CPAC.alff.set_gauss">
-<tt class="descclassname">CPAC.alff.</tt><tt class="descname">set_gauss</tt><big>(</big><em>fwhm</em><big>)</big><a class="headerlink" href="#CPAC.alff.set_gauss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the sigma value, given Full Width Half Max. 
-Further it builds an operand string and returns it</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><strong>fwhm</strong> : float</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><strong>op_string</strong> : string</td>
 </tr>
 </tbody>
 </table>

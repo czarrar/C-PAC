@@ -103,7 +103,10 @@ inputspec.compcor_ncomponents : integer</pre>
 </div>
 <p>Workflow Outputs:</p>
 <div class="highlight-python"><pre>outputspec.subject : string (nifti file)
-outputspec.regressors : string (mat file)</pre>
+    Path of residual file in nifti format
+outputspec.regressors : string (mat file)
+    Path of csv file of regressors used.  Filename corresponds to the name of each
+    regressor in each column.</pre>
 </div>
 <p>Nuisance Procedure:</p>
 <ol class="arabic simple">
@@ -158,7 +161,8 @@ are True/False.  See notes for an example.</p>
 </div></blockquote>
 <p><strong>regressors_file</strong> : string</p>
 <blockquote class="last">
-<div><p>Path of matlab file of regressors used</p>
+<div><p>Path of csv file of regressors used.  Filename corresponds to the name of each
+regressor in each column.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -193,7 +197,7 @@ are True/False.  See notes for an example.</p>
 </div></blockquote>
 <p><strong>bandpass_freqs</strong> : tuple</p>
 <blockquote>
-<div><p>Tuple containing the bandpass frequencies.</p>
+<div><p>Tuple containing the bandpass frequencies. (LowCutoff, HighCutoff)</p>
 </div></blockquote>
 <p><strong>sample_period</strong> : float, optional</p>
 <blockquote>
