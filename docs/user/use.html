@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The Configuration File &mdash; C-PAC 0.1 Alpha documentation</title>
+    <title>Using C-PAC &mdash; C-PAC 0.1 Alpha documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="C-PAC 0.1 Alpha documentation" href="index.html" />
-    <link rel="next" title="Data Pre-Processing" href="preproc.html" />
+    <link rel="next" title="Data Preprocessing" href="preproc.html" />
     <link rel="prev" title="Installing C-PAC" href="install.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="preproc.html" title="Data Pre-Processing"
+          <a href="preproc.html" title="Data Preprocessing"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installing C-PAC"
@@ -51,26 +51,42 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="the-configuration-file">
-<h1>The Configuration File<a class="headerlink" href="#the-configuration-file" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="computer-settings">
-<h2>Computer Settings<a class="headerlink" href="#computer-settings" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="using-c-pac">
+<h1>Using C-PAC<a class="headerlink" href="#using-c-pac" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ready-your-data">
+<h2>Ready Your Data<a class="headerlink" href="#ready-your-data" title="Permalink to this headline">¶</a></h2>
+<p>Open the <tt class="file docutils literal"><span class="pre">data_config.py</span></tt> file located in the file:<cite>utils</cite> directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.</p>
+<p>In the terminal, navigate to the directory where you would like to store subject lists for use by C-PAC. Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_data</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/data_config.py&#39;</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="directory-setup">
-<h2>Directory Setup<a class="headerlink" href="#directory-setup" title="Permalink to this headline">¶</a></h2>
+<p>This will ouput three files needed to run C-PAC:</p>
+<ul class="simple">
+<li><tt class="file docutils literal"><span class="pre">CPAC_subjectlist.py</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">template_phenotypic.csv</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">subject_list_group_analysis.txt</span></tt></li>
+</ul>
 </div>
-<div class="section" id="pre-processing-setup">
-<h2>Pre-Processing Setup<a class="headerlink" href="#pre-processing-setup" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="pre-processing-options">
-<h2>Pre-Processing Options<a class="headerlink" href="#pre-processing-options" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="analysis-options">
-<h2>Analysis Options<a class="headerlink" href="#analysis-options" title="Permalink to this headline">¶</a></h2>
-</div>
+<div class="section" id="configure-c-pac">
+<h2>Configure C-PAC<a class="headerlink" href="#configure-c-pac" title="Permalink to this headline">¶</a></h2>
+<p>Open the <tt class="file docutils literal"><span class="pre">config.py</span></tt> file located in the <tt class="file docutils literal"><span class="pre">pipeline</span></tt> directory. This is where you will specify the analyses run by C-PAC and their settings. Follow the instructions inside to set your desired parameters, then save your changes.</p>
 </div>
 <div class="section" id="running-c-pac">
-<h1>Running C-PAC<a class="headerlink" href="#running-c-pac" title="Permalink to this headline">¶</a></h1>
+<h2>Running C-PAC<a class="headerlink" href="#running-c-pac" title="Permalink to this headline">¶</a></h2>
+<p>In the terminal, navigate to the crash directory you specified in <tt class="file docutils literal"><span class="pre">config.py</span></tt>. Because of a bug in Nipype, C-PAC will output crash logs from wherever it is run.</p>
+<p>Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/CPAC_subjectlist.py&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-basc-and-cwas">
+<h2>Running BASC and CWAS<a class="headerlink" href="#running-basc-and-cwas" title="Permalink to this headline">¶</a></h2>
+<p>must have run functtomni, but not necessarily anything else</p>
+</div>
+<div class="section" id="running-group-statistics">
+<h2>Running Group Statistics<a class="headerlink" href="#running-group-statistics" title="Permalink to this headline">¶</a></h2>
+<p>In order to run group statistics, you must first run C-PAC to generate the desired measures.</p>
+</div>
 </div>
 
 
@@ -84,15 +100,14 @@
             </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">The Configuration File</a><ul>
-<li><a class="reference internal" href="#computer-settings">Computer Settings</a></li>
-<li><a class="reference internal" href="#directory-setup">Directory Setup</a></li>
-<li><a class="reference internal" href="#pre-processing-setup">Pre-Processing Setup</a></li>
-<li><a class="reference internal" href="#pre-processing-options">Pre-Processing Options</a></li>
-<li><a class="reference internal" href="#analysis-options">Analysis Options</a></li>
+<li><a class="reference internal" href="#">Using C-PAC</a><ul>
+<li><a class="reference internal" href="#ready-your-data">Ready Your Data</a></li>
+<li><a class="reference internal" href="#configure-c-pac">Configure C-PAC</a></li>
+<li><a class="reference internal" href="#running-c-pac">Running C-PAC</a></li>
+<li><a class="reference internal" href="#running-basc-and-cwas">Running BASC and CWAS</a></li>
+<li><a class="reference internal" href="#running-group-statistics">Running Group Statistics</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#running-c-pac">Running C-PAC</a></li>
 </ul>
 
   <h4>Previous topic</h4>
@@ -100,7 +115,7 @@
                         title="previous chapter">Installing C-PAC</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="preproc.html"
-                        title="next chapter">Data Pre-Processing</a></p>
+                        title="next chapter">Data Preprocessing</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/use.txt"
@@ -130,7 +145,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="preproc.html" title="Data Pre-Processing"
+          <a href="preproc.html" title="Data Preprocessing"
              >next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installing C-PAC"

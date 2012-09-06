@@ -1,20 +1,36 @@
-The Configuration File
-----------------------
+Using C-PAC
+===========
 
-Computer Settings
-^^^^^^^^^^^^^^^^^
+Ready Your Data
+---------------
+Open the :file:`data_config.py` file located in the file:`utils` directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.
 
-Directory Setup
-^^^^^^^^^^^^^^^
+In the terminal, navigate to the directory where you would like to store subject lists for use by C-PAC. Open iPython by typing :command:`ipython`. From the iPython prompt, run :command:`import CPAC`, followed by::
 
-Pre-Processing Setup
-^^^^^^^^^^^^^^^^^^^^
+    CPAC.utils.extract_data.run ('/path/to/data_config.py')
 
-Pre-Processing Options
-^^^^^^^^^^^^^^^^^^^^^^
+This will ouput three files needed to run C-PAC:
 
-Analysis Options
-^^^^^^^^^^^^^^^^
+* :file:`CPAC_subjectlist.py`
+* :file:`template_phenotypic.csv`
+* :file:`subject_list_group_analysis.txt`
+
+Configure C-PAC
+---------------
+Open the :file:`config.py` file located in the :file:`pipeline` directory. This is where you will specify the analyses run by C-PAC and their settings. Follow the instructions inside to set your desired parameters, then save your changes.
 
 Running C-PAC
 -------------
+In the terminal, navigate to the crash directory you specified in :file:`config.py`. Because of a bug in Nipype, C-PAC will output crash logs from wherever it is run.
+
+Open iPython by typing :command:`ipython`. From the iPython prompt, run :command:`import CPAC`, followed by::
+
+    CPAC.pipeline.cpac_runner.run ('/path/to/config.py', '/path/to/CPAC_subjectlist.py')
+
+Running BASC and CWAS
+---------------------
+must have run functtomni, but not necessarily anything else
+
+Running Group Statistics
+------------------------
+In order to run group statistics, you must first run C-PAC to generate the desired measures. 

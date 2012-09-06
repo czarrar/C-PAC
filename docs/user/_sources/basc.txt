@@ -3,23 +3,25 @@ Bootstrap Analysis of Stable Clusters (BASC)
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Boostrap Analysis of Stable Clusters (BASC) is a statistical framework that quantifies the stability of Resting State Networks (RSNs) by comparing the results of cluster analysis across replications (Bellec et al. 2010) As it is often impossible or impractical repeat data collection for an experiment multiple times, BASC utilizes bootstrapping to generate a large number of samples from the existing data. BASC can be used to charactarize stable RSNs at both the individual and group levels. 
+Bootstrap Analysis of Stable Clusters (BASC) is a statistical framework that quantifies the stability of Resting State Networks (RSNs) by comparing the results of cluster analysis across replications (Bellec et al. 2010) As it is often impossible or impractical to repeat data collection for an experiment multiple times, BASC utilizes bootstrapping to generate a large number of samples from the existing data. BASC can be used to characterize stable RSNs at both the individual and group levels. 
 
 Computation and Analysis Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Note: Though they are computed together, it is possible to specify different numbers of bootsraps for individual and group analysis. Additionally, BASC analysis can be limited to ROIs by applying a mask during setup.
+Note: Though they are computed together, it is possible to specify different numbers of bootstraps for individual and group analysis. Additionally, BASC analysis can be limited to ROIs by applying a mask during setup.
 
 **Individual-level BASC:**
-#. For each subject, bootstrapping is applied to the original data set. For each bootstrap, subjects multiple time windows are randomly [?] selected from the original timeseries to create a new timeseries of equal length. This results in *B* new timeseries where *B* is the number of bootstraps set by the user.
+
+#. For each subject, bootstrapping is applied to the original data set. For each bootstrap, multiple time windows (fixed width) are randomly selected from the original timeseries (with replacement) to create a new timeseries of equal length. This results in *B* new timeseries where *B* is the number of bootstraps set by the user.
 
 #. A clustering algorithm is applied to each new timeseries. Clustering partitions the 4D data matrix into *C* clusters such that each voxel timeseries is a member of only one cluster. *C* is the number of clusters specified by the user. This results in *B* adjacency matrices which represent the cluster membership of each voxel.
 
 #. All adjacency matrices are then averaged to form a stability matrix which quantifies the stable features (voxel memberships) across sets.
 
 **Group-level BASC:**
-#. Bootstrapping is applied to the individual stability matrices. For each bootstrap, subjects are drawn (with replacement) from the original data set to create *B* new sets, each of which have the same number of subjects at the original. This process is intended to mimic random variations in subject recruitment.
 
-#. Within each new data set, individual stability matrices are averaged to create an average individul stability matrix.
+#. Bootstrapping is applied to the individual stability matrices. For each bootstrap, subjects are drawn (with replacement) from the original data set to create *B* new sets, each of which have the same number of subjects as the original. This process is intended to mimic random variations in subject recruitment.
+
+#. Within each new data set, individual stability matrices are averaged to create an average individual stability matrix.
 
 #. A clustering algorithm is applied to each individual stability matrix to generate a group-level adjacency matrix.
 

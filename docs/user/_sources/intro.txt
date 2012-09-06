@@ -1,32 +1,5 @@
 Introduction
-============
-
-
-Goals
-^^^^^
-
-
-Features
-^^^^^^^^
-
-* Seed-based Correlation Analysis (SCA)
-
-* Time-Series Extraction
-
-* :doc:`Voxel-Matched Homotopic Connectivity (VMHC) </vmhc>`
-
-* :doc:`Regional Homogeneity (ReHo) </reho>`
-
-* :doc:`Bootstrap Analysis of Stable Clusters (BASC) </basc>`
-
-* :doc:`Connectome Wide Association Studies (CWAS) </cwas>`
-
-* :doc:`Amplitude of Low Frequency Fluctuations (ALFF) </alff>`
-
-* :doc:`Network Centrality </centrality>`
-
-* FSL Group Analysis
-
+------------
 
 Key Concepts
 ^^^^^^^^^^^^

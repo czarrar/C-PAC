@@ -3,7 +3,7 @@ Regional Homotopy
 
 Introduction & Background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Regional Homogeneity (ReHo) is a voxel-based measure of brain activity which evaluates the similarity or synchronization between the time series of a given voxel and its nearest neighbors (Zang et al., 2004). This measure is based on the hypothesis that brain activity is more likely to occur in clusters rather than a single voxel. Kendall's coefficient of concordance (KCC) (Kendall and Gibbons, 1990) is used as an index to evaluate the similarity of the time series within a cluster of a given voxel and its nearest neighbors. ReHo requires no *a priori* definition of ROIs and can provide information about the local/regional activity of multiple brain regions.
+Regional Homogeneity (ReHo) is a voxel-based measure of brain activity which evaluates the similarity or synchronization between the time series of a given voxel and its nearest neighbors (Zang et al., 2004). This measure is based on the hypothesis that intrinsic brain activity is manifested by clusters of voxels rather than single voxels. Kendall's coefficient of concordance (KCC) (Kendall and Gibbons, 1990) is used as an index to evaluate the similarity of the time series within a cluster of a given voxel and its nearest neighbors. ReHo requires no *a priori* definition of ROIs and can provide information about the local/regional activity of regions throughout the brain.
 
 .. figure:: /images/reho_yan_dmn.png
 
@@ -21,7 +21,7 @@ Applications and Recommendations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Reho as an index of ongoing activity has been widely used in the resting-state literature. ReHo in the Default Mode Network (DMN) has been observed to increase during rest (Long et al., 2008) and decrease during task engagement (Zang et al., 2004), findings that fit well with the existing literature. In healthy subjects, ReHo measures are associated with individual differences in behavioral inhibition (Tian et al., 2012) and normal aging (Wu et al., 2007). In patient populations, alterated ReHo has been observed in multiple conditions, including Alzheimer's Disease (Liu et al., 2008), ADHD (Cao et al., 2006), and schizophrenia (Liu et al., 2006).
 
-ReHo analysis can also be applied to task evoked fMRI data and is appropriate for application in block-based and slow event-related designs, but may not provide relaible results in rapid event-related studies. In such paradigms, the hemodynamic signal for a given timepoint is the result of multiple trials, and ReHo is unable to account for this overlapping of signals.
+ReHo analysis can also be applied to task evoked fMRI data and is appropriate for application in block-based and slow event-related designs, but may not provide reliable results in rapid event-related studies. In such paradigms, the hemodynamic signal for a given timepoint is the result of multiple trials, and ReHo is unable to account for this overlapping of signals.
 
 References
 ^^^^^^^^^^

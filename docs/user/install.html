@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="C-PAC 0.1 Alpha documentation" href="index.html" />
-    <link rel="next" title="The Configuration File" href="use.html" />
+    <link rel="next" title="Using C-PAC" href="use.html" />
     <link rel="prev" title="Introduction" href="intro.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="use.html" title="The Configuration File"
+          <a href="use.html" title="Using C-PAC"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="intro.html" title="Introduction"
@@ -56,43 +56,96 @@
 <div class="section" id="system-requirements">
 <h2>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
 <p>C-PAC is designed to run in a Unix-like environment such as Linux or Mac OS X, and thus does not support Windows.</p>
-<p>[WAITING ON PROGRAMMERS FOR MIN SYS REQS]</p>
 </div>
-<div class="section" id="python">
-<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
-<p>Python is the glue (Bloom, 2012) that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number special-purpose libraries. A complete list of these libraries can be found in the C-PAC developer documentation [ASK DEVS RE: FINDING THIS LIST]</p>
-<p>For most users, it is easier to install a pre-compiled Python distribution than to install each library manually. We recommend using the <a class="reference external" href="http://www.enthought.com/products/epd.php">Enthought Python Distribution</a> (EPD). If you are an academic user, you can <a class="reference external" href="http://www.enthought.com/products/edudownload.php">download EPD for free</a>.</p>
-<p><a class="reference external" href="http://www.enthought.com/products/epdgetstart.php">Click here for instructions on how to install EPD</a>.</p>
-</div>
-<div class="section" id="nibabel-nipype">
-<h2>Nibabel &amp; Nipype<a class="headerlink" href="#nibabel-nipype" title="Permalink to this headline">¶</a></h2>
-<p>C-PAC relies heavily on tools developed as part of the <a class="reference external" href="http://nipy.sourceforge.net/nipy/stable/faq/why.html">Neuroimaging in Python (NiPy)</a> project. Specifically, Nipype and Nibabel must be installed for C-PAC to run. If you have installed EPD, simply open up a new terminal session and type:</p>
-<div class="highlight-python"><pre>easy_install nibabel
-easy_install nipype</pre>
-</div>
-<p>This will automatically install both tools. Alernate installation instructions can be found in the <a class="reference external" href="http://nipy.sourceforge.net/nipype/users/install.html">NiPy documentation</a>.</p>
-</div>
-<div class="section" id="afni-and-fsl">
-<h2>AFNI and FSL<a class="headerlink" href="#afni-and-fsl" title="Permalink to this headline">¶</a></h2>
-<p>C-PAC harnesses the power of two leading neuroimaging software packages to perform key analyses.</p>
+<div class="section" id="install-python-dependencies">
+<h2>Install Python Dependencies<a class="headerlink" href="#install-python-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Python is the glue (Bloom, 2012) that ties all the pieces of C-PAC together. Though many computers come with Python pre-installed, C-PAC relies on a number of special-purpose packages.</p>
+<p>If you have a .edu email address, we strongly recommend installing the <a class="reference external" href="http://www.enthought.com/products/edudownload.php">Enthought Python Distribution</a> (EPD), which is free for academic use and includes all of the packages required by C-PAC.</p>
+<p>If you do not have an .edu email address, you must download and install the following packages manually before continuing:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://afni.nimh.nih.gov/afni/">AFNI</a>  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data (Cox, 2011). <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml">Click here for instructions on how to download and install AFNI</a>.</li>
-<li><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/index.html">FSL</a> (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data (Jenkinson et al., 2012). <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html">Click here for instructions on how to download and install FSL</a>.</li>
+<li><a class="reference external" href="http://www.scipy.org/Download">SciPy and NumPy</a></li>
+<li><a class="reference external" href="http://networkx.lanl.gov/">NetworkX</a></li>
+<li><a class="reference external" href="https://github.com/enthought/traits">Traits</a></li>
+<li><a class="reference external" href="http://ipython.org/">iPython</a></li>
+<li><a class="reference external" href="http://matplotlib.sourceforge.net/">Matplotlib</a></li>
+<li><a class="reference external" href="http://pypi.python.org/pypi/setuptools">Setuptools</a></li>
 </ul>
+<p><strong>WARNING</strong>: Manually installing the above dependencies is a complicated process, and is beyond the scope of this guide. If you are not familiar with the process of installing python packages, we suggest you seek assistance from someone who is. Future versions of C-PAC will include tools to do this automatically.</p>
 </div>
-<div class="section" id="c-pac">
-<h2>C-PAC<a class="headerlink" href="#c-pac" title="Permalink to this headline">¶</a></h2>
-<p>Once you have installed all of the dependencies, simply download C-PAC and place it in the location of your choice. [IS THIS TRUE? DO WE HAVE A PACKAGE TO INSTALL? NOT CLEAR YET]</p>
+<div class="section" id="install-nipype-and-nibabel">
+<h2>Install Nipype and Nibabel<a class="headerlink" href="#install-nipype-and-nibabel" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC relies heavily on tools developed as part of the <a class="reference external" href="http://nipy.sourceforge.net/nipy/stable/faq/why.html">Neuroimaging in Python (NiPy)</a> project. Specifically, Nipype and Nibabel must be installed for C-PAC to run.</p>
+<p>C-PAC currently requires a custom version of Nipype, which which is available on the <a class="reference external" href="https://github.com/FCP-INDI/nipype/downloads">FCP-INDI Github Nipype page</a>. Click the button labeled &#8220;Download as tar.gz&#8221;.</p>
+<p>Open a terminal window and unpack the file using the following command:</p>
+<div class="highlight-python"><pre>tar -xzvf filename.tar.gz</pre>
+</div>
+<p>Where <tt class="file docutils literal"><span class="pre">filename.tar.gz</span></tt> is the name of the file you just downloaded.</p>
+<p>This will result in a new directory containing Nipype files. Navigate into this directory in terminal and type:</p>
+<div class="highlight-python"><pre>sudo python setup.py install</pre>
+</div>
+<p>You will be asked for the root password.</p>
+<p>To install Nibabel, run the following command in terminal:</p>
+<div class="highlight-python"><pre>easy_install nibabel</pre>
+</div>
+</div>
+<div class="section" id="install-afni-and-fsl">
+<h2>Install AFNI and FSL<a class="headerlink" href="#install-afni-and-fsl" title="Permalink to this headline">¶</a></h2>
+<p>C-PAC harnesses the power of two leading neuroimaging software packages to perform key analyses:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://afni.nimh.nih.gov/afni/">AFNI</a>  (which stands for Analysis of Functional NeuroImages) is a set of programs for processing, analyzing and displaying fMRI data. <a class="reference external" href="http://afni.nimh.nih.gov/pub/dist/HOWTO/howto/ht00_inst/html/index.shtml">Click here for instructions on how to download and install AFNI</a>.</li>
+<li><a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/index.html">FSL</a> (which stands for FMRIB Software Library) is a comprehensive library of analysis tools for FMRI, MRI, and DTI brain imaging data. <a class="reference external" href="http://www.fmrib.ox.ac.uk/fsl/fsl/downloading.html">Click here for instructions on how to download and install FSL</a>.</li>
+</ul>
 </div>
 <div class="section" id="editing-bashrc">
 <h2>Editing .bashrc<a class="headerlink" href="#editing-bashrc" title="Permalink to this headline">¶</a></h2>
-<p>[DO WE NEED THIS SECTION IF AFNI/FSL INSTRUCTIONS ALREADY HAVE PEOPLE EDITING .BASHRC?]</p>
+<p>If you have not already done so, make sure the paths to FSL and AFNI have been added to your <tt class="file docutils literal"><span class="pre">.bashrc</span></tt> file. To do this, open a new terminal window and run:</p>
+<div class="highlight-python"><pre>nano ~/.bashrc</pre>
+</div>
+<p>This will open <tt class="file docutils literal"><span class="pre">.bashrc</span></tt> in the nano text editor. Scroll to the bottom of the file and add the following text:</p>
+<div class="highlight-python"><pre># Path to FSL
+FSLDIR=/path/to/fsl
+. ${FSLDIR}/etc/fslconf/fsl.sh
+PATH=${FSLDIR}/bin:${PATH}
+export FSLDIR PATH
+
+# Path to AFNI
+export PATH=$PATH:/path/to/afni</pre>
+</div>
+<p>Where <tt class="file docutils literal"><span class="pre">/path/to/fsl</span></tt> and <tt class="file docutils literal"><span class="pre">/path/to/afni</span></tt> are the locations where FSL and AFNI are installed (usually <tt class="file docutils literal"><span class="pre">/usr/local/fsl</span></tt> for FSL and <tt class="file docutils literal"><span class="pre">~/abin</span></tt> for AFNI). Save <tt class="file docutils literal"><span class="pre">.bashrc</span></tt> and exit nano.</p>
+<p>If these changes have worked, you should be able to launch FSL and AFNI from the terminal simply by typing <strong class="command">afni</strong> and <strong class="command">fsl</strong>.</p>
+</div>
+<div class="section" id="install-freesurfer-optional-but-required-for-vertex-timeseries-extraction">
+<h2>Install FreeSurfer (optional, but required for vertex timeseries extraction)<a class="headerlink" href="#install-freesurfer-optional-but-required-for-vertex-timeseries-extraction" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://surfer.nmr.mgh.harvard.edu/">FreeSurfer</a> is a set of automated tools for reconstruction of the brain’s cortical surface from structural MRI data, and overlay of functional MRI data onto the reconstructed surface. <a class="reference external" href="http://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall">Click here for instructions on how to download and install FreeSurfer</a>.</p>
+<p>Users wishing to run vertex timeseries extraction must also install the <a class="reference external" href="http://code.google.com/p/gradunwarp/">gradunwarp python package</a>. To do so, run the following command in terminal:</p>
+<div class="highlight-python"><pre>svn checkout http://gradunwarp.googlecode.com/svn/trunk/ gradunwarp</pre>
+</div>
+<p>This will download the latest version of the software and put it in a directory called <tt class="file docutils literal"><span class="pre">gradunwarp</span></tt>. Navigate into this directory in terminal.</p>
+<p>If you have installed EPD, run the command:</p>
+<div class="highlight-python"><pre>sudo python setup.py install</pre>
+</div>
+<p>If you have not installed EPD, run the command:</p>
+<div class="highlight-python"><pre>sudo python setup.py install --install-scripts=/usr/local/bin</pre>
+</div>
+<p>In both cases, you will be asked for the root password.</p>
+</div>
+<div class="section" id="install-c-pac">
+<h2>Install C-PAC<a class="headerlink" href="#install-c-pac" title="Permalink to this headline">¶</a></h2>
+<p>Congratulations, you are now ready to install C-PAC itself!</p>
+<p>C-PAC is available from the <a class="reference external" href="https://github.com/FCP-INDI/C-PAC/downloads">FCP-INDI Github C-PAC page</a>. Click the button labeled &#8220;Download as tar.gz&#8221;.</p>
+<p>Open a terminal window and unpack the file using the following command:</p>
+<div class="highlight-python"><pre>tar -xzvf filename.tar.gz</pre>
+</div>
+<p>Where <tt class="file docutils literal"><span class="pre">filename.tar.gz</span></tt> is the name of the file you just downloaded.</p>
+<p>This will result in a new directory containing C-PAC. Navigate into this directory in terminal and type:</p>
+<div class="highlight-python"><pre>sudo python setup.py install</pre>
+</div>
+<p>You will be asked for the root password.</p>
+<p>C-PAC should now be installed and ready to run.</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <p>Bloom, J. <a class="reference external" href="http://www.youtube.com/watch?v=mLuIB8aW2KA">Python as Super Glue for the Modern Scientific Workflow</a>, video of a talk given at the SciPy2012 conference.</p>
-<p>Cox, R.W., <a class="reference external" href="http://afni.nimh.nih.gov/sscc/rwcox/papers/AFNIpaper2011.pdf">AFNI: What a long strange trip it&#8217;s been</a>, NeuroImage, vol. 62, no 2, pp. 743-747, August 2012</p>
-<p>Jenkinson, M., Beckmann, C.F., Behrens, T.E.J., Woolrich, M.W., Smith, S.M., <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/21979382">FSL</a>, NeuroImage, vol. 62, no 2, pp. 782-790, August 2012,</p>
 </div>
 </div>
 
@@ -109,11 +162,12 @@ easy_install nipype</pre>
   <ul>
 <li><a class="reference internal" href="#">Installing C-PAC</a><ul>
 <li><a class="reference internal" href="#system-requirements">System Requirements</a></li>
-<li><a class="reference internal" href="#python">Python</a></li>
-<li><a class="reference internal" href="#nibabel-nipype">Nibabel &amp; Nipype</a></li>
-<li><a class="reference internal" href="#afni-and-fsl">AFNI and FSL</a></li>
-<li><a class="reference internal" href="#c-pac">C-PAC</a></li>
+<li><a class="reference internal" href="#install-python-dependencies">Install Python Dependencies</a></li>
+<li><a class="reference internal" href="#install-nipype-and-nibabel">Install Nipype and Nibabel</a></li>
+<li><a class="reference internal" href="#install-afni-and-fsl">Install AFNI and FSL</a></li>
 <li><a class="reference internal" href="#editing-bashrc">Editing .bashrc</a></li>
+<li><a class="reference internal" href="#install-freesurfer-optional-but-required-for-vertex-timeseries-extraction">Install FreeSurfer (optional, but required for vertex timeseries extraction)</a></li>
+<li><a class="reference internal" href="#install-c-pac">Install C-PAC</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
@@ -124,7 +178,7 @@ easy_install nipype</pre>
                         title="previous chapter">Introduction</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="use.html"
-                        title="next chapter">The Configuration File</a></p>
+                        title="next chapter">Using C-PAC</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/install.txt"
@@ -154,7 +208,7 @@ easy_install nipype</pre>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="use.html" title="The Configuration File"
+          <a href="use.html" title="Using C-PAC"
              >next</a> |</li>
         <li class="right" >
           <a href="intro.html" title="Introduction"

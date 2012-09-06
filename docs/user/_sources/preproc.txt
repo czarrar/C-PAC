@@ -1,21 +1,10 @@
-Data Pre-Processing
+Data Preprocessing
 -------------------
 
-Image Settings
-^^^^^^^^^^^^^^
-:doc:`Image settings </image_settings>` allow you to specify...
-
-Smoothing
-^^^^^^^^^
-:doc:`Smoothing </smoothing>` increases signal-to-noise...
-
-Temporal Filtering
-^^^^^^^^^^^^^^^^^^
-:doc:`Temporal filtering </temporal>` removes....
-
-Nuisance Signal Removal
-^^^^^^^^^^^^^^^^^^^^^^^
-:doc:`Nuisance signal removal </nuisance>` removes...
+* :doc:`Anatomical Preprocessing </anat>`
+* :doc:`Smoothing </smoothing>`
+* :doc:`Temporal Filtering </temporal>`
+* :doc:`Nuisance Signal Correction </nuisance>`
 
 A note about Slice-Timing Correction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -25,7 +14,7 @@ A note about Slice-Timing Correction
 .. toctree::
    :hidden: 
 
-   Image Settings <image_settings>
+   Anatomical Preprocessing <anat>
    Smoothing <smoothing>
    Temporal Filtering <temporal>
    Nuisance Signal Removal <nuisance>
