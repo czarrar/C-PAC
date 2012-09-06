@@ -93,13 +93,13 @@ to a surface vertex.</p>
 inputspec.brain : string (nifti file)
     path to skull stripped anatomical image
 inputspec.recon_subjects : string
-    Path to subjects directory
+    path to subjects directory
 inputspec.subject_id : string
     subject id </pre>
 </div>
 <p>Workflow Outputs:</p>
 <div class="highlight-python"><pre>outputspec.reconall_subjects_dir : string
-    Freesurfer subjects directory
+    freesurfer subjects directory
 outputspec.reconall_subjects_id : string
     subject id for which anatomical data is taken
 outputspec.out_reg_file : string
@@ -168,10 +168,10 @@ input_mask.masks : string (nifti file)
     path to ROI mask</pre>
 </div>
 <p>Workflow Outputs:</p>
-<div class="highlight-python"><pre>outputspec.mask_outputs: string (1d, csv and/or npz files)
-    list of timeseries matrices stored in csv and/or
+<div class="highlight-python"><pre>outputspec.mask_outputs: string (1D, csv and/or npz files)
+    list of time series matrices stored in csv and/or
     npz files.By default it outputs mean of voxels 
-    time series across each timepoint in a 1D file.</pre>
+    across each time point in a afni compatible 1D file.</pre>
 </div>
 </dd></dl>
 
@@ -211,8 +211,9 @@ input_roi.roi : string (nifti file)
 </div>
 <p>Workflow Outputs:</p>
 <div class="highlight-python"><pre>outputspec.roi_outputs : string (list of files)
-    Voxel time series stored in 1D, csv and/or npz files. 
-    By default it outputs timeseries in a 1D file.</pre>
+    Voxel time series stored in 1D (column wise timeseries for each node), 
+    csv and/or npz files. By default it outputs timeseries in a 1D file.
+    The 1D file is compatible with afni interfaces.</pre>
 </div>
 </dd></dl>
 
@@ -291,15 +292,15 @@ in the data that is present in the input mask</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>datafile</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>datafile</strong> : string (nifti file)</p>
 <blockquote>
-<div><p>Path to input functional data</p>
+<div><p>path to input functional data</p>
 </div></blockquote>
-<p><strong>template</strong> : string</p>
+<p><strong>template</strong> : string (nifti file)</p>
 <blockquote>
-<div><p>Path to input mask in functional native space</p>
+<div><p>path to input mask in functional native space</p>
 </div></blockquote>
-<p><strong>output_type</strong> : list</p>
+<p><strong>output_type :list</strong> :</p>
 <blockquote>
 <div><p>list of two boolean values suggesting
 the output types - numpy npz file and csv 
@@ -307,13 +308,14 @@ format</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_list</strong> : string (list of files)</p>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out_list</strong> : list of files</p>
 <blockquote>
-<div><p>path to csv file having timeseries of each voxel in the data
-that is present in the mask.The row header corresponds to 
-voxel&#8217;s xyz cordinates and column headers corresponds 
-to the volume index. By default it outputs 1D file with
-timeseries of voxel across each timepoint</p>
+<div><p>Based on ouput_type options method returns a list containing 
+path to npz and csv file having timeseries of each voxel in 
+the data that is present in the input mask.The row header 
+corresponds to voxel&#8217;s xyz cordinates and column headers corresponds 
+to the volume index in the csv. By default it outputs afni compatible 
+1D file with mean of timeseries of voxels across timepoints.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -335,11 +337,11 @@ all timepoints for each node in roi mask</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>datafile</strong> : string</p>
 <blockquote>
-<div><p>Path to input functional data</p>
+<div><p>path to input functional data</p>
 </div></blockquote>
 <p><strong>template</strong> : string</p>
 <blockquote>
-<div><p>Path to input roi mask in functional native space</p>
+<div><p>path to input roi mask in functional native space</p>
 </div></blockquote>
 <p><strong>output_type</strong> : list</p>
 <blockquote>

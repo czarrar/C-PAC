@@ -59,14 +59,20 @@
 <span id="network-centrality"></span><h1>Network Centrality<a class="headerlink" href="#module-CPAC.network_centrality" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="CPAC.network_centrality.create_resting_state_graphs">
-<tt class="descclassname">CPAC.network_centrality.</tt><tt class="descname">create_resting_state_graphs</tt><big>(</big><em>wf_name='resting_state_graph'</em><big>)</big><a class="headerlink" href="#CPAC.network_centrality.create_resting_state_graphs" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CPAC.network_centrality.</tt><tt class="descname">create_resting_state_graphs</tt><big>(</big><em>generate_graph</em>, <em>wf_name='resting_state_graph'</em><big>)</big><a class="headerlink" href="#CPAC.network_centrality.create_resting_state_graphs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Workflow to calculate degree and eigenvector centrality
 measures for the resting state data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>wf_name</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>generate_graph</strong> : boolean</p>
+<blockquote>
+<div><p>when true the workflow plots the adjacency matrix graph 
+and converts the adjacency matrix into compress sparse 
+matrix and stores it in a .mat file</p>
+</div></blockquote>
+<p><strong>wf_name</strong> : string</p>
 <blockquote>
 <div><p>name of the workflow</p>
 </div></blockquote>
@@ -393,9 +399,9 @@ for centrality and centrality matrix</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>centrality_matrix</strong> : string (numpy mat file)</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>centrality_matrix</strong> : tuple (string, array_like)</p>
 <blockquote>
-<div><p>path to file containing degree or eigenvector centrality matrix</p>
+<div><p>tuple containing matrix name and degree/eigenvector centrality matrix</p>
 </div></blockquote>
 <p><strong>affine</strong> : string (numpy mat file)</p>
 <blockquote>
@@ -403,11 +409,11 @@ for centrality and centrality matrix</p>
 </div></blockquote>
 <p><strong>template_data</strong> : string (numpy mat file)</p>
 <blockquote>
-<div><p>path to file containing mask or parcellation data matrix</p>
+<div><p>path to file containing mask or roi data matrix</p>
 </div></blockquote>
-<p><strong>template_type</strong> : string</p>
+<p><strong>template_type</strong> : int</p>
 <blockquote>
-<div><p>type of template: 0 for mask, 1 for parcellation unit</p>
+<div><p>type of template: 0 for mask, 1 for roi</p>
 </div></blockquote>
 </td>
 </tr>
