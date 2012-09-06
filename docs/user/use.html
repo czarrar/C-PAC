@@ -70,6 +70,9 @@
 <div class="section" id="configure-c-pac">
 <h2>Configure C-PAC<a class="headerlink" href="#configure-c-pac" title="Permalink to this headline">¶</a></h2>
 <p>Open the <tt class="file docutils literal"><span class="pre">config.py</span></tt> file located in the <tt class="file docutils literal"><span class="pre">pipeline</span></tt> directory. This is where you will specify the analyses run by C-PAC and their settings. Follow the instructions inside to set your desired parameters, then save your changes.</p>
+<p>NEED LIST OF SETTINGS THAT CAN HAVE MULTIPLE VALUES</p>
+<p>REINTRODUCE FORKABILITY, MULTIPLE SETTINGS</p>
+<p>WHAT HAS TO BE SET, WHAT CAN BE LEFT ALONE</p>
 </div>
 <div class="section" id="running-c-pac">
 <h2>Running C-PAC<a class="headerlink" href="#running-c-pac" title="Permalink to this headline">¶</a></h2>
@@ -79,9 +82,17 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="data-output">
+<h2>Data Output<a class="headerlink" href="#data-output" title="Permalink to this headline">¶</a></h2>
+<p>SYMLINKS STRUCTURE DESCRIPTION GOES HERE</p>
+</div>
 <div class="section" id="running-basc-and-cwas">
 <h2>Running BASC and CWAS<a class="headerlink" href="#running-basc-and-cwas" title="Permalink to this headline">¶</a></h2>
-<p>must have run functtomni, but not necessarily anything else</p>
+<p>Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_group_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/desired/strategy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To</p>
 </div>
 <div class="section" id="running-group-statistics">
 <h2>Running Group Statistics<a class="headerlink" href="#running-group-statistics" title="Permalink to this headline">¶</a></h2>
@@ -104,6 +115,7 @@
 <li><a class="reference internal" href="#ready-your-data">Ready Your Data</a></li>
 <li><a class="reference internal" href="#configure-c-pac">Configure C-PAC</a></li>
 <li><a class="reference internal" href="#running-c-pac">Running C-PAC</a></li>
+<li><a class="reference internal" href="#data-output">Data Output</a></li>
 <li><a class="reference internal" href="#running-basc-and-cwas">Running BASC and CWAS</a></li>
 <li><a class="reference internal" href="#running-group-statistics">Running Group Statistics</a></li>
 </ul>

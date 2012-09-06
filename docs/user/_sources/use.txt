@@ -19,6 +19,12 @@ Configure C-PAC
 ---------------
 Open the :file:`config.py` file located in the :file:`pipeline` directory. This is where you will specify the analyses run by C-PAC and their settings. Follow the instructions inside to set your desired parameters, then save your changes.
 
+NEED LIST OF SETTINGS THAT CAN HAVE MULTIPLE VALUES
+
+REINTRODUCE FORKABILITY, MULTIPLE SETTINGS
+
+WHAT HAS TO BE SET, WHAT CAN BE LEFT ALONE
+
 Running C-PAC
 -------------
 In the terminal, navigate to the crash directory you specified in :file:`config.py`. Because of a bug in Nipype, C-PAC will output crash logs from wherever it is run.
@@ -27,9 +33,20 @@ Open iPython by typing :command:`ipython`. From the iPython prompt, run :command
 
     CPAC.pipeline.cpac_runner.run ('/path/to/config.py', '/path/to/CPAC_subjectlist.py')
 
+
+Data Output
+-----------
+
+SYMLINKS STRUCTURE DESCRIPTION GOES HERE
+
 Running BASC and CWAS
 ---------------------
-must have run functtomni, but not necessarily anything else
+Open iPython by typing :command:`ipython`. From the iPython prompt, run :command:`import CPAC`, followed by::
+
+    CPAC.pipeline.cpac_group_runner.run ('/path/to/config.py', '/path/to/desired/strategy')
+
+To 
+
 
 Running Group Statistics
 ------------------------

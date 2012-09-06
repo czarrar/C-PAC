@@ -35,7 +35,6 @@ User Guide Index
 .. toctree::
    :maxdepth: 1
 
-   Introduction <intro>
    Installing C-PAC <install>
    Using C-PAC <use>
    Data Preprocessing <preproc>
