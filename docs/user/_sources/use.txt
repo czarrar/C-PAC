@@ -3,7 +3,7 @@ Using C-PAC
 
 Ready Your Data
 ---------------
-Open the :file:`data_config.py` file located in the file:`utils` directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.
+Open the :file:`data_config.py` file located in the :file:`utils` directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.
 
 In the terminal, navigate to the directory where you would like to store subject lists for use by C-PAC. Open iPython by typing :command:`ipython`. From the iPython prompt, run :command:`import CPAC`, followed by::
 
@@ -17,13 +17,17 @@ This will ouput three files needed to run C-PAC:
 
 Configure C-PAC
 ---------------
-Open the :file:`config.py` file located in the :file:`pipeline` directory. This is where you will specify the analyses run by C-PAC and their settings. Follow the instructions inside to set your desired parameters, then save your changes.
+Open the :file:`config.py` file located in the :file:`pipeline` directory. This is where you will specify which analyses C-PAC runs and how they are run. See the links below for detailed instructions. When you are finished, save your changes.
 
-NEED LIST OF SETTINGS THAT CAN HAVE MULTIPLE VALUES
-
-REINTRODUCE FORKABILITY, MULTIPLE SETTINGS
-
-WHAT HAS TO BE SET, WHAT CAN BE LEFT ALONE
+* :doc:`Computer Settings </compute_config>`
+* :doc:`Directory Setup </dir_config>`
+* :doc:`Preprocessing Setup </pp_config>`
+* :doc:`Segmentation </seg_config>`
+* :doc:`Nuisance Correction and Temporal Filtering </nuisance_config>`
+* :doc:`Seed-based Correlation Analysis and Timeseries Extraction </sca_tse_config>`
+* :doc:`Individual-Level Analyses </ind_config>`
+* :doc:`Group-Level Analyses </grp_config>`
+* :doc:`Group Statistics </stat_config>`
 
 Running C-PAC
 -------------
@@ -39,15 +43,23 @@ Data Output
 
 SYMLINKS STRUCTURE DESCRIPTION GOES HERE
 
-Running BASC and CWAS
----------------------
+Running BASC, CWAS, and Group Statistics
+----------------------------------------
 Open iPython by typing :command:`ipython`. From the iPython prompt, run :command:`import CPAC`, followed by::
 
     CPAC.pipeline.cpac_group_runner.run ('/path/to/config.py', '/path/to/desired/strategy')
 
-To 
+In order to run group statistics, you must first run C-PAC to generate the desired measures for which you wish to calculate group differences.
 
+.. toctree::
+   :hidden: 
 
-Running Group Statistics
-------------------------
-In order to run group statistics, you must first run C-PAC to generate the desired measures. 
+   Computer Settings <compute_config>
+   Directory Setup <dir_config>
+   Preprocessing Setup <pp_config>
+   Segmentation <seg_config>
+   Nuisance Correction and Temporal Filtering <nuisance_config>
+   Seed-based Correlation Analysis and Timeseries Extraction <sca_tse_config>
+   Individual-Level Analyses <ind_config>
+   Group-Level Analyses <grp_config>
+   Group Statistics <stat_config>

@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="C-PAC 0.1 Alpha documentation" href="index.html" />
-    <link rel="next" title="Data Preprocessing" href="preproc.html" />
+    <link rel="next" title="Computer Settings" href="compute_config.html" />
     <link rel="prev" title="Installing C-PAC" href="install.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="preproc.html" title="Data Preprocessing"
+          <a href="compute_config.html" title="Computer Settings"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installing C-PAC"
@@ -55,7 +55,7 @@
 <h1>Using C-PAC<a class="headerlink" href="#using-c-pac" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="ready-your-data">
 <h2>Ready Your Data<a class="headerlink" href="#ready-your-data" title="Permalink to this headline">¶</a></h2>
-<p>Open the <tt class="file docutils literal"><span class="pre">data_config.py</span></tt> file located in the file:<cite>utils</cite> directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.</p>
+<p>Open the <tt class="file docutils literal"><span class="pre">data_config.py</span></tt> file located in the <tt class="file docutils literal"><span class="pre">utils</span></tt> directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.</p>
 <p>In the terminal, navigate to the directory where you would like to store subject lists for use by C-PAC. Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_data</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/data_config.py&#39;</span><span class="p">)</span>
 </pre></div>
@@ -69,10 +69,18 @@
 </div>
 <div class="section" id="configure-c-pac">
 <h2>Configure C-PAC<a class="headerlink" href="#configure-c-pac" title="Permalink to this headline">¶</a></h2>
-<p>Open the <tt class="file docutils literal"><span class="pre">config.py</span></tt> file located in the <tt class="file docutils literal"><span class="pre">pipeline</span></tt> directory. This is where you will specify the analyses run by C-PAC and their settings. Follow the instructions inside to set your desired parameters, then save your changes.</p>
-<p>NEED LIST OF SETTINGS THAT CAN HAVE MULTIPLE VALUES</p>
-<p>REINTRODUCE FORKABILITY, MULTIPLE SETTINGS</p>
-<p>WHAT HAS TO BE SET, WHAT CAN BE LEFT ALONE</p>
+<p>Open the <tt class="file docutils literal"><span class="pre">config.py</span></tt> file located in the <tt class="file docutils literal"><span class="pre">pipeline</span></tt> directory. This is where you will specify which analyses C-PAC runs and how they are run. See the links below for detailed instructions. When you are finished, save your changes.</p>
+<ul class="simple">
+<li><a class="reference internal" href="compute_config.html"><em>Computer Settings</em></a></li>
+<li><a class="reference internal" href="dir_config.html"><em>Directory Setup</em></a></li>
+<li><a class="reference internal" href="pp_config.html"><em>Preprocessing Setup</em></a></li>
+<li><a class="reference internal" href="seg_config.html"><em>Segmentation</em></a></li>
+<li><a class="reference internal" href="nuisance_config.html"><em>Nuisance Correction and Temporal Filtering</em></a></li>
+<li><a class="reference internal" href="sca_tse_config.html"><em>Seed-based Correlation Analysis and Timeseries Extraction</em></a></li>
+<li><a class="reference internal" href="ind_config.html"><em>Individual-Level Analyses</em></a></li>
+<li><a class="reference internal" href="grp_config.html"><em>Group-Level Analyses</em></a></li>
+<li><a class="reference internal" href="stat_config.html"><em>Group Statistics</em></a></li>
+</ul>
 </div>
 <div class="section" id="running-c-pac">
 <h2>Running C-PAC<a class="headerlink" href="#running-c-pac" title="Permalink to this headline">¶</a></h2>
@@ -86,17 +94,15 @@
 <h2>Data Output<a class="headerlink" href="#data-output" title="Permalink to this headline">¶</a></h2>
 <p>SYMLINKS STRUCTURE DESCRIPTION GOES HERE</p>
 </div>
-<div class="section" id="running-basc-and-cwas">
-<h2>Running BASC and CWAS<a class="headerlink" href="#running-basc-and-cwas" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="running-basc-cwas-and-group-statistics">
+<h2>Running BASC, CWAS, and Group Statistics<a class="headerlink" href="#running-basc-cwas-and-group-statistics" title="Permalink to this headline">¶</a></h2>
 <p>Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_group_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/desired/strategy&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>To</p>
+<p>In order to run group statistics, you must first run C-PAC to generate the desired measures for which you wish to calculate group differences.</p>
+<div class="toctree-wrapper compound">
 </div>
-<div class="section" id="running-group-statistics">
-<h2>Running Group Statistics<a class="headerlink" href="#running-group-statistics" title="Permalink to this headline">¶</a></h2>
-<p>In order to run group statistics, you must first run C-PAC to generate the desired measures.</p>
 </div>
 </div>
 
@@ -116,8 +122,9 @@
 <li><a class="reference internal" href="#configure-c-pac">Configure C-PAC</a></li>
 <li><a class="reference internal" href="#running-c-pac">Running C-PAC</a></li>
 <li><a class="reference internal" href="#data-output">Data Output</a></li>
-<li><a class="reference internal" href="#running-basc-and-cwas">Running BASC and CWAS</a></li>
-<li><a class="reference internal" href="#running-group-statistics">Running Group Statistics</a></li>
+<li><a class="reference internal" href="#running-basc-cwas-and-group-statistics">Running BASC, CWAS, and Group Statistics</a><ul>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -126,8 +133,8 @@
   <p class="topless"><a href="install.html"
                         title="previous chapter">Installing C-PAC</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="preproc.html"
-                        title="next chapter">Data Preprocessing</a></p>
+  <p class="topless"><a href="compute_config.html"
+                        title="next chapter">Computer Settings</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/use.txt"
@@ -157,7 +164,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="preproc.html" title="Data Preprocessing"
+          <a href="compute_config.html" title="Computer Settings"
              >next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installing C-PAC"
