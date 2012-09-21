@@ -424,6 +424,8 @@ runVMHC = [0]
 Bootstrap Analysis of Stable Clusters (BASC) Options **
 ====================================================
 """
+runBASC = [0]
+
 # Path to a mask file. Voxels outside this mask will be excluded from BASC.
 bascROIFile = '/path/to/basc_mask_file'
 
@@ -447,6 +449,8 @@ bascAffinityThresholdFile = '/path/to/basc_affinity_threshold_file'
 Connectome-wide Association Study (CWAS) Options **
 ================================================
 """
+runCWAS = [0]
+
 # Path to a mask file. Voxels outside this mask will be excluded from CWAS.
 cwasROIFile = '/path/to/cwas_mask_file'
 
@@ -481,6 +485,8 @@ lowPassFreqALFF = [0.1]
 Group Statistics Options ***
 ============================
 """
+runGroupAnalysis = [1]
+
 # Path to list of subjects on which to run group statistics
 # This file should be created automatically when you run extract_data.py
 # The order of subjects in this list must match the order in your model
