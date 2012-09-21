@@ -98,12 +98,13 @@
 </div>
 <div class="section" id="running-basc-cwas-and-group-statistics">
 <h2>Running BASC, CWAS, and Group Statistics<a class="headerlink" href="#running-basc-cwas-and-group-statistics" title="Permalink to this headline">¶</a></h2>
+<p>In order to run group statistics, you must first run C-PAC to generate the desired measures for which you wish to calculate group differences.</p>
+<p>For BASC and CWAS, C-PAC must first be run to transform functional images to MNI space.</p>
 <p>Open iPython by typing <tt class="file docutils literal"><span class="pre">ipython</span></tt>. From the iPython prompt, run:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">CPAC</span>
 <span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_group_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/desired/strategy&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In order to run group statistics, you must first run C-PAC to generate the desired measures for which you wish to calculate group differences.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
