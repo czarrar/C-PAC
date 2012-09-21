@@ -56,8 +56,9 @@
 <div class="section" id="ready-your-data">
 <h2>Ready Your Data<a class="headerlink" href="#ready-your-data" title="Permalink to this headline">¶</a></h2>
 <p>Open the <tt class="file docutils literal"><span class="pre">data_config.py</span></tt> file located in the <tt class="file docutils literal"><span class="pre">utils</span></tt> directory. Follow the instructions inside to specify your directory structure. When you are done, save your changes.</p>
-<p>In the terminal, navigate to the directory where you would like to store subject lists for use by C-PAC. Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_data</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/data_config.py&#39;</span><span class="p">)</span>
+<p>In the terminal, navigate to the directory where you would like to store subject lists for use by C-PAC. Open iPython by typing <tt class="file docutils literal"><span class="pre">ipython</span></tt>. From the iPython prompt, run:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">CPAC</span>
+<span class="n">CPAC</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_data</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/data_config.py&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This will ouput three files needed to run C-PAC:</p>
@@ -85,8 +86,9 @@
 <div class="section" id="running-c-pac">
 <h2>Running C-PAC<a class="headerlink" href="#running-c-pac" title="Permalink to this headline">¶</a></h2>
 <p>In the terminal, navigate to the crash directory you specified in <tt class="file docutils literal"><span class="pre">config.py</span></tt>. Because of a bug in Nipype, C-PAC will output crash logs from wherever it is run.</p>
-<p>Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/CPAC_subjectlist.py&#39;</span><span class="p">)</span>
+<p>Open iPython by typing <tt class="file docutils literal"><span class="pre">ipython</span></tt>. From the iPython prompt, run:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">CPAC</span>
+<span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/CPAC_subjectlist.py&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -96,8 +98,9 @@
 </div>
 <div class="section" id="running-basc-cwas-and-group-statistics">
 <h2>Running BASC, CWAS, and Group Statistics<a class="headerlink" href="#running-basc-cwas-and-group-statistics" title="Permalink to this headline">¶</a></h2>
-<p>Open iPython by typing <strong class="command">ipython</strong>. From the iPython prompt, run <strong class="command">import CPAC</strong>, followed by:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_group_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/desired/strategy&#39;</span><span class="p">)</span>
+<p>Open iPython by typing <tt class="file docutils literal"><span class="pre">ipython</span></tt>. From the iPython prompt, run:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">CPAC</span>
+<span class="n">CPAC</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">cpac_group_runner</span><span class="o">.</span><span class="n">run</span> <span class="p">(</span><span class="s">&#39;/path/to/config.py&#39;</span><span class="p">,</span> <span class="s">&#39;/path/to/desired/strategy&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In order to run group statistics, you must first run C-PAC to generate the desired measures for which you wish to calculate group differences.</p>
