@@ -1,7 +1,7 @@
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
 
-def joint_mask(subjects_file_list, mask_file):
+def joint_mask(subjects_file_list, mask_file, dtype='float64'):
     """
     Creates a joint mask (intersection) common to all the subjects in a provided list
     and a provided mask
@@ -12,6 +12,8 @@ def joint_mask(subjects_file_list, mask_file):
         A length `N` list of file paths of the nifti files of subjects
     mask_file : string
         Path to a mask file in nifti format
+    dtype : string
+        Numpy data type, should be one of 'float16', 'float32', or 'float64'
     
     Returns
     -------
