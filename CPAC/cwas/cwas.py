@@ -240,8 +240,10 @@ def create_cwas(name='cwas'):
             Number of permutation samples to draw from the pseudo F distribution
         inputspec.strata : None or ndarray
             todo
-        inputspec.parallel_nodes : integer
+        inputspec.parallel_nodes : int
             Number of nodes to create and potentially parallelize over
+        inputspec.dtype : str
+            Data type for subject functional data
         
     Workflow Outputs::
 
