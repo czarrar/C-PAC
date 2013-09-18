@@ -4,14 +4,18 @@ import nipype.interfaces.utility as util
 def joint_mask(subjects_file_list, mask_file, dtype='float64'):
     """
     Creates a joint mask (intersection) common to all the subjects in a provided list
-    and a provided mask
+    and a provided mask.
+    
+    The mask for each subject is created by first computing the standard 
+    deviation at each voxel (i.e., a voxelwise maps of the std across time). 
+    Then this standard deviation map is binarized and used as the mask.
     
     Parameters
     ----------
     subjects_file_list : list of strings
         A length `N` list of file paths of the nifti files of subjects
     mask_file : string
-        Path to a mask file in nifti format
+        Path to a mask file in nifti format (this will serve as a prior mask)
     dtype : string
         Numpy data type, should be one of 'float16', 'float32', or 'float64'
     
@@ -19,6 +23,7 @@ def joint_mask(subjects_file_list, mask_file, dtype='float64'):
     -------
     joint_mask : string
         Path to joint mask file in nifti format
+        (this will be the current directory followed by join_mask.nii.gz)
     
     """
     import nibabel as nb
@@ -27,16 +32,16 @@ def joint_mask(subjects_file_list, mask_file, dtype='float64'):
     
     from CPAC.utils import safe_shape
     
-    nii = nb.load(mask_file)
+    mask_img    = nb.load(mask_file)
+    mask        = mask_img.get_data().astype('bool')
     
-    mask = nii.get_data().astype('bool')
     for subject_file in subjects_file_list:
-        sdata = nb.load(subject_file).get_data().astype(np.float64).sum(-1)
-        if not safe_shape(sdata, mask): raise ValueError('Subject %s with volume shape %s conflicts \
-                                                          with mask shape %s' % ( subject_file,
-                                                                                  str(sdata.shape),
-                                                                                  str(mask.shape) ) )
-        mask *= sdata.astype('bool')
+        subj_mask = nb.load(subject_file).get_data().astype(dtype).std(-1)
+        if not safe_shape(subj_mask, mask): raise ValueError('Subject %s with volume shape %s conflicts \
+                                                              with mask shape %s' % ( subject_file,
+                                                                                      str(subj_mask.shape),
+                                                                                      str(mask.shape) ) )
+        mask *= subj_mask.astype('bool')
 
     print '... joint subject/roi mask loaded'
 
@@ -47,7 +52,7 @@ def joint_mask(subjects_file_list, mask_file, dtype='float64'):
     return img_file
 
 def nifti_cwas(subjects_file_list, mask_file, regressor, cols, f_samples, 
-               voxel_range, strata=None):
+               voxel_range, strata=None, dtype='float64'):
     """
     Performs CWAS for a group of subjects
     
@@ -68,6 +73,8 @@ def nifti_cwas(subjects_file_list, mask_file, regressor, cols, f_samples,
         Index ordering is based on the np.where(mask) command
     strata : ndarray (optional)
         todo
+    dtype : string
+        Numpy data type, should be one of 'float16', 'float32', or 'float64'
     
     Returns
     -------
@@ -94,17 +101,16 @@ def nifti_cwas(subjects_file_list, mask_file, regressor, cols, f_samples,
     if(len(subjects_file_list) != regressor.shape[0]):
         raise ValueError('Number of subjects does not match regressor size')
     
-    #Load the data to produce the joint mask
-    mask = nb.load(mask_file).get_data().astype('bool')
-    mask_indices = np.where(mask)
-    #batch_indices = tuple([mask_index[voxel_range[0]:voxel_range[1]] for mask_index in mask_indices])
+    # Load the joint mask
+    mask            = nb.load(mask_file).get_data().astype('bool')
+    mask_indices    = np.where(mask)
     
-    #Reload the data again to actually get the values, sacrificing CPU for smaller memory footprint
-    subjects_data = [ nb.load(subject_file).get_data().astype('float64')[mask_indices].T 
+    # Reload the data again to actually get the values, sacrificing CPU for smaller memory footprint
+    subjects_data = [ nb.load(subject_file).get_data().astype(dtype)[mask_indices].T 
                         for subject_file in subjects_file_list ]
-    #subjects_data = np.array(subjects_data)
     print '... subject data loaded', len(subjects_data), 'batch voxel range', voxel_range
     
+    # Compute distances and MDMR
     F_set, p_set = calc_cwas(subjects_data, regressor, cols, f_samples, voxel_range, strata)
     
     print '... writing cwas data to disk'
@@ -243,7 +249,8 @@ def create_cwas(name='cwas'):
         inputspec.parallel_nodes : int
             Number of nodes to create and potentially parallelize over
         inputspec.dtype : str
-            Data type for subject functional data
+            Data type for subject functional data (recommended 'float16', 
+            'float32', or 'float64')
         
     Workflow Outputs::
 
@@ -282,7 +289,8 @@ def create_cwas(name='cwas'):
                                                        'cols', 
                                                        'f_samples', 
                                                        'strata', 
-                                                       'parallel_nodes']),
+                                                       'parallel_nodes', 
+                                                       'dtype']),
                         name='inputspec')
     outputspec = pe.Node(util.IdentityInterface(fields=['F_map',
                                                         'p_map']),
@@ -316,10 +324,6 @@ def create_cwas(name='cwas'):
                                    function=merge_cwas_batches),
                      name='cwas_volumes')
 
-#    ctf = pe.Node(util.Function(input_names=[],
-#                                output_names=['compiled_dot_norm'],
-#                                function=compile_theano_functions),
-#                  name='theano_functions')
     
     jmask = pe.Node(util.Function(input_names=['subjects_file_list', 
                                                'mask_file'],
@@ -332,6 +336,8 @@ def create_cwas(name='cwas'):
                  jmask, 'subjects_file_list')
     cwas.connect(inputspec, 'roi',
                  jmask, 'mask_file')
+    cwas.connect(inputspec, 'dtype',
+                 jmask, 'dtype')
 
     #Create batches based on the joint mask
     cwas.connect(jmask, 'joint_mask',
@@ -350,12 +356,12 @@ def create_cwas(name='cwas'):
                  ncwas, 'f_samples')
     cwas.connect(inputspec, 'cols',
                  ncwas, 'cols')
-#    cwas.connect(ctf, 'compiled_dot_norm',
-#                 ncwas, 'compiled_func')
     cwas.connect(ccb, 'batch_list',
                  ncwas, 'voxel_range')
     cwas.connect(inputspec, 'strata',
                  ncwas, 'strata')
+    cwas.connect(inputspec, 'dtype',
+                 ncwas, 'dtype')
     
     #Merge the computed CWAS data
     cwas.connect(ncwas, 'result_batch',
