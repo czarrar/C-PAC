@@ -32,6 +32,8 @@ def calc_cwas(memlimit, subjects_data, regressor, cols, nperms, voxel_range, str
         Pseudo-F statistic calculated for every voxel
     p_set : ndarray
         Significance probabilities of F_set based on permutation tests
+    Fperms : ndarray
+        TODO
     
     Notes
     -----
@@ -42,13 +44,24 @@ def calc_cwas(memlimit, subjects_data, regressor, cols, nperms, voxel_range, str
     ----------
     .. [1] Shehzad Z, Reiss PT, Adelstein JS, Emerson JW, Chabernaud C, Mennes M, Di Martino A, Kelly C, Castellanos FX, Milham MP. (June 2011). Connectome-Wide Association Studies (CWAS): A Multivariate Distance-Based Approach. Poster to be presented at the Annual Meeting of the Organization for Human Brain Mapping, Quebec City.
     .. [2] Xiao-Wei Song, Zhang-Ye Dong, Xiang-Yu Long, Su-Fang Li, Xi-Nian Zuo, Chao-Zhe Zhu, Yong He, Chao-Gan Yan, Yu-Feng Zang. (2011) REST: A Toolkit for Resting-State Functional Magnetic Resonance Imaging Data Processing. PLoS ONE 6(9): e25031. doi:10.1371/journal.pone.0025031
+    .. [3] Shehzad Z. connectir R package.
     
     """
     
-    D            = calc_subdists(subjects_data, voxel_range)
-    F_set, p_set = calc_mdmrs(D, regressor, cols, iter, strata)
+    # TODO:
+    # - add a test for varying the dtype?
+    voxel_block = voxel_blocks_for_subdists(memlimit, subjects_data, dtype)
+    D           = calc_subdists(subjects_data, voxel_range, voxel_block, dtype)
     
-    return F_set, p_set
+    # TODO:
+    # - calculate the voxel block for mdmr but need to edit mdmr to give you that blessing
+    # - also pass on the dtype variable
+    voxel_block = voxel_blocks_for_mdmr(memlimit, D, nperms, dtype)
+    F_set, p_set, Fperms = calc_mdmrs(D, regressor, cols, nperms, strata, voxel_block)
+    
+    return F_set, p_set, Fperms
+
+
 ###
 # Computing Distances
 ###
