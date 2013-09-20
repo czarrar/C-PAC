@@ -2,7 +2,7 @@ from base_cwas import *
 
 @given('simulated subjects time-series data')
 def step(context):
-    context.nsubs = 10
+    context.nsubs = 12
     context.ntpts = 100
     context.nvoxs = 200
     context.sdata = np.random.random((context.nsubs, context.ntpts, context.nvoxs))
