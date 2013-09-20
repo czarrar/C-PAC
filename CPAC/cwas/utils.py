@@ -158,14 +158,56 @@ def classic_calc_subdists(subjects_data, voxel_range):
     
     return D
 
-def calc_mdmrs(D, regressor, cols, iter, strata=None):
+
+###
+# Computing MDMR
+###
+
+def voxel_blocks_for_mdmr(memlimit, D, nperms, dtype):
+    """docstring for voxel_blocks_for_mdmr"""
+    nvoxs   = D.shape[0]
+    nsubjs  = D.shape[1]
+    
+    # First determine the things with fixed requirements
+    mem_dmat        = dmat_memory(nvoxs, nsubjs, dtype)
+    mem_perms       = perm_mats_memory(nperms, nsubjs, dtype) # includes H2/IH
+    mem_fperms      = fperms_memory(nperms, nvoxs, dtype)
+    
+    # Second determine the flexible things in life (# of voxels, of course)
+    resid_memlimit  = memlimit - mem_dmat - mem_perms - mem_fperms
+    nvoxs           = nvoxs_per_mdmr(memlimit, nperms, nsubjs, nvoxs, dtype)
+    
+    # TODO: better Exception name?
+    if nvoxs == 0:
+        raise Exception("Memory limit of %i leaves no voxels to process, sadness" % memlimit)
+    
+    return nvoxs
+
+def calc_mdmrs(D, regressor, cols, nperms, strata=None, voxel_block=1):
+    nVoxels     = D.shape[0]
+    nSubjects   = D.shape[1]
+    vox_inds    = split_list_into_groups(range(*nVoxels), voxel_block)
+    
+    perms, H2perms, IHperms = gen_perm_mats(regressor, cols, nperms, strata)
+    
+    Fs          = np.zeros(nVoxels)
+    ps          = np.zeros(nVoxels)
+    Fperms      = np.zeros((nperms, nVoxels))
+    
+    for i,inds in enumerate(vox_inds):
+        ps[inds], Fs[inds], Fperms[:,inds], _ = mdmr(D[inds], regressor, cols, 
+                                                     perms, strata, H2perms, 
+                                                     IHperms)
+    
+    return Fs, ps, Fperms
+
+
+def classic_calc_mdmrs(D, regressor, cols, iter, strata=None):
     nVoxels = D.shape[0]
     nSubjects = D.shape[1]
     
     F_set = np.zeros(nVoxels)
     p_set = np.zeros(nVoxels)
-    
-    # TODO: do the permutations at once here if iter is int. saves time.
     
     for i in range(nVoxels):
         p_set[i], F_set[i], _, _ = mdmr(D[i].reshape(nSubjects**2,1), regressor, cols, iter, strata)
