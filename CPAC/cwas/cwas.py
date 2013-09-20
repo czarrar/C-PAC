@@ -111,7 +111,7 @@ def nifti_cwas(subjects_file_list, mask_file, regressor, cols, f_samples,
     print '... subject data loaded', len(subjects_data), 'batch voxel range', voxel_range
     
     # Compute distances and MDMR
-    F_set, p_set = calc_cwas(subjects_data, regressor, cols, f_samples, voxel_range, strata)
+    F_set, p_set = calc_cwas(subjects_data, regressor, cols, f_samples, voxel_range, strata, dtype)
     
     print '... writing cwas data to disk'
     cwd = os.getcwd()
