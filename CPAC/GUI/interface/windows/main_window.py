@@ -2,6 +2,7 @@ import wx
 from config_window import MainFrame
 from dataconfig_window import DataConfig
 from ..utils.custom_control import FileSelectorCombo
+from ..utils.constants import multiple_value_wfs
 import wx.lib.agw.aquabutton as AB
 import os
 import pkg_resources as p
@@ -281,12 +282,22 @@ class ListBox(wx.Frame):
                 print e
                 #wx.MessageBox(e, "Error") 
                 
+
+
     def runGroupLevelAnalysis(self, event):
-        print "running Group Analysis"
+
+        # Runs group analysis when user clicks "Run Group Level Analysis" in GUI
+
+        print ""
+        print "Running CPAC Group Analysis..."
+        print ""
         
         if (self.listbox.GetChecked() or self.listbox.GetSelection()!= -1):
+            
             pipelines = self.listbox.GetCheckedStrings()
+
             for p in pipelines:
+
                 pipeline = self.pipeline_map.get(p)
                 
                 if os.path.exists(pipeline):
@@ -301,8 +312,10 @@ class ListBox(wx.Frame):
                     else:
                         derv_path = ''
                     
+                    # Opens the sub-window which prompts the user
+                    # for the derivative file paths
                     runGLA(pipeline, derv_path, p)
-                
+
                 else:
                     print "pipeline doesn't exist"
                     
@@ -478,6 +491,36 @@ class ListBox(wx.Frame):
                     break
                             
                             
+                            
+    def check_config(self, config):
+        
+        ret_val = 1
+        
+        try:
+            import yaml
+            c = yaml.load(open(config, 'r'))
+        except:
+            dlg = wx.MessageDialog(self, 'Error loading yaml file. Please check the file format',
+                                           'Error!',
+                                       wx.OK | wx.ICON_ERROR)
+            ret_val = -1
+            dlg.ShowModal()
+            dlg.Destroy()
+        else:
+            for wf in multiple_value_wfs:
+                if c.get(wf):
+                    if len(c.get(wf))>1:
+                        dlg = wx.MessageDialog(self, "Configuration with multiple pipeline is not yet accepted by the gui. The multiple"\
+                                                      "pipeline is due to workflow - %s"%wf,
+                                           'Error!',
+                                       wx.OK | wx.ICON_ERROR)
+                        dlg.ShowModal()
+                        dlg.Destroy()
+                        ret_val = -1
+            
+        return ret_val
+    
+                            
     def AddConfig(self, event):
         
         dlg = wx.FileDialog(
@@ -488,29 +531,32 @@ class ListBox(wx.Frame):
             style=wx.OPEN | wx.CHANGE_DIR)
         
         if dlg.ShowModal() == wx.ID_OK:
-            path = dlg.GetPath()            
-            while True:
-                dlg2 = wx.TextEntryDialog(self, 'Please enter a unique pipeline id for the configuration',
-                                         'Pipeline Id', "")
-                if dlg2.ShowModal() == wx.ID_OK:
-                    if len(dlg2.GetValue()) >0:
-                        if self.pipeline_map.get(dlg2.GetValue()) == None:
-                            self.pipeline_map[dlg2.GetValue()] = path
-                            self.listbox.Append(dlg2.GetValue())
-                            dlg2.Destroy()
-                            dlg.Destroy()
-                            break
-                        else:        
-                                   
-                            dlg3 = wx.MessageDialog(self, 'Pipeline already exist. Please enter a new name',
-                                           'Error!',
-                                       wx.OK | wx.ICON_ERROR)
-                            dlg3.ShowModal()
-                            dlg3.Destroy()
-                else:
-                    dlg2.Destroy()
-                    dlg.Destroy
-                    break
+            path = dlg.GetPath()
+            if self.check_config(path) > 0:
+                while True:
+                    dlg2 = wx.TextEntryDialog(self, 'Please enter a unique pipeline id for the configuration',
+                                             'Pipeline Id', "")
+                    if dlg2.ShowModal() == wx.ID_OK:
+                        if len(dlg2.GetValue()) >0:
+                            
+                                
+                            if self.pipeline_map.get(dlg2.GetValue()) == None:
+                                self.pipeline_map[dlg2.GetValue()] = path
+                                self.listbox.Append(dlg2.GetValue())
+                                dlg2.Destroy()
+                                dlg.Destroy()
+                                break
+                            else:        
+                                       
+                                dlg3 = wx.MessageDialog(self, 'Pipeline already exist. Please enter a new name',
+                                               'Error!',
+                                           wx.OK | wx.ICON_ERROR)
+                                dlg3.ShowModal()
+                                dlg3.Destroy()
+                    else:
+                        dlg2.Destroy()
+                        dlg.Destroy
+                        break
        
               
 class runCPAC(wx.Frame):
@@ -554,6 +600,12 @@ class runCPAC(wx.Frame):
             
 class runGLA(wx.Frame):
     
+    # Opens sub window prompting user to input the derivative file path(s).
+    # If this is already supplied to the function, the path will show up
+    # in the input box already by default.
+
+    # Once the user clicks "Run", group level analysis begins
+
     def __init__(self, pipeline, path, name):
         wx.Frame.__init__(self, None, wx.ID_ANY, "Run Group Level Analysis for Pipeline - %s"%name, size = (680,120))
         
@@ -604,14 +656,24 @@ class runGLA(wx.Frame):
         try:
             import CPAC
             CPAC.pipeline.cpac_group_runner.run(pipeline, path)
-        except Exception:
+        except AttributeError as e:
             print "Exception while running cpac_group_runner"
+            #print "%d: %s" % (e.errno, e.strerror)
+            print "Error type: ", type(e)
+            print "Error args: ", e.args
+            print "e: ", e
+            print ""
+            raise Exception
             
         
     def onOK(self, event, pipeline):
+
+        # Once the user clicks "Run" in the derivative path file window
+        # (from runGLA function), get the filepath and run the
+        # "runAnalysis" function
         
         import thread
-        
+
         if self.box1.GetValue():
             thread.start_new(self.runAnalysis, (pipeline, self.box1.GetValue()))
             self.Close()
@@ -620,3 +682,4 @@ class runGLA(wx.Frame):
             
     def OnShowDoc(self, event):
         wx.TipWindow(self, "Path to file containing derivative path. \n\nThis should be a text file with one path to derivative per line.", 500)
+
