@@ -121,8 +121,7 @@ def gen_perm_mats(x, cols, perms, strata=None):
     return (perms, H2perms, IHperms)
 
 def mdmr_simple(y, *args, **kwrds):
-    ys = y.flatten()
-    return mdmr(ys, *args, **kwrds)
+    return mdmr(y[np.newaxis], *args, **kwrds)
 
 def mdmr(ys, x, cols, perms, strata=None, H2perms=None, IHperms=None, debug_output=False):
     """
@@ -155,6 +154,8 @@ def mdmr(ys, x, cols, perms, strata=None, H2perms=None, IHperms=None, debug_outp
     
     ntests  = ys.shape[0]
     nobs    = x.shape[0]
+    if (len(ys.shape) != 3):
+        raise Exception("ys must be 3d: voxels x observations x observations")
     if (nobs != ys.shape[1]) and (nobs != ys.shape[2]):
         raise Exception("# of observations incompatible between x and ys")
     
