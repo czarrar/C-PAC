@@ -196,12 +196,13 @@ def voxel_blocks_for_mdmr(memlimit, D, nperms, dtype):
     
     return nvoxs
 
-def calc_mdmrs(D, regressor, cols, nperms, strata=None, voxel_block=1):
+def calc_mdmrs(D, regressor, cols, perms, strata=None, voxel_block=1):
     nVoxels     = D.shape[0]
     nSubjects   = D.shape[1]
-    vox_inds    = split_list_into_groups(range(*nVoxels), voxel_block)
+    vox_inds    = split_list_into_groups(range(nVoxels), voxel_block)
     
-    perms, H2perms, IHperms = gen_perm_mats(regressor, cols, nperms, strata)
+    perms, H2perms, IHperms = gen_perm_mats(regressor, cols, perms, strata)
+    nperms      = perms.shape[0]
     
     Fs          = np.zeros(nVoxels)
     ps          = np.zeros(nVoxels)
