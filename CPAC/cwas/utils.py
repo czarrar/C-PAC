@@ -70,7 +70,7 @@ def calc_cwas(subjects_data, regressor, cols, nperms, voxel_range, memlimit=4, s
 def voxel_blocks_for_subdists(memlimit, subjects_data, dtype):
     """docstring for voxel_blocks_for_subdists"""
     nsubjs  = len(subjects_data)
-    nvoxs   = subjects_data[0][2]
+    nvoxs   = subjects_data[0].shape[0]
     ntpts   = [ sdata.shape[1] for sdata in subjects_data ]
     
     # First determine the things with fixed requirements
