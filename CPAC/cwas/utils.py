@@ -127,7 +127,8 @@ def calc_subdists(subjects_data, voxel_range, voxel_block=1, dtype='float64', df
     nSubjects   = len(subjects_data)
     nVoxels     = len(range(*voxel_range))
     
-    vox_inds    = split_list_into_groups(range(*voxel_range), voxel_block)    
+    vox_inds    = split_list_into_groups(range(*voxel_range), voxel_block)
+    subvox_inds = split_list_into_groups(range(nVoxels), voxel_block)
     nGroups     = len(vox_inds)
     
     # Norm the subject's functional data time-series
@@ -135,18 +136,13 @@ def calc_subdists(subjects_data, voxel_range, voxel_block=1, dtype='float64', df
     
     # Distance matrices for every voxel
     D = np.zeros((nVoxels, nSubjects, nSubjects), dtype=dtype)
-        
-    # For a particular voxel v, its spatial correlation map for every subject
-    S = np.zeros((nSubjects, voxel_block, nVoxels), dtype=dtype)
     
     for i in range(nGroups):
-        if i == (nGroups-1):
-            S= np.zeros((nSubjects, len(vox_inds[i]), nVoxels), dtype=dtype)
         S    = ncor_subjects(subjects_normed_data, vox_inds[i])
         S0   = replace_autocorrelations(S)
         S0   = fischers_transform(S0)
-        for ij,j in enumerate(vox_inds[i]):
-            D[j] = dfun(S0[:,ij,:])
+        for ij,j in enumerate(subvox_inds[i]):
+            D[j] = compute_distances(S0[:,ij,:])
     
     return D
 
