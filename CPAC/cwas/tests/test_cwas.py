@@ -15,12 +15,13 @@ class RegressionTester(object):
     """
     
     def __init__(self, name, factor, formula, 
-                 base="/home2/data/Projects/CPAC_Regression_Test/2013-05-30_cwas"):
+                 base="/home2/data/Projects/CPAC_Regression_Test/2013-05-30_cwas", nthreads=4):
         super(RegressionTester, self).__init__()
-        self.base    = base
-        self.name    = name
-        self.factor  = factor
-        self.formula = formula
+        self.base       = base
+        self.name       = name
+        self.factor     = factor
+        self.formula    = formula
+        self.nthreads   = nthreads
     
     def run(self):
         print "Python-Based CWAS"
@@ -40,7 +41,6 @@ class RegressionTester(object):
         import numpy as np
         import time
         from os import path as op
-        
         
         ###
         # Paths and Other Inputs
@@ -82,19 +82,24 @@ class RegressionTester(object):
         c.inputs.inputspec.regressor        = regressors
         c.inputs.inputspec.f_samples        = nperms
         c.inputs.inputspec.parallel_nodes   = 4
+        # ADD MEMORY LIMIT
+        c.inputs.inputspec.memory_limit     = 12
+        c.inputs.inputspec.dtype            = 'float32'
         #c.base_dir = op.join(obase, 'results_fs%i_pn%i' % \
         #                (c.inputs.inputspec.f_samples, c.inputs.inputspec.parallel_nodes))
         c.base_dir = op.join(self.base, "results_%s.py" % self.name)
-    
+        
+        
+        
         # export MKL_NUM_THREADS=X # in command line
         # import mkl
         # mkl.set_num_threads(X)
     
-        # try:
-        #     import mkl
-        #     mkl.set_num_threads(nthreads)
-        # except ImportError:
-        #     pass
+        try:
+            import mkl
+            mkl.set_num_threads(self.nthreads)
+        except ImportError:
+            pass
     
         # Run it!
         start = time.clock()
