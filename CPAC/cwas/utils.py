@@ -2,15 +2,13 @@ import numpy as np
 from mdmr import *
 from subdist import *
 
-def calc_cwas(memlimit, subjects_data, regressor, cols, nperms, voxel_range, strata=None, dtype='float64'):
+def calc_cwas(subjects_data, regressor, cols, nperms, voxel_range, memlimit=4, strata=None, dtype='float64'):
     """
     Performs Connectome-Wide Association Studies (CWAS) [1]_ for every voxel.  For similar implementations see 
     [2]_ and [3]_.
     
     Parameters
     ----------
-    memlimit : int
-        TODO
     subjects_data : ndarray or list
         Numpy data array of shape (`S`,`T`,`V`), `S` subjects, `T` timepoints, `V` voxels.  The number
         of timepoints `T` can vary between subjects in which case data is a list of length `S` with each
@@ -21,6 +19,8 @@ def calc_cwas(memlimit, subjects_data, regressor, cols, nperms, voxel_range, str
         Number of permutations to derive significance tests
     voxel_range : tuple
         (start, end) tuple specify the range of voxels (inside the mask) to perform cwas on.    
+    memlimit : int
+        TODO
     strata : None or list
         TODO
     dtype : str
