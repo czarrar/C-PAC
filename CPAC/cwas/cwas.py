@@ -313,7 +313,7 @@ def create_cwas(name='cwas'):
                                                   'regressor', 
                                                   'cols', 
                                                   'f_samples',
-                                                  'memory_limit', 
+                                                  'memlimit', 
                                                   'voxel_range', 
                                                   'strata', 
                                                   'dtype'],
@@ -365,7 +365,7 @@ def create_cwas(name='cwas'):
     cwas.connect(ccb, 'batch_list',
                  ncwas, 'voxel_range')
     cwas.connect(inputspec, 'memory_limit',
-                 ncwas, 'memory_limit')
+                 ncwas, 'memlimit')
     cwas.connect(inputspec, 'strata',
                  ncwas, 'strata')
     cwas.connect(inputspec, 'dtype',
