@@ -315,7 +315,8 @@ def create_cwas(name='cwas'):
                                                   'f_samples',
                                                   'memory_limit', 
                                                   'voxel_range', 
-                                                  'strata'],
+                                                  'strata', 
+                                                  'dtype'],
                                      output_names=['result_batch'],
                                      function=nifti_cwas),
                        name='cwas_batch',
@@ -330,7 +331,8 @@ def create_cwas(name='cwas'):
 
     
     jmask = pe.Node(util.Function(input_names=['subjects_file_list', 
-                                               'mask_file'],
+                                               'mask_file', 
+                                               'dtype'],
                                   output_names=['joint_mask'],
                                   function=joint_mask),
                     name='joint_mask')
