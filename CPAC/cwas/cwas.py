@@ -52,7 +52,7 @@ def joint_mask(subjects_file_list, mask_file, dtype='float64'):
     return img_file
 
 def nifti_cwas(subjects_file_list, mask_file, regressor, cols, f_samples, 
-               voxel_range, strata=None, dtype='float64'):
+               voxel_range, memlimit=4, strata=None, dtype='float64'):
     """
     Performs CWAS for a group of subjects
     
@@ -111,7 +111,7 @@ def nifti_cwas(subjects_file_list, mask_file, regressor, cols, f_samples,
     print '... subject data loaded', len(subjects_data), 'batch voxel range', voxel_range
     
     # Compute distances and MDMR
-    F_set, p_set = calc_cwas(subjects_data, regressor, cols, f_samples, voxel_range, strata, dtype)
+    F_set, p_set, _ = calc_cwas(subjects_data, regressor, cols, f_samples, voxel_range, memlimit, strata, dtype)
     
     print '... writing cwas data to disk'
     cwd = os.getcwd()
@@ -246,11 +246,14 @@ def create_cwas(name='cwas'):
             Number of permutation samples to draw from the pseudo F distribution
         inputspec.strata : None or ndarray
             todo
+        inputspec.memory_limit : float
+            Maximum amount of RAM to use for the larger operations (not exact) per node!
+            If you are using 4 nodes in parallel, then you will want to adjust the memory 
+            limit by 4.
         inputspec.parallel_nodes : int
             Number of nodes to create and potentially parallelize over
         inputspec.dtype : str
-            Data type for subject functional data (recommended 'float16', 
-            'float32', or 'float64')
+            Data type for subject functional data (recommended 'float32' or 'float64')
         
     Workflow Outputs::
 
@@ -289,6 +292,7 @@ def create_cwas(name='cwas'):
                                                        'cols', 
                                                        'f_samples', 
                                                        'strata', 
+                                                       'memory_limit', 
                                                        'parallel_nodes', 
                                                        'dtype']),
                         name='inputspec')
@@ -309,7 +313,7 @@ def create_cwas(name='cwas'):
                                                   'regressor', 
                                                   'cols', 
                                                   'f_samples',
-#                                                  'compiled_func',
+                                                  'memory_limit', 
                                                   'voxel_range', 
                                                   'strata'],
                                      output_names=['result_batch'],
@@ -358,6 +362,8 @@ def create_cwas(name='cwas'):
                  ncwas, 'cols')
     cwas.connect(ccb, 'batch_list',
                  ncwas, 'voxel_range')
+    cwas.connect(inputspec, 'memory_limit',
+                 ncwas, 'memory_limit')
     cwas.connect(inputspec, 'strata',
                  ncwas, 'strata')
     cwas.connect(inputspec, 'dtype',
