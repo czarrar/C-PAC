@@ -45,7 +45,7 @@ def joint_mask(subjects_file_list, mask_file, dtype='float64'):
 
     print '... joint subject/roi mask loaded'
 
-    img = nb.Nifti1Image(mask, header=nii.get_header(), affine=nii.get_affine())
+    img = nb.Nifti1Image(mask, header=mask_img.get_header(), affine=mask_img.get_affine())
     img_file = os.path.join(os.getcwd(), 'joint_mask.nii.gz')
     img.to_filename(img_file)
     
