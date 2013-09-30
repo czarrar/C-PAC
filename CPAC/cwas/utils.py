@@ -1,6 +1,7 @@
 import numpy as np
 from mdmr import *
 from subdist import *
+from memlimit import *
 
 def calc_cwas(subjects_data, regressor, cols, nperms, voxel_range, memlimit=4, strata=None, dtype='float64'):
     """
