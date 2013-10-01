@@ -599,6 +599,8 @@ bascAffinityThresholdFile: /path/to/basc_affinity_threshold_file
 runCWAS: [0]
 
 # Path to a mask file. Voxels outside this mask will be excluded from CWAS.
+# Note: that internally another mask will also be generated that excludes any
+# voxel not present in all participants.
 cwasROIFile: /path/to/cwas_mask_file
 
 # Number of permutation tests to run on the Psuedo-F statistic
@@ -606,7 +608,19 @@ cwasFSamples: 5000
 
 # Number of NiPype nodes to be created while computing CWAS.
 # This number depends on computing resources
-cwasParallelNodes: 4
+cwasParallelNodes: 3
+
+# Number of processors to use in parallel for each matrix algebra operation.
+# The total number of processors is this number times cwasParallelNodes.
+cwasThreads: 4
+
+# Maximum amount of RAM to use
+# Note: this is an underestimate and doesn't include a lot of operations
+cwasMemory: 12
+
+# The data type to use for many data structures.
+# Can be float16, float32, or float64 but float16 may lead to slow processing.
+cwasDtype: float32
 
 # Path to a text file containing phenotypic regressor.
 cwasRegressorFile: /path/to/cwas_regressor_file
