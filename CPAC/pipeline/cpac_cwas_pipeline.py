@@ -19,8 +19,8 @@ def prep_cwas_workflow(c, subject_infos):
         pass
     
     print 'Preparing CWAS workflow'
-    #p_id, s_ids, scan_ids, s_paths = (list(tup) for tup in zip(*subject_infos))
-    #print 'Subjects', s_ids
+    p_id, s_ids, scan_ids, s_paths = (list(tup) for tup in zip(*subject_infos))
+    print 'Subjects', s_ids
     
     # Read in list of subject functionals
     lines   = open(c.cwasFuncFiles).readlines()
