@@ -622,6 +622,9 @@ cwasMemory: 12
 # Can be float16, float32, or float64 but float16 may lead to slow processing.
 cwasDtype: float32
 
+# Path to list of functional files with one subject path on each line
+cwasFuncFiles: /path/to/cwas_func_files
+
 # Path to a text file containing phenotypic regressor.
 cwasRegressorFile: /path/to/cwas_regressor_file
 
