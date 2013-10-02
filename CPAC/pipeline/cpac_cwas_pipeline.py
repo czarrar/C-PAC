@@ -8,6 +8,61 @@ import sys
 import glob
 from CPAC.utils import Configuration
 
+def cwas_workflow(c):
+    from CPAC.cwas import create_cwas
+    import numpy as np
+    import time
+    
+    try:
+        import mkl
+        mkl.set_num_threads(c.cwasThreads)
+    except ImportError:
+        pass
+    
+    # Read in list of subject functionals
+    lines   = open(c.cwasFuncFiles).readlines()
+    spaths  = [ l.strip().strip('"') for l in lines ]
+    
+    # Read in design/regressor file
+    regressor = np.loadtxt(c.cwasRegressorFile)
+    
+    # Load workflow
+    wf = pe.Workflow(name='cwas_workflow')
+    wf.base_dir = c.workingDirectory
+    
+    # Setup CWAS set of commands
+    cw = create_cwas()
+    cw.inputs.inputspec.roi         = c.cwasROIFile
+    cw.inputs.inputspec.subjects    = spaths
+    cw.inputs.inputspec.regressor   = regressor
+    cw.inputs.inputspec.cols        = c.cwasRegressorCols
+    cw.inputs.inputspec.f_samples   = c.cwasFSamples
+    cw.inputs.inputspec.strata      = c.cwasRegressorStrata # will stay None?
+    cw.inputs.inputspec.parallel_nodes = c.cwasParallelNodes
+    cw.inputs.inputspec.memory_limit = c.cwasMemory
+    cw.inputs.inputspec.dtype       = c.cwasDtype
+    
+    # Output directory
+    ds = pe.Node(nio.DataSink(), name='cwas_sink')
+    ds.inputs.base_directory = os.path.join(c.outputDirectory, "cwas_results")
+    ds.inputs.container = ''
+    
+    # Link F-stats and P-values
+    wf.connect(cw, 'outputspec.F_map',
+               ds, 'F_map')
+    wf.connect(cw, 'outputspec.p_map',
+               ds, 'p_map')
+    
+    # Run CWAS
+    start   = time.time()
+    wf.run(plugin='MultiProc',
+                         plugin_args={'n_procs': c.numCoresPerSubject})
+    end     = time.time()
+    
+    # Return time it took
+    print 'It took', end-start, 'seconds.'
+    return (end-start)
+
 def prep_cwas_workflow(c, subject_infos):
     from CPAC.cwas import create_cwas
     import numpy as np
