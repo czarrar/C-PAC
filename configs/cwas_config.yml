@@ -1,0 +1,169 @@
+#Computer Settings
+
+# Number of cores (non-cluster) or slots on a node (cluster) per subject
+# Slots are cores on a cluster node
+# This number depends on computing resources
+# Only applies when non-cluster machine has multiple cores or runOnGrid = True
+numCoresPerSubject: 2
+
+
+#Data Directory Setup
+# NOTE: Users must manually create these directories before running C-PAC
+
+# Directory where C-PAC should store temporary and intermediate files
+workingDirectory: /path/to/working_directory
+
+# Directory where C-PAC should place crash logs
+#NOT USED IN CWAS
+crashLogDirectory: /path/to/crash_directory
+
+# Directory where C-PAC should put processed data
+outputDirectory: /path/to/output_directory
+
+#Truncate Working Directory after run
+#NOT USED IN CWAS
+removeWorkingDir: False
+
+#regenerates all the outputs for all the subjects and their symlinks
+#NOT USED IN CWAS
+reGenerateOutputs: True
+
+
+# Directory where FSL is located
+# If you have added FSL to your .bashrc file, this will be set automatically
+FSLDIR: /usr/local/fsl
+
+# The following options specify the path of various resources used by C-PAC
+# By default, C-PAC will automatically locate most files based on FSLDIR
+# Most users will not need to modify these values
+
+# For users wishing to use non-standard versions of these resources:
+## 1) Delete the string in parentheses beginning with FSLDIR
+## 2) Replace this value with the full path to the appropriate file
+## 3) Repalce the resolution (e.g. 2mm) with %s in the file names.
+##    This allows resources to be automatically selected based on the
+##    standardResolution set above.
+
+standardResolutionBrainAnat:  $FSLDIR/data/standard/MNI152_T1_${standardResolutionAnat}_brain.nii.gz
+
+standardAnat: $FSLDIR/data/standard/MNI152_T1_${standardResolutionAnat}.nii.gz
+
+standardResolutionBrain: $FSLDIR/data/standard/MNI152_T1_${standardResolution}_brain.nii.gz
+
+standard: $FSLDIR/data/standard/MNI152_T1_$standardResolution.nii.gz 
+
+standardBrainMaskDiluted: $FSLDIR/data/standard/MNI152_T1_${standardResolution}_brain_mask_dil.nii.gz
+
+# MUST BE DOWNLOADED AS PART OF CPAC_Templates.tgz (see User Guide)
+brainSymmetric: $FSLDIR/data/standard/MNI152_T1_2mm_brain_symmetric.nii.gz
+
+# MUST BE DOWNLOADED AS PART OF CPAC_Templates.tgz (see User Guide)
+symmStandard: $FSLDIR/data/standard/MNI152_T1_2mm_symmetric.nii.gz
+
+twommBrainMaskDiluted: $FSLDIR/data/standard/MNI152_T1_2mm_brain_mask_symmetric_dil.nii.gz
+
+
+####
+#================================================
+#Connectome-wide Association Study (CWAS) Options
+#================================================
+###
+# Run CWAS
+runCWAS: [1]
+
+cwas:
+    # For now this is the only variable that you can set to use below
+    base: /path/to/directory
+    
+    # Path to a mask file. Voxels outside this mask will be excluded from CWAS.
+    prior_mask_file: $base/rois/grey_matter_4mm.nii.gz
+    
+    # Path to a text file containing the list of functional files
+    # each line should be the functional file for one subject/scan
+    # the order of subjects/scans should be the same as in the regressor file
+    file_with_functional_paths: $base/funcpaths.txt
+    
+    # Path to a text file containing phenotypic regressor.
+    regressor_file: $base/regressors.txt
+    
+    # Column Number with Regressor of Interest (from the regressor_file)
+    # remember this is 0 indexed so the 1st column is 0
+    # assuming the 1st column is the intercept, I've chosen the second column here
+    regressors_of_interest: [1]
+    
+    # A list with length equal to the total number of rows in your regressor file
+    # Each element of the list, indicates that elements group. Leave it as None
+    # if you have a between-subject design and give it a value if not.
+    # 
+    # For instance, if you have multiple scans per subject, then you would want to
+    # do a permutation within-subject between scans. For this to occur, the list 
+    # below could be something like ['s1', 's1', 's2', 's2', 's3', 's3', ...], 
+    # indicating what subject each element/scan is associated with and permutations
+    # would only be done between scans within each subject.
+    strata: None
+    
+    # Number of permutation tests to run on the Psuedo-F statistic
+    n_permutations: 1000
+    
+    # Number of NiPype nodes to be created while computing CWAS.
+    # This number depends on computing resources
+    parallel_nodes: 3
+    
+    # Number of processors to use in parallel for each matrix algebra operation.
+    # The total number of processors is this number times cwasParallelNodes.
+    threads: 4
+    
+    # Maximum amount of RAM to use
+    # Note: this is an underestimate and doesn't include a lot of operations
+    memory_limit: 12
+    
+    # The data type to use for many data structures.
+    # Can be float16, float32, or float64 but float16 may lead to slow processing.
+    dtype: float32
+
+
+# Path to a mask file. Voxels outside this mask will be excluded from CWAS.
+# Note: that internally another mask will also be generated that excludes any
+# voxel not present in all participants.
+cwasROIFile: /path/to/cwas_mask_file
+
+# Number of permutation tests to run on the Psuedo-F statistic
+cwasFSamples: 5000
+
+# Number of NiPype nodes to be created while computing CWAS.
+# This number depends on computing resources
+cwasParallelNodes: 3
+
+# Number of processors to use in parallel for each matrix algebra operation.
+# The total number of processors is this number times cwasParallelNodes.
+cwasThreads: 4
+
+# Maximum amount of RAM to use
+# Note: this is an underestimate and doesn't include a lot of operations
+cwasMemory: 12
+
+# The data type to use for many data structures.
+# Can be float16, float32, or float64 but float16 may lead to slow processing.
+cwasDtype: float32
+
+# Path to list of functional files with one subject path on each line
+cwasFuncFiles: /path/to/cwas_func_files
+
+# Path to a text file containing phenotypic regressor.
+cwasRegressorFile: /path/to/cwas_regressor_file
+
+# Column Number with Regressor of Interest
+# remember this is 0 indexed so the 1st column is 0
+# assuming the 1st column is the intercept, I've chosen the second column here
+cwasRegressorCols: [1]
+
+# A list with length equal to the total number of rows in your regressor file
+# Each element of the list, indicates that elements group. Leave it as None
+# if you have a between-subject design and give it a value if not.
+# 
+# For instance, if you have multiple scans per subject, then you would want to
+# do a permutation within-subject between scans. For this to occur, the list 
+# below could be something like ['s1', 's1', 's2', 's2', 's3', 's3', ...], 
+# indicating what subject each element/scan is associated with and permutations
+# would only be done between scans within each subject.
+cwasRegressorStrata: None

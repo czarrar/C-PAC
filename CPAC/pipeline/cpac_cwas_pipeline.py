@@ -10,21 +10,31 @@ from CPAC.utils import Configuration
 
 def cwas_workflow(c):
     from CPAC.cwas import create_cwas
+    from string import Template
     import numpy as np
     import time
+        
+    if isinstance(c.cwas, dict):
+        c.cwas = Configuration(c.cwas)
     
     try:
         import mkl
-        mkl.set_num_threads(c.cwasThreads)
+        mkl.set_num_threads(c.cwas.threads)
     except ImportError:
         pass
+        
+    # Auto-complete base
+    fields = ["prior_mask_file", "file_with_functional_paths", "regressor_file"]
+    for field in fields:
+        s = Template(getattr(c.cwas, field))
+        c.cwas.update(field, s.substitute(base=c.cwas.base))
     
     # Read in list of subject functionals
-    lines   = open(c.cwasFuncFiles).readlines()
+    lines   = open(c.cwas.file_with_functional_paths).readlines()
     spaths  = [ l.strip().strip('"') for l in lines ]
     
     # Read in design/regressor file
-    regressor = np.loadtxt(c.cwasRegressorFile)
+    regressor = np.loadtxt(c.cwas.regressor_file)
     
     # Load workflow
     wf = pe.Workflow(name='cwas_workflow')
@@ -32,15 +42,15 @@ def cwas_workflow(c):
     
     # Setup CWAS set of commands
     cw = create_cwas()
-    cw.inputs.inputspec.roi         = c.cwasROIFile
+    cw.inputs.inputspec.roi         = c.cwas.prior_mask_file
     cw.inputs.inputspec.subjects    = spaths
     cw.inputs.inputspec.regressor   = regressor
-    cw.inputs.inputspec.cols        = c.cwasRegressorCols
-    cw.inputs.inputspec.f_samples   = c.cwasFSamples
-    cw.inputs.inputspec.strata      = c.cwasRegressorStrata # will stay None?
-    cw.inputs.inputspec.parallel_nodes = c.cwasParallelNodes
-    cw.inputs.inputspec.memory_limit = c.cwasMemory
-    cw.inputs.inputspec.dtype       = c.cwasDtype
+    cw.inputs.inputspec.cols        = c.cwas.regressors_of_interest
+    cw.inputs.inputspec.f_samples   = c.cwas.n_permutations
+    cw.inputs.inputspec.strata      = c.cwas.strata
+    cw.inputs.inputspec.parallel_nodes = c.cwas.parallel_nodes
+    cw.inputs.inputspec.memory_limit = c.cwas.memory_limit
+    cw.inputs.inputspec.dtype       = c.cwas.dtype
     
     # Output directory
     ds = pe.Node(nio.DataSink(), name='cwas_sink')
