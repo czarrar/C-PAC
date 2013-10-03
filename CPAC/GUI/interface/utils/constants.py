@@ -25,8 +25,11 @@ dtype = enum(BOOL=0,
 
 substitution_map = {'On': 1,
                     'Off': 0,
+<<<<<<< HEAD
                     'FSL': 'fsl',
                     'ANTS': 'ants',
+=======
+>>>>>>> 2d2feff20f01fb118f1efa8eae02defc0150eb43
                     'Voxelwise SCA': 'sca_seed_Z_to_standard_smooth',
                     'ROI Average SCA':'sca_roi_Z_to_standard_smooth',
                     'Multiple Regression SCA':'sca_tempreg_maps_z_files_smooth',
@@ -39,7 +42,11 @@ substitution_map = {'On': 1,
                     'End': 'None',
                     'ROI Average Time Series Extraction': 'roi_average',
                     'ROI Voxelwise Time Series Extraction': 'roi_voxelwise',
+<<<<<<< HEAD
                     'Network Centrality': 'network_cent'
+=======
+                    'Network Centrality': 'centrality_outputs_smoothed'
+>>>>>>> 2d2feff20f01fb118f1efa8eae02defc0150eb43
                    }
 
 
