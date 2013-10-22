@@ -9,6 +9,8 @@ import nipype.interfaces.utility as util
 import nipype.interfaces.io as nio
 from   nipype.pipeline.utils import format_dot
 import nipype.interfaces.ants as ants
+from nipype.interfaces.ants import ApplyTransforms
+import nipype.interfaces.c3 as c3
 from nipype import config
 from nipype import logging
 from multiprocessing import Process
@@ -19,7 +21,8 @@ from CPAC.anat_preproc.anat_preproc import create_anat_preproc
 from CPAC.func_preproc.func_preproc import create_func_preproc
 from CPAC.seg_preproc.seg_preproc import create_seg_preproc
 
-from CPAC.registration import create_nonlinear_register, create_bbregister_func_to_anat, create_ants_nonlinear_xfm
+from CPAC.registration import create_nonlinear_register, create_register_func_to_anat, create_bbregister_func_to_anat, \
+                              create_ants_nonlinear_xfm, create_apply_ants_xfm
 from CPAC.nuisance import create_nuisance, bandpass_voxels
 
 from CPAC.median_angle import create_median_angle_correction
@@ -31,14 +34,15 @@ from CPAC.timeseries import create_surface_registration, get_voxel_timeseries, \
                             get_spatial_map_timeseries
 from CPAC.network_centrality import create_resting_state_graphs, get_zscore
 from CPAC.utils.datasource import *
-from CPAC.utils import Configuration, create_log_template
+from CPAC.pipeline.tests.datasource import *    # TEMP ADDITIONS
+from CPAC.utils import Configuration, create_all_qc   ### no create_log_template here, move in CPAC/utils/utils.py
 from CPAC.qc.qc import create_montage, create_montage_gm_wm_csf
 from CPAC.qc.utils import register_pallete, make_edge, drop_percent_, \
                           gen_histogram, gen_plot_png, gen_motion_plt, \
-                          gen_std_dev, gen_func_anat_xfm, gen_snr, generateQCPages
+                          gen_std_dev, gen_func_anat_xfm, gen_snr, generateQCPages, cal_snr_val   ###
 from CPAC.utils.utils import extract_one_d, set_gauss, \
                              prepare_symbolic_links, \
-                             get_scan_params, get_tr, extract_txt, create_log
+                             get_scan_params, get_tr, extract_txt, create_log, create_log_template   ###
 from CPAC.vmhc.vmhc import create_vmhc
 from CPAC.reho.reho import create_reho
 from CPAC.alff.alff import create_alff
@@ -92,9 +96,6 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
     timing = open(os.path.join(c.outputDirectory, 'cpac_pipeline_timing.txt'), 'wt')
-
-    print >>timing, "Starting CPAC run for configuration: ", c
-    print >>timing, "\n"
 
     # Start timing here
     pipeline_start_time = time.time()
@@ -163,25 +164,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     workflow_bit_id = {}
     workflow_counter = 0
 
-
     """
     Initialize Anatomical Input Data Flow
     """
-
-    print >>timing, "Starting 'Initalize Anatomical Input Data Flow'.."
-    print >>timing, "configuration parameter: 'runAnatomicalDataGathering'"
-    print >>timing, "workflow: create_anat_datasource()"
-
     new_strat_list = []
     num_strat = 0
 
     strat_initial = None
 
     for gather_anat in c.runAnatomicalDataGathering:
-
-        print >>timing, "gather_anat: ", gather_anat
-        workflow_start_time = time.time()
-
         strat_initial = strategy()
 
         if gather_anat == 1:
@@ -197,13 +188,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
         strat_list.append(strat_initial)
 
-        print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-        print >>timing, "\n"
-
     print strat_list
-
-    
-
 
     """
     Inserting Anatomical Preprocessing workflow
@@ -213,17 +198,9 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     if 1 in c.runAnatomicalPreprocessing:
 
-        print >>timing, "Starting 'Inserting Anatomical Preprocessing Workflow'.."
-        print >>timing, "configuration parameter: 'runAnatomicalPreprocessing'"
-        print >>timing, "workflow: create_anat_preproc()"
-
         workflow_bit_id['anat_preproc'] = workflow_counter
 
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
-
             # create a new node, Remember to change its name!
             anat_preproc = create_anat_preproc().clone('anat_preproc_%d' % num_strat)
 
@@ -261,12 +238,18 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(anat_preproc, 'outputspec.brain', num_strat)
 
             num_strat += 1
-
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
-
+    
+    elif 'anatomical_brain' in sub_dict and 'anatomical_reorient' in sub_dict:
+        
+        for strat in strat_list:
+            k = 'anatomical_brain'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            k = 'anatomical_reorient'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            
+            num_strat += 1
+    
     strat_list += new_strat_list
-
 
 
 
@@ -279,155 +262,151 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     workflow_counter += 1
     
     # either run FSL anatomical-to-MNI registration, or...
-    if 'fsl' in c.runRegistrationPreprocessing:
-
-        print >>timing, "Starting 'T1 -> Template, Non-linear registration (FNIRT or ANTS) - FLIRT/FNIRT'.."
-        print >>timing, "configuration parameter: 'runRegistrationPreprocessing'"
-        print >>timing, "workflow: create_nonlinear_register()"
+    
+    if 1 in c.runRegistrationPreprocessing:
 
         workflow_bit_id['anat_mni_register'] = workflow_counter
         for strat in strat_list:
 
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
+            if 'FSL' in c.regOption:
 
-            reg_anat_mni = create_nonlinear_register('anat_mni_register_%d' % num_strat)
+                fnirt_reg_anat_mni = create_nonlinear_register('anat_mni_fnirt_register_%d' % num_strat)
 
-            try:
-                node, out_file = strat.get_leaf_properties()
-                workflow.connect(node, out_file,
-                                 reg_anat_mni, 'inputspec.input_brain')
+                try:
+                    node, out_file = strat.get_leaf_properties()
+                    workflow.connect(node, out_file,
+                                     fnirt_reg_anat_mni, 'inputspec.input_brain')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_reorient')
-                workflow.connect(node, out_file,
-                                 reg_anat_mni, 'inputspec.input_skull')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_reorient')
+                    workflow.connect(node, out_file,
+                                     fnirt_reg_anat_mni, 'inputspec.input_skull')
 
-                # pass the reference files                
-                reg_anat_mni.inputs.inputspec.reference_brain = c.standardResolutionBrainAnat
-                reg_anat_mni.inputs.inputspec.reference_skull = c.standardAnat
+                    # pass the reference files                
+                    fnirt_reg_anat_mni.inputs.inputspec.reference_brain = c.standardResolutionBrainAnat
+                    fnirt_reg_anat_mni.inputs.inputspec.reference_skull = c.standardAnat
 
-                # assign the FSL FNIRT config file specified in pipeline config.yml
-                reg_anat_mni.inputs.inputspec.fnirt_config = c.fnirtConfig
+                    # assign the FSL FNIRT config file specified in pipeline config.yml
+                    fnirt_reg_anat_mni.inputs.inputspec.fnirt_config = c.fnirtConfig
                 
 
-            except:
-                print 'Invalid Connection: Anatomical Registration:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
+                except:
+                    print 'Invalid Connection: Anatomical Registration:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
 
-            if 0 in c.runRegistrationPreprocessing:
-                tmp = strategy()
-                tmp.resource_pool = dict(strat.resource_pool)
-                tmp.leaf_node = (strat.leaf_node)
-                tmp.leaf_out_file = str(strat.leaf_out_file)
-                tmp.name = list(strat.name)
-                strat = tmp
-                new_strat_list.append(strat)
+                if 0 in c.runRegistrationPreprocessing:
+                    tmp = strategy()
+                    tmp.resource_pool = dict(strat.resource_pool)
+                    tmp.leaf_node = (strat.leaf_node)
+                    tmp.leaf_out_file = str(strat.leaf_out_file)
+                    tmp.name = list(strat.name)
+                    strat = tmp
+                    new_strat_list.append(strat)
 
-            strat.append_name(reg_anat_mni.name)
-            strat.set_leaf_properties(reg_anat_mni, 'outputspec.output_brain')
+                strat.append_name(fnirt_reg_anat_mni.name)
+                strat.set_leaf_properties(fnirt_reg_anat_mni, 'outputspec.output_brain')
 
-            strat.update_resource_pool({'anatomical_to_mni_linear_xfm':(reg_anat_mni, 'outputspec.linear_xfm'),
-                                        'anatomical_to_mni_nonlinear_xfm':(reg_anat_mni, 'outputspec.nonlinear_xfm'),
-                                        'mni_to_anatomical_linear_xfm':(reg_anat_mni, 'outputspec.invlinear_xfm'),
-                                        'mni_normalized_anatomical':(reg_anat_mni, 'outputspec.output_brain')})
+                strat.update_resource_pool({'anatomical_to_mni_linear_xfm':(fnirt_reg_anat_mni, 'outputspec.linear_xfm'),
+                                            'anatomical_to_mni_nonlinear_xfm':(fnirt_reg_anat_mni, 'outputspec.nonlinear_xfm'),
+                                            'mni_to_anatomical_linear_xfm':(fnirt_reg_anat_mni, 'outputspec.invlinear_xfm'),
+                                            'mni_normalized_anatomical':(fnirt_reg_anat_mni, 'outputspec.output_brain')})
 
 
-            create_log_node(reg_anat_mni, 'outputspec.output_brain', num_strat)
+                """
+                ### add mni normalized anatomical to qc output html page
+                strat.update_resource_pool({'qc___mni_normalized_anatomical': (reg_anat_mni, 'outputspec.output_brain')})
+
+                if not 6 in qc_montage_id_a:
+                    qc_montage_id_a[6] = 'mni_normalized_anatomical'
+                    ###qc_montage_id_s[6] = 'skullstrip_vis_s'
+                """
+
+
+                create_log_node(fnirt_reg_anat_mni, 'outputspec.output_brain', num_strat)
             
             
-            num_strat += 1
+                num_strat += 1
+            
+            
+            # or run ANTS anatomical-to-MNI registration instead        
+            elif 'ANTS' in c.regOption:
 
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
+                ants_reg_anat_mni = create_ants_nonlinear_xfm('anat_mni_ants_register_%d' % num_strat)
 
-                        
-    # or run ANTS anatomical-to-MNI registration instead        
-    elif 'ants' in c.runRegistrationPreprocessing:
+                try:
+                    node, out_file = strat.get_leaf_properties()
+                    workflow.connect(node, out_file,
+                                     ants_reg_anat_mni, 'inputspec.anatomical_brain')
 
-        print >>timing, "Starting 'T1 -> Template, Non-linear registration (FNIRT or ANTS) - ANTS'.."
-        print >>timing, "configuration parameter: 'runRegistrationPreprocessing'"
-        print >>timing, "workflow: create_ants_nonlinear_xfm()"
+                    # pass the reference file           
+                    ants_reg_anat_mni.inputs.inputspec.reference_brain = c.standardResolutionBrainAnat
+                
 
-        workflow_bit_id['anat_mni_register'] = workflow_counter
+                except:
+                    print 'Invalid Connection: Anatomical Registration:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                if 0 in c.runRegistrationPreprocessing:
+                    tmp = strategy()
+                    tmp.resource_pool = dict(strat.resource_pool)
+                    tmp.leaf_node = (strat.leaf_node)
+                    tmp.leaf_out_file = str(strat.leaf_out_file)
+                    tmp.name = list(strat.name)
+                    strat = tmp
+                    new_strat_list.append(strat)
+
+                strat.append_name(ants_reg_anat_mni.name)
+                strat.set_leaf_properties(ants_reg_anat_mni, 'outputspec.output_brain')
+
+                strat.update_resource_pool({#'anatomical_to_mni_linear_xfm':(reg_anat_mni, 'outputspec.linear_xfm'),
+                                            #'anatomical_to_mni_nonlinear_xfm':(reg_anat_mni, 'outputspec.nonlinear_xfm'),
+                                            #'mni_to_anatomical_linear_xfm':(reg_anat_mni, 'outputspec.invlinear_xfm'),
+                                            'ants_affine_xfm':(ants_reg_anat_mni, 'outputspec.affine_transformation'),
+                                            #'ants_warp_field':(ants_reg_anat_mni, 'outputspec.warp_field'),
+                                            # changed 'ants_warp_field' to 'anatomical_to_mni_nonlinear_xfm' because
+                                            # it is the warp field output of ANTS, and FLIRT/FNIRT also outputs a warp
+                                            # field named this. need to verify that these work interchangeably
+                                            'anatomical_to_mni_nonlinear_xfm':(ants_reg_anat_mni, 'outputspec.warp_field'),
+                                            'mni_to_anatomical_linear_xfm':(ants_reg_anat_mni, 'outputspec.inverse_warp'), #<---- this is the mni to anatomical NONLINEAR xfm
+                                            'mni_normalized_anatomical':(ants_reg_anat_mni, 'outputspec.output_brain')})
+
+                create_log_node(ants_reg_anat_mni, 'outputspec.output_brain', num_strat)  
+          
+                num_strat += 1
+    
+    elif 'anatomical_to_mni_nonlinear_xfm' in sub_dict and 'mni_normalized_anatomical' in sub_dict:
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
-
-            ants_reg_anat_mni = create_ants_nonlinear_xfm('anat_mni_register_%d' % num_strat)
-
-            try:
-                node, out_file = strat.get_leaf_properties()
-                workflow.connect(node, out_file,
-                                 ants_reg_anat_mni, 'inputspec.anatomical_brain')
-
-                # pass the reference file           
-                ants_reg_anat_mni.inputs.inputspec.reference_brain = c.standardResolutionBrainAnat
-                
-
-            except:
-                print 'Invalid Connection: Anatomical Registration:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
-
-            if '0' in c.runRegistrationPreprocessing:
-                tmp = strategy()
-                tmp.resource_pool = dict(strat.resource_pool)
-                tmp.leaf_node = (strat.leaf_node)
-                tmp.leaf_out_file = str(strat.leaf_out_file)
-                tmp.name = list(strat.name)
-                strat = tmp
-                new_strat_list.append(strat)
-
-            strat.append_name(ants_reg_anat_mni.name)
-            strat.set_leaf_properties(ants_reg_anat_mni, 'outputspec.output_brain')
-
-            strat.update_resource_pool({#'anatomical_to_mni_linear_xfm':(reg_anat_mni, 'outputspec.linear_xfm'),
-                                        #'anatomical_to_mni_nonlinear_xfm':(reg_anat_mni, 'outputspec.nonlinear_xfm'),
-                                        #'mni_to_anatomical_linear_xfm':(reg_anat_mni, 'outputspec.invlinear_xfm'),
-                                        'ants_affine_xfm':(ants_reg_anat_mni, 'outputspec.affine_transformation'),
-                                        #'ants_warp_field':(ants_reg_anat_mni, 'outputspec.warp_field'),
-                                        # changed 'ants_warp_field' to 'anatomical_to_mni_nonlinear_xfm' because
-                                        # it is the warp field output of ANTS, and FLIRT/FNIRT also outputs a warp
-                                        # field named this. need to verify that these work interchangeably
-                                        'anatomical_to_mni_nonlinear_xfm':(ants_reg_anat_mni, 'outputspec.warp_field'),
-                                        'mni_to_anatomical_linear_xfm':(ants_reg_anat_mni, 'outputspec.inverse_warp'),
-                                        'mni_normalized_anatomical':(ants_reg_anat_mni, 'outputspec.output_brain')})
-
-            create_log_node(ants_reg_anat_mni, 'outputspec.output_brain', num_strat)
-            
+            k = 'mni_normalized_anatomical'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            k = 'anatomical_to_mni_nonlinear_xfm'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            if 'ANTS' in c.regOption:
+                k = 'ants_affine_xfm'
+                strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
             
             num_strat += 1
 
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
-            
+    
     strat_list += new_strat_list
     
     
  
-
     """
     Inserting Segmentation Preprocessing
     Workflow
     """
-    
+
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runSegmentationPreprocessing:
-
-        print >>timing, "Starting 'Inserting Segmentation Preprocessing Workflow'.."
-        print >>timing, "configuration parameter: 'runSegmentationPreprocessing'"
-        print >>timing, "workflow: create_seg_preproc()"
-
         workflow_bit_id['seg_preproc'] = workflow_counter
         for strat in strat_list:
 
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
-
-            seg_preproc = create_seg_preproc('seg_preproc_%d' % num_strat)
+            if 'FSL' in c.regOption:
+                seg_preproc = create_seg_preproc(False, 'seg_preproc_%d' % num_strat)
+            elif 'ANTS' in c.regOption:
+                seg_preproc = create_seg_preproc(True, 'seg_preproc_%d' % num_strat)
 
             try:
                 node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
@@ -481,32 +460,16 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(seg_preproc, 'outputspec.partial_volume_map', num_strat)
             num_strat += 1
 
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
-
     strat_list += new_strat_list
-
-
-
 
     """
     Inserting Functional Input Data workflow
     """
-
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runFunctionalDataGathering:
-
-        print >>timing, "Starting 'Inserting Functional Input Data Workflow'.."
-        print >>timing, "configuration parameter: 'runFunctionalDataGathering'"
-        print >>timing, "workflow: create_func_datasource()"
-
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
-
             # create a new node, Remember to change its name!
             # Flow = create_func_datasource(sub_dict['rest'])
             # Flow.inputs.inputnode.subject = subject_id
@@ -527,34 +490,20 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
-
     strat_list += new_strat_list
-
-
 
 
     """
     Inserting Functional Image Preprocessing
     Workflow
     """
-
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runFunctionalPreprocessing:
-
-        print >>timing, "Starting 'Inserting Functional Image Preprocessing'.."
-        print >>timing, "configuration parameter: 'runFunctionalPreprocessing'"
-        print >>timing, "workflow: create_func_preproc()"
-
         workflow_bit_id['func_preproc'] = workflow_counter
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
 
             slice_timing = sub_dict.get('scan_parameters')
             # a node which checks if scan _parameters are present for each scan
@@ -654,12 +603,17 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(func_preproc, 'outputspec.preprocessed', num_strat)
             num_strat += 1
 
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
-
-            
+    elif 'preprocessed' in sub_dict and 'mean_functional' in sub_dict and 'functional_brain_mask' in sub_dict:
+        
+        for strat in strat_list:
+            k = 'preprocessed'
+            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            k = 'mean_functional'
+            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            k = 'functional_brain_mask'
+            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat)
+    
     strat_list += new_strat_list
-
 
 
 
@@ -670,22 +624,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     that depend on. The effect should be seen when regressing out nuisance signals and motion
     is used as one of the regressors
     """
-    
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runFristonModel:
-
-        print >>timing, "Starting 'Inserting Friston's 24 parameter Workflow'.."
-        print >>timing, "configuration parameter: 'runFristonModel'"
-        print >>timing, "workflow: fristons_twenty_four()"
-
         workflow_bit_id['fristons_parameter_model'] = workflow_counter
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
 
             fristons_model = fristons_twenty_four(wf_name='fristons_parameter_model_%d' % num_strat)
 
@@ -715,12 +660,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(fristons_model, 'outputspec.movement_file', num_strat)
             
             num_strat += 1
-
-            print >>timing, "run time (minutes): ", ((time.time() - workflow_start_time)/60)
-            print >>timing, "\n"
-
     strat_list += new_strat_list
-
 
 
 
@@ -824,12 +764,86 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     strat_list += new_strat_list
     """
 
+    """
+    Func -> T1 Registration (Initial Linear reg)
+    """
+
+    # Depending on configuration, either passes output matrix to Func -> Template ApplyWarp,
+    # or feeds into linear reg of BBReg operation (if BBReg is enabled)
+
+    new_strat_list = []
+    num_strat = 0
+    workflow_counter += 1
+    
+    if 1 in c.runRegisterFuncToAnat:
+        workflow_bit_id['func_to_anat'] = workflow_counter
+        for strat in strat_list:
+            func_to_anat = create_register_func_to_anat('func_to_anat_FLIRT_%d' % num_strat)
+       
+            # Input registration parameters
+            func_to_anat.inputs.inputspec.interp = 'trilinear'
+
+
+            try:
+                def pick_wm(seg_prob_list):
+                    seg_prob_list.sort()
+                    return seg_prob_list[-1]
+
+                # Input functional image (func.nii.gz)
+                node, out_file = strat.get_node_from_resource_pool('mean_functional')
+                workflow.connect(node, out_file,
+                                 func_to_anat, 'inputspec.func')
+
+                # Input skull-stripped anatomical (anat.nii.gz)
+                node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                workflow.connect(node, out_file,
+                                 func_to_anat, 'inputspec.anat')
+
+   
+
+            except:
+                print 'Invalid Connection: Register Functional to Anatomical (pre BBReg):', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                raise
+
+            if 0 in c.runRegisterFuncToAnat:
+                tmp = strategy()
+                tmp.resource_pool = dict(strat.resource_pool)
+                tmp.leaf_node = (strat.leaf_node)
+                tmp.out_file = str(strat.leaf_out_file)
+                tmp.name = list(strat.name)
+                strat = tmp
+                new_strat_list.append(strat)
+
+            strat.append_name(func_to_anat.name)
+            # strat.set_leaf_properties(func_mni_warp, 'out_file')
+
+            strat.update_resource_pool({'mean_functional_in_anat':(func_to_anat, 'outputspec.anat_func_nobbreg'),
+                                        #'anatomical_wm_edge':(func_to_anat, 'outputspec.anat_wm_edge'),
+                                        'functional_to_anat_linear_xfm':(func_to_anat, 'outputspec.func_to_anat_linear_xfm_nobbreg')})
+                                        #'functional_to_mni_linear_xfm':(func_to_anat, 'outputspec.func_to_anat_linear_xfm'),
+                                        #'mni_to_functional_linear_xfm':(func_to_anat, 'outputspec.mni_to_func_linear_xfm')})
+
+            # Outputs:
+            # functional_to_anat_linear_xfm = func-t1.mat, linear, sent to 'premat' of post-FNIRT applywarp,
+            #                                 or to the input of the post-ANTS c3d_affine_tool
+            
+            #create_log_node(func_to_anat, 'outputspec.mni_func', num_strat)
+            num_strat += 1
+    elif 'functional_to_anat_linear_xfm' in sub_dict:
+        for strat in strat_list:
+            k = 'functional_to_anat_linear_xfm'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            
+            num_strat += 1
+    
+
+    strat_list += new_strat_list
+
 
 
 
     """
-    Func -> T1 Registration (BBREG), this has an ApplyWarp (mni warp) which
-    takes in the premat, for some reason - may not actually go anywhere
+    Func -> T1 Registration (BBREG)
     """
 
     # Outputs 'functional_to_anat_linear_xfm', a matrix file of the functional-to-anatomical
@@ -839,18 +853,87 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
     workflow_counter += 1
     
+    if 1 in c.runBBReg:
+        workflow_bit_id['func_to_anat_bbreg'] = workflow_counter
+        for strat in strat_list:
+            func_to_anat_bbreg = create_bbregister_func_to_anat('func_to_anat_bbreg_%d' % num_strat)
+       
+            # Input registration parameters
+            func_to_anat_bbreg.inputs.inputspec.bbr_schedule = c.boundaryBasedRegistrationSchedule
+
+            try:
+                def pick_wm(seg_prob_list):
+                    seg_prob_list.sort()
+                    return seg_prob_list[-1]
+
+                # Input functional image (func.nii.gz)
+                node, out_file = strat.get_node_from_resource_pool('mean_functional')
+                workflow.connect(node, out_file,
+                                 func_to_anat_bbreg, 'inputspec.func')
+
+                # Input segmentation probability maps for white matter segmentation
+                node, out_file = strat.get_node_from_resource_pool('seg_probability_maps')
+                workflow.connect(node, (out_file, pick_wm),
+                                 func_to_anat_bbreg, 'inputspec.anat_wm_segmentation')
+
+                # Input anatomical whole-head image (reoriented)
+                node, out_file = strat.get_node_from_resource_pool('anatomical_reorient')
+                workflow.connect(node, out_file,
+                                 func_to_anat_bbreg, 'inputspec.anat_skull')
+
+                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                workflow.connect(node, out_file,
+                                 func_to_anat_bbreg, 'inputspec.linear_reg_matrix')
+   
+
+            except:
+                print 'Invalid Connection: Register Functional to Anatomical (BBReg):', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                raise
+
+            if 0 in c.runBBReg:
+                tmp = strategy()
+                tmp.resource_pool = dict(strat.resource_pool)
+                tmp.leaf_node = (strat.leaf_node)
+                tmp.out_file = str(strat.leaf_out_file)
+                tmp.name = list(strat.name)
+                strat = tmp
+                new_strat_list.append(strat)
+
+            strat.append_name(func_to_anat.name)
+            # strat.set_leaf_properties(func_mni_warp, 'out_file')
+
+            strat.update_resource_pool({#'mean_functional_in_mni':(copy_tr, 'out_file'),
+                                        'mean_functional_in_anat':(func_to_anat_bbreg, 'outputspec.anat_func'),
+                                        #'anatomical_wm_edge':(func_to_anat, 'outputspec.anat_wm_edge'),
+                                        'functional_to_anat_linear_xfm':(func_to_anat_bbreg, 'outputspec.func_to_anat_linear_xfm')})
+                                        #'functional_to_mni_linear_xfm':(func_to_anat, 'outputspec.func_to_anat_linear_xfm'),
+                                        #'mni_to_functional_linear_xfm':(func_to_anat, 'outputspec.mni_to_func_linear_xfm')})
+
+            # Outputs:
+            # functional_to_anat_linear_xfm = func-t1.mat, linear, sent to 'premat' of post-FNIRT applywarp,
+            #                                 or to the input of the post-ANTS c3d_affine_tool
+            
+            #create_log_node(func_to_anat, 'outputspec.mni_func', num_strat)
+            num_strat += 1
+
+    strat_list += new_strat_list
+
+
+    """
+    Func -> T1 Registration (BBREG), this has an ApplyWarp (mni warp) which
+    takes in the premat, for some reason - may not actually go anywhere
+    """
+    """
+    # Outputs 'functional_to_anat_linear_xfm', a matrix file of the functional-to-anatomical
+    # registration warp to be applied LATER in func_mni_warp, which accepts it as input 'premat'
+
+    new_strat_list = []
+    num_strat = 0
+    workflow_counter += 1
+    
     if 1 in c.runRegisterFuncToAnat:
-
-        print >>timing, "Starting 'Func -> T1 Registration (BBREG)'.."
-        print >>timing, "configuration parameter: 'runRegisterFuncToAnat'"
-        print >>timing, "workflow: create_bbregister_func_to_anat()"
-
         workflow_bit_id['func_to_anat'] = workflow_counter
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
-
             func_to_anat = create_bbregister_func_to_anat('func_to_anat_%d' % num_strat)
        
             # Input registration parameters
@@ -926,12 +1009,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             #create_log_node(func_to_anat, 'outputspec.mni_func', num_strat)
             num_strat += 1
 
-            print >>timing, "run time: ", int(((time.time() - workflow_start_time)/60)), " min, ", (time.time() - workflow_start_time), " sec"
-            print >>timing, "\n"
-
     strat_list += new_strat_list
-
-
+    """
 
 
     """
@@ -942,16 +1021,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     workflow_counter += 1
     if 1 in c.runGenerateMotionStatistics:
-
-        print >>timing, "Starting 'Inserting Generate Motion Statistics Workflow'.."
-        print >>timing, "configuration parameter: 'runGenerateMotionStatistics'"
-        print >>timing, "workflow: motion_power_statistics()"
-
         workflow_bit_id['gen_motion_stats'] = workflow_counter
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
 
             gen_motion_stats = motion_power_statistics('gen_motion_stats_%d' % num_strat)
             gen_motion_stats.inputs.scrubbing_input.threshold = c.scrubbingThreshold
@@ -1008,12 +1079,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(gen_motion_stats, 'outputspec.motion_params', num_strat)
             num_strat += 1
 
-            print >>timing, "run time: ", int(((time.time() - workflow_start_time)/60)), " min, ", (time.time() - workflow_start_time), " sec"
-            print >>timing, "\n"
-
     strat_list += new_strat_list
-
-
 
 
     """
@@ -1024,24 +1090,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     workflow_counter += 1
     if 1 in c.runNuisance:
-
-        print >>timing, "Starting 'Inserting Nuisance Workflow'.."
-        print >>timing, "configuration parameter: 'runNuisance'"
-        print >>timing, "workflow: create_nuisance()"
-
         workflow_bit_id['nuisance'] = workflow_counter
         for strat in strat_list:
 
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
+            if 'FSL' in c.regOption:
+                nuisance = create_nuisance(False, 'nuisance_%d' % num_strat)
+            elif 'ANTS' in c.regOption:
+                nuisance = create_nuisance(True, 'nuisance_%d' % num_strat)
 
-            nuisance = create_nuisance('nuisance_%d' % num_strat)
 
             nuisance.get_node('residuals').iterables = ([('selector', c.Corrections),
                                                          ('compcor_ncomponents', c.nComponents)])
 
             nuisance.inputs.inputspec.harvard_oxford_mask = c.harvardOxfordMask
-
 
             try:
                 node, out_file = strat.get_leaf_properties()
@@ -1098,13 +1159,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             num_strat += 1
 
-            print >>timing, "run time: ", int(((time.time() - workflow_start_time)/60)), " min, ", (time.time() - workflow_start_time), " sec"
-            print >>timing, "\n"
+    elif 'functional_nuisance_residuals' in sub_dict:
+        for strat in strat_list:
+            k = 'functional_nuisance_residuals'
+            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            num_strat += 1
 
     strat_list += new_strat_list
-
-
-
 
     """
     Inserting Median Angle Correction Workflow
@@ -1114,17 +1175,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     workflow_counter += 1
     if 1 in c.runMedianAngleCorrection:
-
-        print >>timing, "Starting 'Inserting Median Angle Correction Workflow'.."
-        print >>timing, "configuration parameter: 'runMedianAngleCorrection'"
-        print >>timing, "workflow: create_median_angle_correction()"
-
         workflow_bit_id['median_angle_corr'] = workflow_counter
         for strat in strat_list:
-
-            print >>timing, "strat: ", strat
-            workflow_start_time = time.time()
-
             median_angle_corr = create_median_angle_correction('median_angle_corr_%d' % num_strat)
 
             median_angle_corr.get_node('median_angle_correct').iterables = ('target_angle_deg', c.targetAngleDeg)
@@ -1155,13 +1207,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
-            print >>timing, "run time: ", int(((time.time() - workflow_start_time)/60)), " min, ", (time.time() - workflow_start_time), " sec"
-            print >>timing, "\n"
-
     strat_list += new_strat_list
-
-
-
 
     """
     Inserting ALFF/fALFF
@@ -1251,7 +1297,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(frequency_filter, 'bandpassed_file', num_strat)
             
             num_strat += 1
-
+    elif 'functional_freq_filtered' in sub_dict:
+        for strat in strat_list:
+            k = 'functional_freq_filtered'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+                        
+            num_strat += 1
+    
     strat_list += new_strat_list
 
 
@@ -1264,6 +1316,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
 
     workflow_counter += 1
+
+    ###
+    if c.runScrubbing == 10:
+        c.runScrubbing = [1, 0]
+
     if 1 in c.runScrubbing:
         workflow_bit_id['scrubbing'] = workflow_counter
         for strat in strat_list:
@@ -1322,25 +1379,21 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
     if 1 in c.runRegisterFuncToMNI:
 
-        print >>timing, "Starting 'Func -> Template Registration'.."
-        print >>timing, "configuration parameter: 'runRegisterFuncToMNI'"
+        for strat in strat_list:
 
-        # Run FSL ApplyWarp
-        if 'fsl' in c.runRegistrationPreprocessing:
+            # Run FSL ApplyWarp
+            if 'FSL' in c.regOption:
 
-            print >>timing, "option 'FSL'"
-
-            for strat in strat_list:
                 func_mni_warp = pe.Node(interface=fsl.ApplyWarp(),
-                                        name='func_mni_warp_%d' % num_strat)
+                                        name='func_mni_fsl_warp_%d' % num_strat)
                 func_mni_warp.inputs.ref_file = c.standardResolutionBrain
     
                 functional_brain_mask_to_standard = pe.Node(interface=fsl.ApplyWarp(),
-                                                            name='functional_brain_mask_to_standard1_%d' % num_strat)
+                                                            name='func_mni_fsl_warp_mask_%d' % num_strat)
                 functional_brain_mask_to_standard.inputs.interp = 'nn'
                 functional_brain_mask_to_standard.inputs.ref_file = c.standard
 
-                mean_functional_warp = pe.Node(interface=fsl.ApplyWarp(), name='mean_func_warp_%d' % num_strat)
+                mean_functional_warp = pe.Node(interface=fsl.ApplyWarp(), name='mean_func_fsl_warp_%d' % num_strat)
                 mean_functional_warp.inputs.ref_file = c.standardResolutionBrain
     
                 try:
@@ -1350,7 +1403,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
                     node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
                     workflow.connect(node, out_file,
-                                     func_mni_warp, 'premat') 
+                                     func_mni_warp, 'premat')
   
                     node, out_file = strat.get_leaf_properties()
                     workflow.connect(node, out_file,
@@ -1391,40 +1444,82 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 num_strat += 1
 
 
-        # Run ANTS apply (WarpImageMultiTransform) instead
-        elif 'ants' in c.runRegistrationPreprocessing:
-
-            for strat in strat_list:
+            # Run ANTS apply (WarpImageMultiTransform) instead
+            elif 'ANTS' in c.regOption:
 
                 # THIS SHOULD ALL BE COMBINED INTO ITS OWN WORKFLOW IN REGISTRATION.PY
+
+                # converts FSL-format .mat affine xfm into ANTS-format .txt
+                # .mat affine comes from Func->Anat registration
+                fsl_reg_2_itk = pe.Node(c3.C3dAffineTool(), name='fsl_reg_2_itk_%d' % num_strat)
+                fsl_reg_2_itk.inputs.itk_transform = True
+                fsl_reg_2_itk.inputs.fsl2ras = True
+
+                # converts FSL-format .mat affine xfm into ANTS-format .txt
+                # .mat affine comes from Func->Anat registration
+                fsl_reg_2_itk_mask = pe.Node(c3.C3dAffineTool(), name='fsl_reg_2_itk_mask_%d' % num_strat)
+                fsl_reg_2_itk_mask.inputs.itk_transform = True
+                fsl_reg_2_itk_mask.inputs.fsl2ras = True
+
+                # converts FSL-format .mat affine xfm into ANTS-format .txt
+                # .mat affine comes from Func->Anat registration
+                fsl_reg_2_itk_mean = pe.Node(c3.C3dAffineTool(), name='fsl_reg_2_itk_mean_%d' % num_strat)
+                fsl_reg_2_itk_mean.inputs.itk_transform = True
+                fsl_reg_2_itk_mean.inputs.fsl2ras = True
+
+
 
                 #collects series of transformations to be applied to the moving images
                 collect_transforms = pe.Node(util.Merge(3), name='collect_transforms_%d' % num_strat)
 
                 #performs series of transformations on moving images
-                warp_images = pe.Node(ants.WarpTimeSeriesImageMultiTransform(), name='warp_images_%d' % num_strat)
+                warp_images = pe.Node(ants.WarpTimeSeriesImageMultiTransform(), name='func_mni_ants_warp_images_%d' % num_strat)
                 warp_images.inputs.reference_image = c.standardResolutionBrain
-                warp_images.inputs.dimension = 3
-
+                warp_images.inputs.dimension = 4
+ 
 
                 #collects series of transformations to be applied to the moving images
                 collect_transforms_mask = pe.Node(util.Merge(3), name='collect_transforms_mask_%d' % num_strat)
 
                 #performs series of transformations on moving images
-                warp_images_mask = pe.Node(ants.WarpTimeSeriesImageMultiTransform(), name='warp_images_mask_%d' % num_strat)
+                warp_images_mask = pe.Node(ants.WarpImageMultiTransform(), name='func_mni_ants_warp_images_mask_%d' % num_strat)
                 warp_images_mask.inputs.reference_image = c.standard
+                warp_images_mask.inputs.use_nearest = True
                 warp_images_mask.inputs.dimension = 3
+                
+                
+                #collects series of transformations to be applied to the moving images
+                collect_transforms_mean = pe.Node(util.Merge(3), name='collect_transforms_mean_%d' % num_strat)
+
+                # mean functional warp
+                mean_functional_ants_warp = pe.Node(ants.WarpImageMultiTransform(), name='mean_func_ants_warp_%d' % num_strat)
+                mean_functional_ants_warp.inputs.reference_image = c.standardResolutionBrain
+                mean_functional_ants_warp.inputs.dimension = 3
 
     
                 try:
-                    # Premat
+
+                    # FUNCTIONAL
+
+                    # convert the .mat from linear Func->Anat to ANTS format
                     node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                    workflow.connect(node, out_file, collect_transforms, 'in3')
+                    workflow.connect(node, out_file, fsl_reg_2_itk, 'transform_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file, fsl_reg_2_itk, 'reference_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('mean_functional')
+                    workflow.connect(node, out_file, fsl_reg_2_itk, 'source_file')
+
+
+                    # Premat from Func->Anat linear reg and bbreg (if bbreg is enabled)
+                    workflow.connect(fsl_reg_2_itk, 'itk_transform', collect_transforms, 'in3')
     
-                    # Field file
+                    # Field file from anatomical nonlinear registration
                     node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
                     workflow.connect(node, out_file, collect_transforms, 'in1')
 
+                    # affine transformation from anatomical registration
                     node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
                     workflow.connect(node, out_file, collect_transforms, 'in2')
 
@@ -1434,21 +1529,68 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     workflow.connect(collect_transforms, 'out', warp_images, 'transformation_series')
 
 
-                    # Premat
+
+                    # FUNCTIONAL MASK
+
+                    # convert the .mat from linear Func->Anat to ANTS format
                     node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                    workflow.connect(node, out_file, collect_transforms_mask, 'in3')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_mask, 'transform_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_mask, 'reference_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_brain_mask')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_mask, 'source_file')
+
+
+                    # Premat from Func->Anat linear reg and bbreg (if bbreg is enabled)
+                    workflow.connect(fsl_reg_2_itk_mask, 'itk_transform', collect_transforms_mask, 'in3')
     
-                    # Field file
+                    # Field file from anatomical nonlinear registration
                     node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
                     workflow.connect(node, out_file, collect_transforms_mask, 'in1')
 
-                    node, out_file = strat.get_node_from_resource_pool('functional_brain_mask')
+                    # affine transformation from anatomical registration
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
                     workflow.connect(node, out_file, collect_transforms_mask, 'in2')
 
                     node, out_file = strat.get_node_from_resource_pool('functional_brain_mask')
                     workflow.connect(node, out_file, warp_images_mask, 'input_image')
 
                     workflow.connect(collect_transforms_mask, 'out', warp_images_mask, 'transformation_series')
+                    
+                    
+                    
+                    # MEAN FUNCTIONAL
+
+                    # convert the .mat from linear Func->Anat to ANTS format
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_mean, 'transform_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_mean, 'reference_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('mean_functional')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_mean, 'source_file')
+
+
+                    # Premat from Func->Anat linear reg and bbreg (if bbreg is enabled)
+                    workflow.connect(fsl_reg_2_itk_mean, 'itk_transform', collect_transforms_mean, 'in3')
+    
+                    # Field file from anatomical nonlinear registration
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file, collect_transforms_mean, 'in1')
+
+                    # affine transformation from anatomical registration
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file, collect_transforms_mean, 'in2')
+
+                    node, out_file = strat.get_node_from_resource_pool('mean_functional')
+                    workflow.connect(node, out_file, mean_functional_ants_warp, 'input_image')
+
+                    workflow.connect(collect_transforms_mean, 'out', mean_functional_ants_warp, 'transformation_series')
+
+
 
     
 
@@ -1457,12 +1599,23 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     raise
     
                 strat.update_resource_pool({'functional_mni':(warp_images, 'output_image'),
-                                            'functional_brain_mask_to_standard':(warp_images_mask, 'output_image')})
+                                            'functional_brain_mask_to_standard':(warp_images_mask, 'output_image'),
+                                            'mean_functional_in_mni':(mean_functional_ants_warp, 'output_image')})
 
                 strat.append_name(warp_images.name)
                 create_log_node(warp_images, 'output_image', num_strat)
             
                 num_strat += 1
+
+    elif 'functional_mni' in sub_dict and 'functional_brain_mask_to_standard' in sub_dict:
+        for strat in strat_list:
+            k = 'functional_mni'
+            strat.append_name(k)
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            k = 'functional_brain_mask_to_standard'
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            
+            num_strat += 1
 
 
 
@@ -1481,7 +1634,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runVMHC:
         for strat in strat_list:
 
-            preproc = create_vmhc()
+            if 'FSL' in c.regOption:
+                preproc = create_vmhc(False)
+            elif 'ANTS' in c.regOption:
+                preproc = create_vmhc(True)
+
             preproc.inputs.inputspec.brain_symmetric = \
                                             c.brainSymmetric
             preproc.inputs.inputspec.symm_standard = \
@@ -1520,6 +1677,10 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 node, out_file = strat.get_node_from_resource_pool('anatomical_reorient')
                 workflow.connect(node, out_file,
                                  vmhc, 'inputspec.reorient')
+
+                node, out_file = strat.get_node_from_resource_pool('mean_functional')
+                workflow.connect(node, out_file,
+                                 vmhc, 'inputspec.mean_functional')
 
             except:
                 print 'Invalid Connection: VMHC:', num_strat, ' resource_pool: ', strat.get_resource_pool()
@@ -1589,53 +1750,131 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runRegisterFuncToMNI and (1 in c.runALFF):
         for strat in strat_list:
 
-            alff_Z_to_standard = pe.Node(interface=fsl.ApplyWarp(),
-                           name='alff_Z_to_standard_%d' % num_strat)
+            if 'FSL' in c.regOption:
 
-            alff_Z_to_standard.inputs.ref_file = c.standard
+                alff_Z_to_standard = pe.Node(interface=fsl.ApplyWarp(),
+                               name='alff_Z_to_standard_%d' % num_strat)
 
-            falff_Z_to_standard = alff_Z_to_standard.clone('falff_Z_to_standard_%d' % num_strat)
-            falff_Z_to_standard.inputs.ref_file = c.standard
+                alff_Z_to_standard.inputs.ref_file = c.standard
 
-            try:
+                falff_Z_to_standard = alff_Z_to_standard.clone('falff_Z_to_standard_%d' % num_strat)
+                falff_Z_to_standard.inputs.ref_file = c.standard
 
-                node, out_file = strat.get_node_from_resource_pool('alff_Z_img')
-                workflow.connect(node, out_file,
-                                 alff_Z_to_standard, 'in_file')
+                try:
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 alff_Z_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('alff_Z_img')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 alff_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'premat')
 
-
-                node, out_file = strat.get_node_from_resource_pool('falff_Z_img')
-                workflow.connect(node, out_file,
-                                 falff_Z_to_standard, 'in_file')
-
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 falff_Z_to_standard, 'premat')
-
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 falff_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'field_file')
 
 
+                    node, out_file = strat.get_node_from_resource_pool('falff_Z_img')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'in_file')
 
-            except:
-                print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'premat')
 
-            strat.update_resource_pool({'alff_Z_to_standard':(alff_Z_to_standard, 'out_file')})
-            strat.update_resource_pool({'falff_Z_to_standard':(falff_Z_to_standard, 'out_file')})
-            strat.append_name(alff_Z_to_standard.name)
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'field_file')
+
+
+
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                strat.update_resource_pool({'alff_Z_to_standard':(alff_Z_to_standard, 'out_file')})
+                strat.update_resource_pool({'falff_Z_to_standard':(falff_Z_to_standard, 'out_file')})
+                strat.append_name(alff_Z_to_standard.name)
             
+                num_strat += 1
+
+
+            elif 'ANTS' in c.regOption:
+
+                alff_Z_to_standard = create_apply_ants_xfm(3, 0, name='alff_Z_to_standard_%d' % num_strat)
+
+                alff_Z_to_standard.inputs.inputspec.warp_reference = c.standard
+
+
+                falff_Z_to_standard = alff_Z_to_standard.clone('falff_Z_to_standard_%d' % num_strat)
+               
+                falff_Z_to_standard.inputs.inputspec.warp_reference = c.standard
+
+
+                try:
+
+                    node, out_file = strat.get_node_from_resource_pool('alff_Z_img')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('alff_Z_img')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'inputspec.conversion_source')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'inputspec.nonlinear_field')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     alff_Z_to_standard, 'inputspec.ants_affine')
+
+
+                    node, out_file = strat.get_node_from_resource_pool('falff_Z_img')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('falff_Z_img')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'inputspec.conversion_source')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'inputspec.nonlinear_field')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     falff_Z_to_standard, 'inputspec.ants_affine')
+
+
+
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                strat.update_resource_pool({'alff_Z_to_standard':(alff_Z_to_standard, 'outputspec.out_file')})
+                strat.update_resource_pool({'falff_Z_to_standard':(falff_Z_to_standard, 'outputspec.out_file')})
+                strat.append_name(alff_Z_to_standard.name)
             
-            num_strat += 1
+                num_strat += 1
+    
     strat_list += new_strat_list
 
 
@@ -1753,33 +1992,126 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runRegisterFuncToMNI and (1 in c.runReHo):
         for strat in strat_list:
 
-            reho_Z_to_standard = pe.Node(interface=fsl.ApplyWarp(),
-                           name='reho_Z_to_standard_%d' % num_strat)
+            if 'FSL' in c.regOption:
 
-            reho_Z_to_standard.inputs.ref_file = c.standard
+                reho_Z_to_standard = pe.Node(interface=fsl.ApplyWarp(),
+                               name='reho_Z_to_standard_%d' % num_strat)
+
+                reho_Z_to_standard.inputs.ref_file = c.standard
 
 
-            try:
+                try:
 
-                node, out_file = strat.get_node_from_resource_pool('reho_Z_img')
-                workflow.connect(node, out_file,
-                                 reho_Z_to_standard, 'in_file')
+                    node, out_file = strat.get_node_from_resource_pool('reho_Z_img')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 reho_Z_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'premat')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 reho_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'field_file')
 
-            except:
-                print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
 
-            strat.update_resource_pool({'reho_Z_to_standard':(reho_Z_to_standard, 'out_file')})
-            strat.append_name(reho_Z_to_standard.name)
-            num_strat += 1
+                strat.update_resource_pool({'reho_Z_to_standard':(reho_Z_to_standard, 'out_file')})
+                strat.append_name(reho_Z_to_standard.name)
+                num_strat += 1
+
+
+            elif 'ANTS' in c.regOption:
+                
+                reho_Z_to_standard = create_apply_ants_xfm(3, 0, name='reho_Z_to_standard_%d' % num_strat)
+
+                reho_Z_to_standard.inputs.inputspec.warp_reference = c.standard
+                '''
+
+                # converts FSL-format .mat affine xfm into ANTS-format .txt
+                # .mat affine comes from Func->Anat registration
+                fsl_reg_2_itk_reho = pe.Node(c3.C3dAffineTool(), name='fsl_reg_2_itk_reho_%d' % num_strat)
+                fsl_reg_2_itk_reho.inputs.itk_transform = True
+                fsl_reg_2_itk_reho.inputs.fsl2ras = True
+
+
+
+                #collects series of transformations to be applied to the moving images
+                collect_transforms_reho = pe.Node(util.Merge(3), name='collect_transforms_reho_%d' % num_strat)
+
+                #performs series of transformations on moving images
+                warp_images_reho = pe.Node(ants.WarpImageMultiTransform(), name='reho_ants_warp_images_%d' % num_strat)
+                warp_images_reho.inputs.reference_image = c.standard
+                warp_images_reho.inputs.dimension = 3
+                '''
+                try:
+                    '''
+                    # MEAN FUNCTIONAL
+
+                    # convert the .mat from linear Func->Anat to ANTS format
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_reho, 'transform_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_reho, 'reference_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('reho_Z_img')
+                    workflow.connect(node, out_file, fsl_reg_2_itk_reho, 'source_file')
+
+
+                    # Premat from Func->Anat linear reg and bbreg (if bbreg is enabled)
+                    workflow.connect(fsl_reg_2_itk_reho, 'itk_transform', collect_transforms_reho, 'in3')
+    
+                    # Field file from anatomical nonlinear registration
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file, collect_transforms_reho, 'in1')
+
+                    # affine transformation from anatomical registration
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file, collect_transforms_reho, 'in2')
+
+                    node, out_file = strat.get_node_from_resource_pool('reho_Z_img')
+                    workflow.connect(node, out_file, warp_images_reho, 'input_image')
+
+                    workflow.connect(collect_transforms_reho, 'out', warp_images_reho, 'transformation_series')
+
+                    '''
+                    node, out_file = strat.get_node_from_resource_pool('reho_Z_img')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'inputspec.nonlinear_field')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'inputspec.ants_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('reho_Z_img')
+                    workflow.connect(node, out_file,
+                                     reho_Z_to_standard, 'inputspec.conversion_source')
+                    
+
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                strat.update_resource_pool({'reho_Z_to_standard':(reho_Z_to_standard, 'outputspec.out_file')})#warp_images_reho, 'output_image')})#reho_Z_to_standard, 'outputspec.out_file')})
+                strat.append_name(reho_Z_to_standard.name)#warp_images_reho.name)#reho_Z_to_standard.name)
+                num_strat += 1
+
+
     strat_list += new_strat_list
 
 
@@ -2134,72 +2466,179 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runRegisterFuncToMNI and (1 in c.runDualReg) and (1 in c.runSpatialRegression):
         for strat in strat_list:
 
-            dr_tempreg_stack_Z_to_standard = pe.Node(interface=fsl.ApplyWarp(),
-                           name='dr_tempreg_stack_Z_to_standard_%d' % num_strat)
-            dr_tempreg_stack_Z_to_standard.inputs.ref_file = c.standard
+            if 'FSL' in c.regOption:
+
+                dr_tempreg_stack_Z_to_standard = pe.Node(interface=fsl.ApplyWarp(),
+                               name='dr_tempreg_stack_Z_to_standard_%d' % num_strat)
+                dr_tempreg_stack_Z_to_standard.inputs.ref_file = c.standard
             
-            dr_tempreg_files_Z_to_standard = pe.MapNode(interface=fsl.ApplyWarp(),
-                                                        name = 'dr_tempreg_files_Z_to_standard_%d' % num_strat,
-                                                        iterfield=['in_file'])
-            dr_tempreg_files_Z_to_standard.inputs.ref_file = c.standard
+                dr_tempreg_files_Z_to_standard = pe.MapNode(interface=fsl.ApplyWarp(),
+                                                            name = 'dr_tempreg_files_Z_to_standard_%d' % num_strat,
+                                                            iterfield=['in_file'])
+                dr_tempreg_files_Z_to_standard.inputs.ref_file = c.standard
             
-            dr_tempreg_stack_to_standard = dr_tempreg_stack_Z_to_standard.clone(name= 'dr_tempreg_stack_to_standard_%d' % num_strat)
+                dr_tempreg_stack_to_standard = dr_tempreg_stack_Z_to_standard.clone(name= 'dr_tempreg_stack_to_standard_%d' % num_strat)
 
 
-            try:
+                try:
                 
-                ##dual tempreg z stack
-                node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_stack')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_stack_Z_to_standard, 'in_file')
+                    ##dual tempreg z stack
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_stack')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_stack_Z_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'premat')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_stack_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'field_file')
                 
-                ####dual tempreg z files
-                node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_files')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_files_Z_to_standard, 'in_file')
+                    ####dual tempreg z files
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_files')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_files_Z_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'premat')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_files_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'field_file')
                 
-                ##dual tempreg stack
-                node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_stack')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_stack_to_standard, 'in_file')
+                    ##dual tempreg stack
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_stack')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_stack_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'premat')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 dr_tempreg_stack_to_standard, 'field_file')                
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'field_file')                
 
 
 
-            except:
-                print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
 
-            strat.update_resource_pool({'dr_tempreg_maps_z_stack_to_standard':(dr_tempreg_stack_Z_to_standard, 'out_file')})
-            strat.update_resource_pool({'dr_tempreg_maps_z_files_to_standard':(dr_tempreg_files_Z_to_standard, 'out_file')})
-            strat.update_resource_pool({'dr_tempreg_maps_stack_to_standard':(dr_tempreg_stack_to_standard, 'out_file')})
-            strat.append_name(dr_tempreg_stack_to_standard.name)
+                strat.update_resource_pool({'dr_tempreg_maps_z_stack_to_standard':(dr_tempreg_stack_Z_to_standard, 'out_file')})
+                strat.update_resource_pool({'dr_tempreg_maps_z_files_to_standard':(dr_tempreg_files_Z_to_standard, 'out_file')})
+                strat.update_resource_pool({'dr_tempreg_maps_stack_to_standard':(dr_tempreg_stack_to_standard, 'out_file')})
+                strat.append_name(dr_tempreg_stack_to_standard.name)
             
+                num_strat += 1
+
+
+            elif 'ANTS' in c.regOption:
+
+                dr_tempreg_stack_Z_to_standard = create_apply_ants_xfm(3, 0, 
+                               name='dr_tempreg_stack_Z_to_standard_%d' % num_strat)
+                dr_tempreg_stack_Z_to_standard.inputs.inputspec.warp_reference = c.standard
+      
+                dr_tempreg_files_Z_to_standard = create_apply_ants_xfm(3, 1,
+                                                            name = 'dr_tempreg_files_Z_to_standard_%d' % num_strat)
+                dr_tempreg_files_Z_to_standard.inputs.inputspec.warp_reference = c.standard
             
-            num_strat += 1
+                dr_tempreg_stack_to_standard = dr_tempreg_stack_Z_to_standard.clone(name= 'dr_tempreg_stack_to_standard_%d' % num_strat)
+
+
+                try:
+
+                    ##dual tempreg z stack
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_stack')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'inputspec.ants_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'inputspec.nonlinear_field')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_stack')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_Z_to_standard, 'inputspec.conversion_source')
+                
+                    ####dual tempreg z files
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_files')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'inputspec.ants_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'inputspec.nonlinear_field')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_files')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_files_Z_to_standard, 'inputspec.conversion_source')
+                
+                    ##dual tempreg stack
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_stack')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'inputspec.ants_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'inputspec.nonlinear_field') 
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_stack')
+                    workflow.connect(node, out_file,
+                                     dr_tempreg_stack_to_standard, 'inputspec.conversion_source')
+
+
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                strat.update_resource_pool({'dr_tempreg_maps_z_stack_to_standard':(dr_tempreg_stack_Z_to_standard, 'outputspec.out_file')})
+                strat.update_resource_pool({'dr_tempreg_maps_z_files_to_standard':(dr_tempreg_files_Z_to_standard, 'outputspec.out_file')})
+                strat.update_resource_pool({'dr_tempreg_maps_stack_to_standard':(dr_tempreg_stack_to_standard, 'outputspec.out_file')})
+                strat.append_name(dr_tempreg_stack_to_standard.name)
+            
+                num_strat += 1
+
+
+
     strat_list += new_strat_list
     
 
@@ -2413,33 +2852,82 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runRegisterFuncToMNI and (1 in c.runSCA) and (1 in c.runVoxelTimeseries):
         for strat in strat_list:
 
-            sca_seed_Z_to_standard = pe.MapNode(interface=fsl.ApplyWarp(),
-                           name='sca_seed_Z_to_standard_%d' % num_strat, iterfield=['in_file'])
+            if 'FSL' in c.regOption:
 
-            sca_seed_Z_to_standard.inputs.ref_file = c.standard
+                sca_seed_Z_to_standard = pe.MapNode(interface=fsl.ApplyWarp(),
+                               name='sca_seed_Z_to_standard_%d' % num_strat, iterfield=['in_file'])
+
+                sca_seed_Z_to_standard.inputs.ref_file = c.standard
 
 
-            try:
+                try:
 
-                node, out_file = strat.get_node_from_resource_pool('sca_seed_Z')
-                workflow.connect(node, out_file,
-                                 sca_seed_Z_to_standard, 'in_file')
+                    node, out_file = strat.get_node_from_resource_pool('sca_seed_Z')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 sca_seed_Z_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'premat')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 sca_seed_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'field_file')
 
-            except:
-                print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
 
-            strat.update_resource_pool({'sca_seed_Z_to_standard':(sca_seed_Z_to_standard, 'out_file')})
-            strat.append_name(sca_seed_Z_to_standard.name)
-            num_strat += 1
+                strat.update_resource_pool({'sca_seed_Z_to_standard':(sca_seed_Z_to_standard, 'out_file')})
+                strat.append_name(sca_seed_Z_to_standard.name)
+                num_strat += 1
+
+
+            elif 'ANTS' in c.regOption:
+
+                sca_seed_Z_to_standard = create_apply_ants_xfm(3, 1,
+                               name='sca_seed_Z_to_standard_%d' % num_strat)
+
+                sca_seed_Z_to_standard.inputs.inputspec.warp_reference = c.standard
+
+
+                try:
+
+                    node, out_file = strat.get_node_from_resource_pool('sca_seed_Z')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'inputspec.ants_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('sca_seed_Z')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'inputspec.conversion_source')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_seed_Z_to_standard, 'inputspec.nonlinear_field')
+
+
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                strat.update_resource_pool({'sca_seed_Z_to_standard':(sca_seed_Z_to_standard, 'outputspec.out_file')})
+                strat.append_name(sca_seed_Z_to_standard.name)
+                num_strat += 1
+
+
+
     strat_list += new_strat_list
 
 
@@ -2454,33 +2942,80 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runRegisterFuncToMNI and (1 in c.runSCA) and (1 in c.runROITimeseries):
         for strat in strat_list:
 
-            sca_roi_Z_to_standard = pe.MapNode(interface=fsl.ApplyWarp(),
-                           name='sca_roi_Z_to_standard_%d' % num_strat, iterfield=['in_file'])
+            if 'FSL' in c.regOption:
 
-            sca_roi_Z_to_standard.inputs.ref_file = c.standard
+                sca_roi_Z_to_standard = pe.MapNode(interface=fsl.ApplyWarp(),
+                               name='sca_roi_Z_to_standard_%d' % num_strat, iterfield=['in_file'])
+
+                sca_roi_Z_to_standard.inputs.ref_file = c.standard
 
 
-            try:
+                try:
 
-                node, out_file = strat.get_node_from_resource_pool('sca_roi_Z')
-                workflow.connect(node, out_file,
-                                 sca_roi_Z_to_standard, 'in_file')
+                    node, out_file = strat.get_node_from_resource_pool('sca_roi_Z')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'in_file')
 
-                node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
-                workflow.connect(node, out_file,
-                                 sca_roi_Z_to_standard, 'premat')
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'premat')
 
-                node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
-                workflow.connect(node, out_file,
-                                 sca_roi_Z_to_standard, 'field_file')
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'field_file')
 
-            except:
-                print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
-                raise
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
 
-            strat.update_resource_pool({'sca_roi_Z_to_standard':(sca_roi_Z_to_standard, 'out_file')})
-            strat.append_name(sca_roi_Z_to_standard.name)
-            num_strat += 1
+                strat.update_resource_pool({'sca_roi_Z_to_standard':(sca_roi_Z_to_standard, 'out_file')})
+                strat.append_name(sca_roi_Z_to_standard.name)
+                num_strat += 1
+
+
+            elif 'ANTS' in c.regOption:
+
+                sca_roi_Z_to_standard = create_apply_ants_xfm(3, 1,
+                               name='sca_roi_Z_to_standard_%d' % num_strat)
+
+                sca_roi_Z_to_standard.inputs.inputspec.warp_reference = c.standard
+
+
+                try:
+
+                    node, out_file = strat.get_node_from_resource_pool('sca_roi_Z')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'inputspec.in_file')
+
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'inputspec.ants_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'inputspec.func_anat_affine')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_to_mni_nonlinear_xfm')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'inputspec.nonlinear_field')
+
+                    node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'inputspec.conversion_reference')
+
+                    node, out_file = strat.get_node_from_resource_pool('sca_roi_Z')
+                    workflow.connect(node, out_file,
+                                     sca_roi_Z_to_standard, 'inputspec.conversion_source')
+
+                except:
+                    print 'Invalid Connection: Register Functional to MNI:', num_strat, ' resource_pool: ', strat.get_resource_pool()
+                    raise
+
+                strat.update_resource_pool({'sca_roi_Z_to_standard':(sca_roi_Z_to_standard, 'outputspec.out_file')})
+                strat.append_name(sca_roi_Z_to_standard.name)
+                num_strat += 1
+
+
     strat_list += new_strat_list
 
 
@@ -2795,9 +3330,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
     num_strat = 0
+
+
+
     """
     Quality Control
     """
+
+
     if 1 in c.generateQualityControlImages:
 
         #register color palettes
@@ -2811,7 +3351,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 os.path.join(CPAC.__path__[0], 'qc', 'red_to_blue.py')), 'red_to_blue')
         register_pallete(os.path.realpath(
                 os.path.join(CPAC.__path__[0], 'qc', 'cyan_to_yellow.py')), 'cyan_to_yellow')
-
+    
         hist = pe.Node(util.Function(input_names=['measure_file',
                                                    'measure'],
                                      output_names=['hist_path'],
@@ -2860,6 +3400,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                                                 function=gen_snr),
                                   name='snr_%d' % num_strat)
 
+                    ###
+                    snr_val = pe.Node(util.Function(input_names=['measure_file'],
+                                                output_names=['snr_storefl'],
+                                                function=cal_snr_val),
+                                  name='snr_val%d' % num_strat)
+
 
                     std_dev_anat.inputs.interp_ = 'trilinear'
 
@@ -2894,6 +3440,10 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     workflow.connect(snr, 'new_fname',
                                      drop_percent, 'measure_file')
 
+                    workflow.connect(snr, 'new_fname',
+                                     snr_val, 'measure_file')   ###
+
+
                     workflow.connect(drop_percent, 'modified_measure_file',
                                      montage_snr, 'inputspec.overlay')
 
@@ -2903,7 +3453,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
                     strat.update_resource_pool({'qc___snr_a': (montage_snr, 'outputspec.axial_png'),
                                                 'qc___snr_s': (montage_snr, 'outputspec.sagittal_png'),
-                                                'qc___snr_hist': (hist_, 'hist_path')})
+                                                'qc___snr_hist': (hist_, 'hist_path'),
+                                                'qc___snr_val': (snr_val, 'snr_storefl')})   ###
                     if not 3 in qc_montage_id_a:
                         qc_montage_id_a[3] = 'snr_a'
                         qc_montage_id_s[3] = 'snr_s'
@@ -2980,7 +3531,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
                 montage_skull = create_montage('montage_skull_%d' % num_strat,
-                                    'green', 'skull_vis')
+                                    'red', 'skull_vis')   ###
 
                 skull_edge = pe.Node(util.Function(input_names=['file_'],
                                                    output_names=['new_fname'],
@@ -3008,6 +3559,34 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
                 print 'Cannot generate QC montages for Skull Stripping: Resources Not Found'
                 raise
+
+
+            ### make QC montages for mni normalized anatomical image
+
+            try:
+                mni_anat_underlay, out_file = strat.get_node_from_resource_pool('mni_normalized_anatomical')
+
+                montage_mni_anat = create_montage('montage_mni_anat_%d' % num_strat,
+                                    'red', 'mni_anat')  
+
+                workflow.connect(mni_anat_underlay, out_file,
+                                 montage_mni_anat, 'inputspec.underlay')
+
+                montage_mni_anat.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
+
+                strat.update_resource_pool({'qc___mni_normalized_anatomical_a': (montage_mni_anat, 'outputspec.axial_png'),
+                                            'qc___mni_normalized_anatomical_s': (montage_mni_anat, 'outputspec.sagittal_png')})
+
+                if not 6 in qc_montage_id_a:
+                        qc_montage_id_a[6] = 'mni_normalized_anatomical_a'
+                        qc_montage_id_s[6] = 'mni_normalized_anatomical_s'
+
+            except:
+
+                print 'Cannot generate QC montages for mni normalized anatomical: Resources Not Found'
+                raise
+
+
 
             # make QC montages for CSF WM GM
 
@@ -3051,7 +3630,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 m_f_a, out_file_mfa = strat.get_node_from_resource_pool('mean_functional_in_anat')
 
                 montage_anat = create_montage('montage_anat_%d' % num_strat,
-                                    'green', 't1_edge_on_mean_func_in_t1')
+                                    'red', 't1_edge_on_mean_func_in_t1')   ###
 
                 anat_edge = pe.Node(util.Function(input_names=['file_'],
                                                    output_names=['new_fname'],
@@ -3086,7 +3665,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 m_f_i, out_file = strat.get_node_from_resource_pool('mean_functional_in_mni')
 
                 montage_mfi = create_montage('montage_mfi_%d' % num_strat,
-                                    'green', 'MNI_edge_on_mean_func_mni')
+                                    'red', 'MNI_edge_on_mean_func_mni')   ###
 
 #                  MNI_edge = pe.Node(util.Function(input_names=['file_'],
 #                                                     output_names=['new_fname'],
@@ -3611,10 +4190,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
     ###################### end of workflow ###########
+
+
     try:
         workflow.write_graph(graph2use='orig')
     except:
         pass
+
+
     """
     Datasink
     """
@@ -3692,13 +4275,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             #if running multiple pipelines with gui, need to change this in future
             p_name = None
 
-        
-        print strat_tag, ' ~~~~~ ', hash_val, ' ~~~~~~ ', pipeline_id
+        print 'strat_tag,  ~~~~~ , hash_val,  ~~~~~~ , pipeline_id: ', strat_tag, ' ~~~~~ ', hash_val, ' ~~~~~~ ', pipeline_id
         pip_ids.append(pipeline_id)
         wf_names.append(strat.get_name())
 
         for key in sorted(rp.keys()):
-
 
             ds = pe.Node(nio.DataSink(), name='sinker_%d' % sink_idx)
             ds.inputs.base_directory = c.outputDirectory
@@ -3712,6 +4293,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             node, out_file = rp[key]
             workflow.connect(node, out_file,
                              ds, key)
+            print 'node, out_file, key: ', node, out_file, key
 
             if 1 in c.runSymbolicLinks:
 
@@ -3720,7 +4302,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                                         output_names=[],
                                         function=prepare_symbolic_links),
                                         name='link_%d' % sink_idx)
-                                
+               
                 link_node.inputs.strategies = strategies
                 link_node.inputs.subject_id = subject_id
                 link_node.inputs.pipeline_id = 'pipeline_%s' % (pipeline_id)
@@ -3728,12 +4310,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
                 workflow.connect(ds, 'out_file', link_node, 'in_file')
             sink_idx += 1
+            print 'sink index: ', sink_idx
 
         d_name = os.path.join(c.outputDirectory, ds.inputs.container)
         if not os.path.exists(d_name):
             os.makedirs(d_name)
-
-
+        
 
         try:
             G = nx.DiGraph()
@@ -3752,8 +4334,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     create_log_template(pip_ids, wf_names, scan_ids, subject_id, log_dir)
 
+
+
     workflow.run(plugin='MultiProc', plugin_args={'n_procs': c.numCoresPerSubject})
-    '''
+
+    ###workflow.run(plugin='Linear')
+
+    """
     try:
 
         workflow.run(plugin='MultiProc', plugin_args={'n_procs': c.numCoresPerSubject})
@@ -3764,8 +4351,9 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         print ""
         print e
         print type(e)
-        raise Exception
-    '''
+        ###raise Exception
+    """
+
     for count, id in enumerate(pip_ids):
         for scan in scan_ids:
             create_log_node(None, None, count, scan).run()
@@ -3782,6 +4370,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             f_path = os.path.join(f_path, 'qc_files_here')
 
             generateQCPages(f_path, qc_montage_id_a, qc_montage_id_s, qc_plot_id, qc_hist_id)
+
+
+        ### Automatically generate QC index page
+        create_all_qc.run(c.outputDirectory)
+
 
 
     if c.removeWorkingDir:
