@@ -3535,174 +3535,184 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
             # make QC montages for Skull Stripping Visualization
+            
+            if 1 in c.runAnatomicalPreprocessing:
 
-            try:
-                anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
-                skull, out_file_s = strat.get_node_from_resource_pool('anatomical_reorient')
-
-
-                montage_skull = create_montage('montage_skull_%d' % num_strat,
-                                    'red', 'skull_vis')   ###
-
-                skull_edge = pe.Node(util.Function(input_names=['file_'],
-                                                   output_names=['new_fname'],
-                                                   function=make_edge),
-                                     name='skull_edge_%d' % num_strat)
+                try:
+                    anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    skull, out_file_s = strat.get_node_from_resource_pool('anatomical_reorient')
 
 
-                workflow.connect(skull, out_file_s,
-                                 skull_edge, 'file_')
+                    montage_skull = create_montage('montage_skull_%d' % num_strat,
+                                        'red', 'skull_vis')   ###
 
-                workflow.connect(anat_underlay, out_file,
-                                 montage_skull, 'inputspec.underlay')
+                    skull_edge = pe.Node(util.Function(input_names=['file_'],
+                                                       output_names=['new_fname'],
+                                                       function=make_edge),
+                                         name='skull_edge_%d' % num_strat)
 
-                workflow.connect(skull_edge, 'new_fname',
-                                 montage_skull, 'inputspec.overlay')
 
-                strat.update_resource_pool({'qc___skullstrip_vis_a': (montage_skull, 'outputspec.axial_png'),
-                                            'qc___skullstrip_vis_s': (montage_skull, 'outputspec.sagittal_png')})
+                    workflow.connect(skull, out_file_s,
+                                     skull_edge, 'file_')
 
-                if not 1 in qc_montage_id_a:
-                        qc_montage_id_a[1] = 'skullstrip_vis_a'
-                        qc_montage_id_s[1] = 'skullstrip_vis_s'
+                    workflow.connect(anat_underlay, out_file,
+                                     montage_skull, 'inputspec.underlay')
 
-            except:
+                    workflow.connect(skull_edge, 'new_fname',
+                                     montage_skull, 'inputspec.overlay')
 
-                print 'Cannot generate QC montages for Skull Stripping: Resources Not Found'
-                raise
+                    strat.update_resource_pool({'qc___skullstrip_vis_a': (montage_skull, 'outputspec.axial_png'),
+                                                'qc___skullstrip_vis_s': (montage_skull, 'outputspec.sagittal_png')})
+
+                    if not 1 in qc_montage_id_a:
+                            qc_montage_id_a[1] = 'skullstrip_vis_a'
+                            qc_montage_id_s[1] = 'skullstrip_vis_s'
+
+                except:
+
+                    print 'Cannot generate QC montages for Skull Stripping: Resources Not Found'
+                    raise
 
 
             ### make QC montages for mni normalized anatomical image
+            
+            if 1 in c.runRegistrationPreprocessing:
+            
+                try:
+                    mni_anat_underlay, out_file = strat.get_node_from_resource_pool('mni_normalized_anatomical')
 
-            try:
-                mni_anat_underlay, out_file = strat.get_node_from_resource_pool('mni_normalized_anatomical')
+                    montage_mni_anat = create_montage('montage_mni_anat_%d' % num_strat,
+                                        'red', 'mni_anat')  
 
-                montage_mni_anat = create_montage('montage_mni_anat_%d' % num_strat,
-                                    'red', 'mni_anat')  
+                    workflow.connect(mni_anat_underlay, out_file,
+                                     montage_mni_anat, 'inputspec.underlay')
 
-                workflow.connect(mni_anat_underlay, out_file,
-                                 montage_mni_anat, 'inputspec.underlay')
+                    montage_mni_anat.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
 
-                montage_mni_anat.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
+                    strat.update_resource_pool({'qc___mni_normalized_anatomical_a': (montage_mni_anat, 'outputspec.axial_png'),
+                                                'qc___mni_normalized_anatomical_s': (montage_mni_anat, 'outputspec.sagittal_png')})
 
-                strat.update_resource_pool({'qc___mni_normalized_anatomical_a': (montage_mni_anat, 'outputspec.axial_png'),
-                                            'qc___mni_normalized_anatomical_s': (montage_mni_anat, 'outputspec.sagittal_png')})
+                    if not 6 in qc_montage_id_a:
+                            qc_montage_id_a[6] = 'mni_normalized_anatomical_a'
+                            qc_montage_id_s[6] = 'mni_normalized_anatomical_s'
 
-                if not 6 in qc_montage_id_a:
-                        qc_montage_id_a[6] = 'mni_normalized_anatomical_a'
-                        qc_montage_id_s[6] = 'mni_normalized_anatomical_s'
+                except:
 
-            except:
-
-                print 'Cannot generate QC montages for mni normalized anatomical: Resources Not Found'
-                raise
+                    print 'Cannot generate QC montages for mni normalized anatomical: Resources Not Found'
+                    raise
 
 
 
             # make QC montages for CSF WM GM
+            
+            if 1 in c.runSegmentationPreprocessing:
+            
+                try:
+                    anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    csf_overlay, out_file_csf = strat.get_node_from_resource_pool('anatomical_csf_mask')
+                    wm_overlay, out_file_wm = strat.get_node_from_resource_pool('anatomical_wm_mask')
+                    gm_overlay, out_file_gm = strat.get_node_from_resource_pool('anatomical_gm_mask')
 
-            try:
-                anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
-                csf_overlay, out_file_csf = strat.get_node_from_resource_pool('anatomical_csf_mask')
-                wm_overlay, out_file_wm = strat.get_node_from_resource_pool('anatomical_wm_mask')
-                gm_overlay, out_file_gm = strat.get_node_from_resource_pool('anatomical_gm_mask')
+                    montage_csf_gm_wm = create_montage_gm_wm_csf('montage_csf_gm_wm_%d' % num_strat,
+                                        'montage_csf_gm_wm')
 
-                montage_csf_gm_wm = create_montage_gm_wm_csf('montage_csf_gm_wm_%d' % num_strat,
-                                    'montage_csf_gm_wm')
+                    workflow.connect(anat_underlay, out_file,
+                                     montage_csf_gm_wm, 'inputspec.underlay')
 
-                workflow.connect(anat_underlay, out_file,
-                                 montage_csf_gm_wm, 'inputspec.underlay')
+                    workflow.connect(csf_overlay, out_file_csf,
+                                     montage_csf_gm_wm, 'inputspec.overlay_csf')
 
-                workflow.connect(csf_overlay, out_file_csf,
-                                 montage_csf_gm_wm, 'inputspec.overlay_csf')
+                    workflow.connect(wm_overlay, out_file_wm,
+                                     montage_csf_gm_wm, 'inputspec.overlay_wm')
 
-                workflow.connect(wm_overlay, out_file_wm,
-                                 montage_csf_gm_wm, 'inputspec.overlay_wm')
+                    workflow.connect(gm_overlay, out_file_gm,
+                                     montage_csf_gm_wm, 'inputspec.overlay_gm')
 
-                workflow.connect(gm_overlay, out_file_gm,
-                                 montage_csf_gm_wm, 'inputspec.overlay_gm')
+                    strat.update_resource_pool({'qc___csf_gm_wm_a': (montage_csf_gm_wm, 'outputspec.axial_png'),
+                                                'qc___csf_gm_wm_s': (montage_csf_gm_wm, 'outputspec.sagittal_png')})
 
-                strat.update_resource_pool({'qc___csf_gm_wm_a': (montage_csf_gm_wm, 'outputspec.axial_png'),
-                                            'qc___csf_gm_wm_s': (montage_csf_gm_wm, 'outputspec.sagittal_png')})
+                    if not 2 in qc_montage_id_a:
+                            qc_montage_id_a[2] = 'csf_gm_wm_a'
+                            qc_montage_id_s[2] = 'csf_gm_wm_s'
 
-                if not 2 in qc_montage_id_a:
-                        qc_montage_id_a[2] = 'csf_gm_wm_a'
-                        qc_montage_id_s[2] = 'csf_gm_wm_s'
-
-            except:
-                print 'Cannot generate QC montages for WM GM CSF masks: Resources Not Found'
-                raise
+                except:
+                    print 'Cannot generate QC montages for WM GM CSF masks: Resources Not Found'
+                    raise
 
 
             # make QC montage for Mean Functional in T1 with T1 edge
+            
+            if 1 in c.runRegisterFuncToAnat:
+            
+                try:
+                    anat, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                    m_f_a, out_file_mfa = strat.get_node_from_resource_pool('mean_functional_in_anat')
 
-            try:
-                anat, out_file = strat.get_node_from_resource_pool('anatomical_brain')
-                m_f_a, out_file_mfa = strat.get_node_from_resource_pool('mean_functional_in_anat')
+                    montage_anat = create_montage('montage_anat_%d' % num_strat,
+                                        'red', 't1_edge_on_mean_func_in_t1')   ###
 
-                montage_anat = create_montage('montage_anat_%d' % num_strat,
-                                    'red', 't1_edge_on_mean_func_in_t1')   ###
+                    anat_edge = pe.Node(util.Function(input_names=['file_'],
+                                                       output_names=['new_fname'],
+                                                       function=make_edge),
+                                         name='anat_edge_%d' % num_strat)
 
-                anat_edge = pe.Node(util.Function(input_names=['file_'],
-                                                   output_names=['new_fname'],
-                                                   function=make_edge),
-                                     name='anat_edge_%d' % num_strat)
-
-                workflow.connect(anat, out_file,
-                                 anat_edge, 'file_')
-
-
-                workflow.connect(m_f_a, out_file_mfa,
-                                 montage_anat, 'inputspec.underlay')
-
-                workflow.connect(anat_edge, 'new_fname',
-                                 montage_anat, 'inputspec.overlay')
-
-                strat.update_resource_pool({'qc___mean_func_with_t1_edge_a': (montage_anat, 'outputspec.axial_png'),
-                                            'qc___mean_func_with_t1_edge_s': (montage_anat, 'outputspec.sagittal_png')})
-
-                if not 4 in qc_montage_id_a:
-                        qc_montage_id_a[4] = 'mean_func_with_t1_edge_a'
-                        qc_montage_id_s[4] = 'mean_func_with_t1_edge_s'
+                    workflow.connect(anat, out_file,
+                                     anat_edge, 'file_')
 
 
-            except:
-                print 'Cannot generate QC montages for Mean Functional in T1 with T1 edge: Resources Not Found'
-                raise
+                    workflow.connect(m_f_a, out_file_mfa,
+                                     montage_anat, 'inputspec.underlay')
+
+                    workflow.connect(anat_edge, 'new_fname',
+                                     montage_anat, 'inputspec.overlay')
+
+                    strat.update_resource_pool({'qc___mean_func_with_t1_edge_a': (montage_anat, 'outputspec.axial_png'),
+                                                'qc___mean_func_with_t1_edge_s': (montage_anat, 'outputspec.sagittal_png')})
+
+                    if not 4 in qc_montage_id_a:
+                            qc_montage_id_a[4] = 'mean_func_with_t1_edge_a'
+                            qc_montage_id_s[4] = 'mean_func_with_t1_edge_s'
+
+
+                except:
+                    print 'Cannot generate QC montages for Mean Functional in T1 with T1 edge: Resources Not Found'
+                    raise
 
             # make QC montage for Mean Functional in MNI with MNI edge
+            
+            if 1 in c.runGenerateMotionStatistics:
+            
+                try:
+                    m_f_i, out_file = strat.get_node_from_resource_pool('mean_functional_in_mni')
 
-            try:
-                m_f_i, out_file = strat.get_node_from_resource_pool('mean_functional_in_mni')
+                    montage_mfi = create_montage('montage_mfi_%d' % num_strat,
+                                        'red', 'MNI_edge_on_mean_func_mni')   ###
 
-                montage_mfi = create_montage('montage_mfi_%d' % num_strat,
-                                    'red', 'MNI_edge_on_mean_func_mni')   ###
+    #                  MNI_edge = pe.Node(util.Function(input_names=['file_'],
+    #                                                     output_names=['new_fname'],
+    #                                                     function=make_edge),
+    #                                       name='MNI_edge_%d' % num_strat)
+    #                  #MNI_edge.inputs.file_ = c.standardResolutionBrain
+    #                 workflow.connect(MNI_edge, 'new_fname',
+    #                                  montage_mfi, 'inputspec.overlay')
 
-#                  MNI_edge = pe.Node(util.Function(input_names=['file_'],
-#                                                     output_names=['new_fname'],
-#                                                     function=make_edge),
-#                                       name='MNI_edge_%d' % num_strat)
-#                  #MNI_edge.inputs.file_ = c.standardResolutionBrain
-#                 workflow.connect(MNI_edge, 'new_fname',
-#                                  montage_mfi, 'inputspec.overlay')
+                    workflow.connect(m_f_i, out_file,
+                                     montage_mfi, 'inputspec.underlay')
 
-                workflow.connect(m_f_i, out_file,
-                                 montage_mfi, 'inputspec.underlay')
-
-                montage_mfi.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
-
-
-                strat.update_resource_pool({'qc___mean_func_with_mni_edge_a': (montage_mfi, 'outputspec.axial_png'),
-                                            'qc___mean_func_with_mni_edge_s': (montage_mfi, 'outputspec.sagittal_png')})
-
-                if not 5 in qc_montage_id_a:
-                        qc_montage_id_a[5] = 'mean_func_with_mni_edge_a'
-                        qc_montage_id_s[5] = 'mean_func_with_mni_edge_s'
+                    montage_mfi.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
 
 
-            except:
-                print 'Cannot generate QC montages for Mean Functional in MNI with MNI edge: Resources Not Found'
-                raise
+                    strat.update_resource_pool({'qc___mean_func_with_mni_edge_a': (montage_mfi, 'outputspec.axial_png'),
+                                                'qc___mean_func_with_mni_edge_s': (montage_mfi, 'outputspec.sagittal_png')})
+
+                    if not 5 in qc_montage_id_a:
+                            qc_montage_id_a[5] = 'mean_func_with_mni_edge_a'
+                            qc_montage_id_s[5] = 'mean_func_with_mni_edge_s'
+
+
+                except:
+                    print 'Cannot generate QC montages for Mean Functional in MNI with MNI edge: Resources Not Found'
+                    raise
 
 
             # make QC montages for SCA ROI Smoothed Derivative
