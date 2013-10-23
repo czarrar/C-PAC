@@ -34,7 +34,7 @@ from CPAC.timeseries import create_surface_registration, get_voxel_timeseries, \
                             get_spatial_map_timeseries
 from CPAC.network_centrality import create_resting_state_graphs, get_zscore
 from CPAC.utils.datasource import *
-from CPAC.pipeline.tests.datasource import *    # TEMP ADDITIONS
+from CPAC.pipeline.datasource import *    # TEMP ADDITIONS
 from CPAC.utils import Configuration, create_all_qc   ### no create_log_template here, move in CPAC/utils/utils.py
 from CPAC.qc.qc import create_montage, create_montage_gm_wm_csf
 from CPAC.qc.utils import register_pallete, make_edge, drop_percent_, \
@@ -243,9 +243,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         
         for strat in strat_list:
             k = 'anatomical_brain'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow, extra=True)
             k = 'anatomical_reorient'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow)
             
             num_strat += 1
     
@@ -376,12 +378,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     elif 'anatomical_to_mni_nonlinear_xfm' in sub_dict and 'mni_normalized_anatomical' in sub_dict:
         for strat in strat_list:
             k = 'mni_normalized_anatomical'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow, extra=True)
             k = 'anatomical_to_mni_nonlinear_xfm'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow)
             if 'ANTS' in c.regOption:
                 k = 'ants_affine_xfm'
-                strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+                strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                          log_dir, workflow)
             
             num_strat += 1
 
@@ -607,11 +612,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         
         for strat in strat_list:
             k = 'preprocessed'
-            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                              log_dir, workflow, extra=True)
             k = 'mean_functional'
-            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                              log_dir, workflow)
             k = 'functional_brain_mask'
-            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                              log_dir, workflow)
     
     strat_list += new_strat_list
 
@@ -832,7 +840,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     elif 'functional_to_anat_linear_xfm' in sub_dict:
         for strat in strat_list:
             k = 'functional_to_anat_linear_xfm'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow, extra=True)
             
             num_strat += 1
     
@@ -1162,7 +1171,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     elif 'functional_nuisance_residuals' in sub_dict:
         for strat in strat_list:
             k = 'functional_nuisance_residuals'
-            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow, extra=True)
             num_strat += 1
 
     strat_list += new_strat_list
@@ -1300,7 +1310,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     elif 'functional_freq_filtered' in sub_dict:
         for strat in strat_list:
             k = 'functional_freq_filtered'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, extra=True)
+            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow, extra=True)
                         
             num_strat += 1
     
@@ -1611,9 +1622,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         for strat in strat_list:
             k = 'functional_mni'
             strat.append_name(k)
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow)
             k = 'functional_brain_mask_to_standard'
-            strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat)
+            strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
+                                      log_dir, workflow)
             
             num_strat += 1
 
@@ -1932,15 +1945,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             strat.append_name(alff_Z_smooth.name)
             strat.update_resource_pool({'alff_Z_smooth':(alff_Z_smooth, 'out_file')})
             strat.update_resource_pool({'falff_Z_smooth':(falff_Z_smooth, 'out_file')})
-            
   
-            if c.runRegisterFuncToMNI:
+            if 1 in c.runRegisterFuncToMNI:
 
                 alff_Z_to_standard_smooth = alff_Z_smooth.clone('alff_Z_to_standard_smooth_%d' % num_strat)
                 falff_Z_to_standard_smooth = alff_Z_smooth.clone('falff_Z_to_standard_smooth_%d' % num_strat)
 
                 try:
-
 
                     node, out_file = strat.get_node_from_resource_pool('alff_Z_to_standard')
                     workflow.connect(node, out_file,
