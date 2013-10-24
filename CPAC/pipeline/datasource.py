@@ -30,7 +30,7 @@ def create_anat_datasource(path, wf_name='anat_datasource'):
                                 fields=['subject', 'anat'],
                                 mandatory_inputs=True),
                         name='inputnode')
-    inputnode.anat = path
+    inputnode.inputs.anat = path
     
     outputnode = pe.Node(util.IdentityInterface(fields=['subject',
                                                      'anat' ]),
@@ -77,11 +77,11 @@ def add_func_resource(name, paths, subject_id, strat, num_strat, log_dir, workfl
     # - subject
     # - scan (key for the scan)
     # - rest (actual data)
-    
-    strat.append_name(funcFlow.name)
-    strat.set_leaf_properties(funcFlow, 'outputspec.rest')
     strat.update_resource_pool({name:(funcFlow, 'outputspec.rest')})
     
-    create_log_node(funcFlow, 'outputspec.rest', num_strat, log_dir, workflow)
+    if extra:
+        strat.append_name(funcFlow.name)
+        strat.set_leaf_properties(funcFlow, 'outputspec.rest')    
+        create_log_node(funcFlow, 'outputspec.rest', num_strat, log_dir, workflow)
     
     return strat
