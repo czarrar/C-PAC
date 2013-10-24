@@ -193,8 +193,10 @@ def prep_resources(output_path, pipelines):
     for pipeline in sorted(pipelines):
 
         pip_path = os.path.join(output_path, pipeline)
-
-
+        
+        print output_path
+        print pipeline
+        print pip_path
         subjects = os.listdir(pip_path)
         subjects = [subj for subj in subjects if os.path.isdir(os.path.join(pip_path, subj))]
 
@@ -475,7 +477,7 @@ def make_group_htmls(output_path):
 
     files_ = []
     pipelines = os.listdir(output_path)
-    pipelines = [pipeline for pipeline in pipelines if 'pipeline_' in pipeline]
+    pipelines = [pipeline for pipeline in pipelines if 'pipeline_' == pipeline[:9]]
     prep_resources(output_path, pipelines)
 #    organize_resources(output_path, pipelines)
 
