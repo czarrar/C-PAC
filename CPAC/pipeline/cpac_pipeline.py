@@ -1619,11 +1619,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 num_strat += 1
 
     elif 'functional_mni' in sub_dict and 'functional_brain_mask_to_standard' in sub_dict:
+        
+        c.applyRegisterFuncToMNI = [1]
+        
         for strat in strat_list:
             k = 'functional_mni'
-            strat.append_name(k)
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow)
+            node, out_file = strat.get_node_from_resource_pool(k)
+            strat.append_name(node.name)
             k = 'functional_brain_mask_to_standard'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow)
@@ -1760,7 +1764,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
 
 
-    if 1 in c.runRegisterFuncToMNI and (1 in c.runALFF):
+    if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runALFF):
         for strat in strat_list:
 
             if 'FSL' in c.regOption:
@@ -1834,7 +1838,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     node, out_file = strat.get_node_from_resource_pool('functional_to_anat_linear_xfm')
                     workflow.connect(node, out_file,
                                      alff_Z_to_standard, 'inputspec.func_anat_affine')
-
+                    
                     node, out_file = strat.get_node_from_resource_pool('anatomical_brain')
                     workflow.connect(node, out_file,
                                      alff_Z_to_standard, 'inputspec.conversion_reference')
@@ -1946,7 +1950,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             strat.update_resource_pool({'alff_Z_smooth':(alff_Z_smooth, 'out_file')})
             strat.update_resource_pool({'falff_Z_smooth':(falff_Z_smooth, 'out_file')})
   
-            if 1 in c.runRegisterFuncToMNI:
+            if 1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI:
 
                 alff_Z_to_standard_smooth = alff_Z_smooth.clone('alff_Z_to_standard_smooth_%d' % num_strat)
                 falff_Z_to_standard_smooth = alff_Z_smooth.clone('falff_Z_to_standard_smooth_%d' % num_strat)
@@ -2000,7 +2004,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
 
 
-    if 1 in c.runRegisterFuncToMNI and (1 in c.runReHo):
+    if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI)and (1 in c.runReHo):
         for strat in strat_list:
 
             if 'FSL' in c.regOption:
@@ -2157,7 +2161,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             strat.append_name(reho_Z_smooth.name)
             strat.update_resource_pool({'reho_Z_smooth':(reho_Z_smooth, 'out_file')})
 
-            if 1 in c.runRegisterFuncToMNI:
+            if 1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI:
 
                 reho_Z_to_standard_smooth = reho_Z_smooth.clone('reho_Z_to_standard_smooth_%d' % num_strat)
 
@@ -2474,7 +2478,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
 
 
-    if 1 in c.runRegisterFuncToMNI and (1 in c.runDualReg) and (1 in c.runSpatialRegression):
+    if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runDualReg) and (1 in c.runSpatialRegression):
         for strat in strat_list:
 
             if 'FSL' in c.regOption:
@@ -2860,7 +2864,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
 
 
-    if 1 in c.runRegisterFuncToMNI and (1 in c.runSCA) and (1 in c.runVoxelTimeseries):
+    if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runSCA) and (1 in c.runVoxelTimeseries):
         for strat in strat_list:
 
             if 'FSL' in c.regOption:
@@ -2950,7 +2954,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     num_strat = 0
 
 
-    if 1 in c.runRegisterFuncToMNI and (1 in c.runSCA) and (1 in c.runROITimeseries):
+    if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runSCA) and (1 in c.runROITimeseries):
         for strat in strat_list:
 
             if 'FSL' in c.regOption:
@@ -3063,7 +3067,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             strat.append_name(sca_seed_Z_smooth.name)
             strat.update_resource_pool({'sca_seed_Z_smooth':(sca_seed_Z_smooth, 'out_file')})
 
-            if 1 in c.runRegisterFuncToMNI:
+            if 1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI:
 
                 sca_seed_Z_to_standard_smooth = sca_seed_Z_smooth.clone('sca_seed_Z_to_standard_smooth_%d' % num_strat)
 
@@ -3121,7 +3125,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             strat.append_name(sca_roi_Z_smooth.name)
             strat.update_resource_pool({'sca_roi_Z_smooth':(sca_roi_Z_smooth, 'out_file')})
 
-            if 1 in c.runRegisterFuncToMNI:
+            if 1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI:
 
                 sca_roi_Z_to_standard_smooth = sca_roi_Z_smooth.clone('sca_roi_Z_to_standard_smooth_%d' % num_strat)
 
@@ -4386,7 +4390,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
         for pip_id in pip_ids:
 
-            f_path = os.path.join(os.path.join(c.outputDirectory, 'pipeline_' + pip_id), subject_id)
+            f_path = os.path.join(os.path.join(c.outputDirectory, 'pipeline_' + str(pip_id)), subject_id)
 
             f_path = os.path.join(f_path, 'qc_files_here')
 
