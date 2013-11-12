@@ -2,7 +2,6 @@ import threading
 global_lock = threading.Lock()
 
 
-
 files_folders_wf = {
     'anatomical_brain': 'anat',
     'qc': 'qc',
@@ -13,6 +12,7 @@ files_folders_wf = {
     'anatomical_gm_mask': 'anat',
     'anatomical_csf_mask': 'anat',
     'anatomical_wm_mask': 'anat',
+    'ants_affine_xfm': 'anat',
     'mean_functional': 'func',
     'functional_preprocessed_mask': 'func',
     'functional_to_spatial_map': 'func',
