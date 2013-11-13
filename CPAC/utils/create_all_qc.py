@@ -511,8 +511,14 @@ def make_group_htmls(output_path):
                 for file_ in sorted(html_files):
 
                     html_ = os.path.join(pip_path, file_)
-                    meanFD, meanDvars = get_power_params(qc_path, file_)
-                    mean_rms, max_rms = get_motion_params(qc_path, file_)
+                    try:
+                        meanFD, meanDvars = get_power_params(qc_path, file_)
+                        mean_rms, max_rms = get_motion_params(qc_path, file_)
+                    except:
+                        meanFD      = 'NA'
+                        meanDvars   = 'NA'
+                        mean_rms    = 'NA'
+                        max_rms     = 'NA'
                     populate_htmls(html_, os.path.join(qc_path, file_), subj, \
                     subj_path, meanFD, meanDvars, mean_rms, max_rms)
                     if not html_ in files_:

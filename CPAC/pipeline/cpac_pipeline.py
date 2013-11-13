@@ -176,9 +176,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         strat_initial = strategy()
 
         if gather_anat == 1:
-            flow = create_anat_datasource()
+            flow = create_anat_datasource(sub_dict['anat'])
             flow.inputs.inputnode.subject = subject_id
-            flow.inputs.inputnode.anat = sub_dict['anat']
 
             anat_flow = flow.clone('anat_gather_%d' % num_strat)
 
