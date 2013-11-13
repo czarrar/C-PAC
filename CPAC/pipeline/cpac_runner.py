@@ -154,45 +154,60 @@ def run_sge_jobs(c, config_file, strategies_file, subject_list_file, p_name):
         sublist = yaml.load(open(os.path.realpath(subject_list_file), 'r'))
     except:
         raise Exception ("Subject list is not in proper YAML format. Please check your file")
-
+    
     shell = commands.getoutput('echo $SHELL')
-
-    temp_files_dir = os.path.join(os.getcwd(), 'cluster_temp_files')
-    subject_bash_file = os.path.join(temp_files_dir, 'submit_%s.sge' % str(strftime("%Y_%m_%d_%H_%M_%S")))
-    f = open(subject_bash_file, 'w')
-    print >>f, '#! %s' % shell
-    print >>f, '#$ -cwd'
-    print >>f, '#$ -S %s' % shell
-    print >>f, '#$ -V'
-    print >>f, '#$ -t 1-%d' % len(sublist)
-    print >>f, '#$ -q %s' % c.queue
-    print >>f, '#$ -pe %s %d' % (c.parallelEnvironment, c.numCoresPerSubject)
-    print >>f, '#$ -e %s' % os.path.join(temp_files_dir, 'c-pac_%s.err' % str(strftime("%Y_%m_%d_%H_%M_%S")))
-    print >>f, '#$ -o %s' % os.path.join(temp_files_dir, 'c-pac_%s.out' % str(strftime("%Y_%m_%d_%H_%M_%S")))
-    print >>f, 'source ~/.bashrc'
+    
+    # Loop through and submit one subject at a time to the grid engine (will be less fancy)
+    pids = []; subs = []
+    temp_files_dir = os.path.join(os.getcwd(), 'cluster_temp_files', str(strftime("%Y_%m_%d_%H_%M_%S")))
+    for subdict in sublist:
+        sub = "%(subject_id)s_%(unique_id)s" % subdict
+        print "Preparing to submit: %s" % sub
+        subs.append(sub)
+        
+        subject_bash_file = os.path.join(temp_files_dir, 'submit_%s.sge' % sub)
+        f = open(subject_bash_file, 'w')
+        
+        print >>f, '#! %s' % shell
+        print >>f, '#$ -cwd'
+        print >>f, '#$ -S %s' % shell
+        print >>f, '#$ -V'
+    #    print >>f, '#$ -t 1-%d' % len(sublist) # not running this because doing one by one
+        print >>f, '#$ -q %s' % c.queue
+        print >>f, '#$ -pe %s %d' % (c.parallelEnvironment, c.numCoresPerSubject)
+        print >>f, '#$ -e %s' % os.path.join(temp_files_dir, 'c-pac_%s.err' % sub)
+        print >>f, '#$ -o %s' % os.path.join(temp_files_dir, 'c-pac_%s.out' % sub)
+        print >>f, 'source ~/.bashrc'
 
 #    print >>f, "python CPAC.pipeline.cpac_pipeline.py -c ", str(config_file), " -s ", subject_list_file, " -indx $SGE_TASK_ID  -strategies ", strategies_file
-    print >>f, "python -c \"import CPAC; CPAC.pipeline.cpac_pipeline.run(\\\"%s\\\" , \\\"%s\\\", \\\"$SGE_TASK_ID\\\" , \\\"%s\\\", \\\"%s\\\" , \\\"%s\\\", \\\"%s\\\", \\\"%s\\\") \" " % (str(config_file), \
-        subject_list_file, strategies_file, c.maskSpecificationFile, c.roiSpecificationFile, c.templateSpecificationFile, p_name)
+        print >>f, "python -c \"import CPAC; CPAC.pipeline.cpac_pipeline.run(\\\"%s\\\" , \\\"%s\\\", \\\"$SGE_TASK_ID\\\" , \\\"%s\\\", \\\"%s\\\" , \\\"%s\\\", \\\"%s\\\", \\\"%s\\\") \" " % (str(config_file), subject_list_file, strategies_file, c.maskSpecificationFile, c.roiSpecificationFile, c.templateSpecificationFile, p_name)
 
-    f.close()
+        f.close()
 
-    commands.getoutput('chmod +x %s' % subject_bash_file )
-    p = open(os.path.join(c.outputDirectory, 'pid.txt'), 'w') 
+        commands.getoutput('chmod +x %s' % subject_bash_file )
+        out = commands.getoutput('qsub  %s ' % (subject_bash_file))
+        
+        import re
+        if re.search("(?<=Your job-array )\d+", out) == None:
 
-    out = commands.getoutput('qsub  %s ' % (subject_bash_file))
-
-    import re
-    if re.search("(?<=Your job-array )\d+", out) == None:
-
-        print "Error: Running of 'qsub' command in terminal failed - is qsub installed?"
-        print ""
-        raise Exception
-
-    pid = re.search("(?<=Your job-array )\d+", out).group(0)
-    print >> p, pid
+            print "Error: Running of 'qsub' command in terminal failed - is qsub installed?"
+            print ""
+            raise Exception
+        pid = re.search("(?<=Your job-array )\d+", out).group(0)
+        pids.append(pid)
     
+    # Save the job ids
+    p = open(os.path.join(c.outputDirectory, 'pid.txt'), 'w') 
+    for pid in pids:
+        print >> p, pid
     p.close()
+    
+    # Save the subject ids (should be in the same order as job ids)
+    s = open(os.path.join(c.outputDirectory, 'subs.txt'), 'w') 
+    for sub in subs:
+        print >> s, sub
+    s.close()
+    
 
 def run_condor_jobs(c, config_file, strategies_file, subject_list_file, p_name):
 
