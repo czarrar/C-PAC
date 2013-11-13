@@ -25,12 +25,7 @@ dtype = enum(BOOL=0,
 
 substitution_map = {'On': 1,
                     'Off': 0,
-<<<<<<< HEAD
-                    'FSL': 'fsl',
-                    'ANTS': 'ants',
-=======
                     'On & Off': 10,
->>>>>>> da6107a060fa0da485d7a1ac15f20ac6360c9346
                     'Voxelwise SCA': 'sca_seed_Z_to_standard_smooth',
                     'ROI Average SCA':'sca_roi_Z_to_standard_smooth',
                     'Multiple Regression SCA':'sca_tempreg_maps_z_files_smooth',

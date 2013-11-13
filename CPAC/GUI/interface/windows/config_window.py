@@ -561,12 +561,7 @@ class MainFrame(wx.Frame):
                     valueList.append(value)
                     """
                     
-<<<<<<< HEAD
-                    print>>f, label, ":", valueList
-
-=======
                     print>>f, label, ":", lvalue   ###
->>>>>>> da6107a060fa0da485d7a1ac15f20ac6360c9346
                     print>>f, "\n"
 
 
