@@ -66,7 +66,7 @@ def cwas_workflow(c):
     # Run CWAS
     start   = time.time()
     wf.run(plugin='MultiProc',
-                         plugin_args={'n_procs': c.numCoresPerSubject})
+                         plugin_args={'n_procs': c.cwas.parallel_nodes})
     end     = time.time()
     
     # Return time it took
@@ -76,6 +76,7 @@ def cwas_workflow(c):
 def prep_cwas_workflow(c, subject_infos):
     from CPAC.cwas import create_cwas
     import numpy as np
+    import yaml
     
     try:
         import mkl
@@ -84,6 +85,27 @@ def prep_cwas_workflow(c, subject_infos):
         pass
     
     print 'Preparing CWAS workflow'
+    
+    for config in c.modelConfigs:
+        # 1. We get the list of subjects with actual data
+        new_subject_list_file   = setup_group_subject_list(config, subject_infos)
+        
+        # 2. We get the paths for these subjects
+        func_paths              = load_paths_from_subject_list(new_subject_list_file, subject_infos)
+        
+        # 3. We generate the regressor, etc
+        mat, cols, strata       = create_models_for_cwas(config)
+        
+        # 4. Now we can call the cwas workflow
+        c.cwas.regressors_of_interest = cols
+        c.cwas.strata = strata
+        cwas_workflow(func_paths, mat, ...)
+        
+        
+        #model_sub_list.append((model_files_dir, subject_list_file))        
+        
+        
+    
     p_id, s_ids, scan_ids, s_paths = (list(tup) for tup in zip(*subject_infos))
     print 'Subjects', s_ids
     

@@ -321,7 +321,6 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     ###qc_montage_id_s[6] = 'skullstrip_vis_s'
                 """
 
-
                 create_log_node(fnirt_reg_anat_mni, 'outputspec.output_brain', num_strat)
             
             
@@ -373,7 +372,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 create_log_node(ants_reg_anat_mni, 'outputspec.output_brain', num_strat)  
           
                 num_strat += 1
-    
+
     elif 'anatomical_to_mni_nonlinear_xfm' in sub_dict and 'mni_normalized_anatomical' in sub_dict:
         for strat in strat_list:
             k = 'mni_normalized_anatomical'
@@ -389,7 +388,6 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             num_strat += 1
 
-    
     strat_list += new_strat_list
     
     
@@ -417,9 +415,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 workflow.connect(node, out_file,
                                  seg_preproc, 'inputspec.brain')
 
-                node, out_file = strat.get_node_from_resource_pool('mni_to_anatomical_linear_xfm')
-                workflow.connect(node, out_file,
-                                 seg_preproc, 'inputspec.standard2highres_mat')
+                if 'FSL' in c.regOption:
+                    node, out_file = strat.get_node_from_resource_pool('mni_to_anatomical_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     seg_preproc, 'inputspec.standard2highres_mat')
+                elif 'ANTS' in c.regOption:
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     seg_preproc, 'inputspec.standard2highres_mat')                
+
 
                 seg_preproc.inputs.inputspec.PRIOR_CSF = c.PRIOR_CSF
                 seg_preproc.inputs.inputspec.PRIOR_GRAY = c.PRIOR_GRAY
@@ -836,12 +840,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             #create_log_node(func_to_anat, 'outputspec.mni_func', num_strat)
             num_strat += 1
+            
     elif 'functional_to_anat_linear_xfm' in sub_dict:
         for strat in strat_list:
             k = 'functional_to_anat_linear_xfm'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow, extra=True)
-            
+    
             num_strat += 1
     
 
@@ -1137,9 +1142,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 workflow.connect(node, out_file,
                                  nuisance, 'inputspec.func_to_anat_linear_xfm')
 
-                node, out_file = strat.get_node_from_resource_pool('mni_to_anatomical_linear_xfm')
-                workflow.connect(node, out_file,
-                                 nuisance, 'inputspec.mni_to_anat_linear_xfm')
+                if 'FSL' in c.regOption:
+                    node, out_file = strat.get_node_from_resource_pool('mni_to_anatomical_linear_xfm')
+                    workflow.connect(node, out_file,
+                                     nuisance, 'inputspec.mni_to_anat_linear_xfm')
+                elif 'ANTS' in c.regOption:
+                    node, out_file = strat.get_node_from_resource_pool('ants_affine_xfm')
+                    workflow.connect(node, out_file,
+                                     nuisance, 'inputspec.mni_to_anat_linear_xfm')
 
 
             except:
@@ -2563,7 +2573,6 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
                 try:
-
                     ##dual tempreg z stack
                     node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_stack')
                     workflow.connect(node, out_file,
@@ -2588,7 +2597,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_stack')
                     workflow.connect(node, out_file,
                                      dr_tempreg_stack_Z_to_standard, 'inputspec.conversion_source')
-                
+              
                     ####dual tempreg z files
                     node, out_file = strat.get_node_from_resource_pool('dr_tempreg_maps_z_files')
                     workflow.connect(node, out_file,
@@ -3545,9 +3554,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
                     skull, out_file_s = strat.get_node_from_resource_pool('anatomical_reorient')
 
-
                     montage_skull = create_montage('montage_skull_%d' % num_strat,
-                                        'red', 'skull_vis')   ###
+                                    'red', 'skull_vis')   ###
 
                     skull_edge = pe.Node(util.Function(input_names=['file_'],
                                                        output_names=['new_fname'],
@@ -3576,6 +3584,34 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     print 'Cannot generate QC montages for Skull Stripping: Resources Not Found'
                     raise
 
+            ### make QC montages for mni normalized anatomical image
+
+            try:
+                mni_anat_underlay, out_file = strat.get_node_from_resource_pool('mni_normalized_anatomical')
+
+                montage_mni_anat = create_montage('montage_mni_anat_%d' % num_strat,
+                                    'red', 'mni_anat')  
+
+                workflow.connect(mni_anat_underlay, out_file,
+                                 montage_mni_anat, 'inputspec.underlay')
+
+                montage_mni_anat.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
+
+                strat.update_resource_pool({'qc___mni_normalized_anatomical_a': (montage_mni_anat, 'outputspec.axial_png'),
+                                            'qc___mni_normalized_anatomical_s': (montage_mni_anat, 'outputspec.sagittal_png')})
+
+                if not 6 in qc_montage_id_a:
+                        qc_montage_id_a[6] = 'mni_normalized_anatomical_a'
+                        qc_montage_id_s[6] = 'mni_normalized_anatomical_s'
+
+            except:
+
+                print 'Cannot generate QC montages for mni normalized anatomical: Resources Not Found'
+                raise
+
+
+
+            # make QC montages for CSF WM GM
 
             ### make QC montages for mni normalized anatomical image
             
@@ -3621,6 +3657,9 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
                     workflow.connect(anat_underlay, out_file,
                                      montage_csf_gm_wm, 'inputspec.underlay')
+                                     
+                    montage_anat = create_montage('montage_anat_%d' % num_strat,
+                                    'red', 't1_edge_on_mean_func_in_t1')   ###
 
                     workflow.connect(csf_overlay, out_file_csf,
                                      montage_csf_gm_wm, 'inputspec.overlay_csf')
@@ -3675,7 +3714,6 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     if not 4 in qc_montage_id_a:
                             qc_montage_id_a[4] = 'mean_func_with_t1_edge_a'
                             qc_montage_id_s[4] = 'mean_func_with_t1_edge_s'
-
 
                 except:
                     print 'Cannot generate QC montages for Mean Functional in T1 with T1 edge: Resources Not Found'

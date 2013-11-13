@@ -468,6 +468,7 @@ def create_nuisance(use_ants, name='nuisance'):
 
 	ho_mni_to_2mm = pe.Node(interface=ants.WarpImageMultiTransform(), name='ho_mni_to_2mm_ants_applyxfm')
 	#ho_mni_to_2mm.inputs.args = '-applyisoxfm 2'
+    ho_mni_to_2mm.inputs.invert_affine = [1]
 	ho_mni_to_2mm.inputs.use_nearest = True
         ho_mni_to_2mm.inputs.dimension = 3
 	

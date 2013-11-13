@@ -487,6 +487,7 @@ def process_segment_map(wf_name, use_ants):
     if use_ants == True:
 
         tissueprior_mni_to_t1 = pe.Node(interface=ants.WarpImageMultiTransform(), name='%s_prior_mni_to_t1' % (wf_name))
+        tissueprior_mni_to_t1.inputs.invert_affine = [1]
         tissueprior_mni_to_t1.inputs.use_nearest = True
 
         overlap_segmentmap_with_prior = pe.Node(interface=fsl.MultiImageMaths(), name='overlap_%s_map_with_prior' % (wf_name))
