@@ -99,7 +99,7 @@ def prep_cwas_workflow(c, subject_infos):
         # 4. Now we can call the cwas workflow
         c.cwas.regressors_of_interest = cols
         c.cwas.strata = strata
-        cwas_workflow(func_paths, mat, ...)
+#        cwas_workflow(func_paths, mat, ...)
         
         
         #model_sub_list.append((model_files_dir, subject_list_file))        

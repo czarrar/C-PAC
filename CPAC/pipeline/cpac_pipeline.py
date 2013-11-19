@@ -51,6 +51,7 @@ from CPAC.interfaces.afni import preprocess
 import zlib
 import linecache
 from string import Template
+from copy import deepcopy
 
 class strategy:
 
@@ -160,6 +161,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             return log_wf
 
     strat_list = []
+    stops_list = [] # list of stop lists
 
     workflow_bit_id = {}
     workflow_counter = 0
@@ -167,6 +169,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Initialize Anatomical Input Data Flow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
@@ -186,12 +189,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         num_strat += 1
 
         strat_list.append(strat_initial)
-
-    print strat_list
-
+        stops_list.append([])
+    
+    print "STRAT_LIST:", strat_list
+    print "STOPS_LIST:", stops_list
+    
     """
     Inserting Anatomical Preprocessing workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
@@ -199,7 +205,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
         workflow_bit_id['anat_preproc'] = workflow_counter
 
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             # create a new node, Remember to change its name!
             anat_preproc = create_anat_preproc().clone('anat_preproc_%d' % num_strat)
 
@@ -223,6 +229,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(anat_preproc.name)
 
@@ -240,23 +247,27 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     
     elif 'anatomical_brain' in sub_dict and 'anatomical_reorient' in sub_dict:
         
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             k = 'anatomical_brain'
             strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow, extra=True)
+            stops_list[i].append(k)
+            
             k = 'anatomical_reorient'
             strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow)
+            stops_list[i].append(k)
             
             num_strat += 1
     
+    stops_list += new_stops_list
     strat_list += new_strat_list
-
 
 
     """
     T1 -> Template, Non-linear registration (FNIRT or ANTS)
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
@@ -267,7 +278,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     if 1 in c.runRegistrationPreprocessing:
 
         workflow_bit_id['anat_mni_register'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
 
@@ -302,6 +313,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     tmp.name = list(strat.name)
                     strat = tmp
                     new_strat_list.append(strat)
+                    new_stops_list.append(deepcopy(stops_list[i]))
 
                 strat.append_name(fnirt_reg_anat_mni.name)
                 strat.set_leaf_properties(fnirt_reg_anat_mni, 'outputspec.output_brain')
@@ -353,6 +365,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                     tmp.name = list(strat.name)
                     strat = tmp
                     new_strat_list.append(strat)
+                    new_stops_lists.append([])
 
                 strat.append_name(ants_reg_anat_mni.name)
                 strat.set_leaf_properties(ants_reg_anat_mni, 'outputspec.output_brain')
@@ -374,22 +387,28 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 num_strat += 1
 
     elif 'anatomical_to_mni_nonlinear_xfm' in sub_dict and 'mni_normalized_anatomical' in sub_dict:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
+            
             k = 'mni_normalized_anatomical'
             strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow, extra=True)
+            stops_list[i].append(k)
+            
             k = 'anatomical_to_mni_nonlinear_xfm'
             strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow)
+            stops_list[i].append(k)
+            
             if 'ANTS' in c.regOption:
                 k = 'ants_affine_xfm'
                 strat = add_anat_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                           log_dir, workflow)
+                stops_list[i].append(k)
             
             num_strat += 1
 
-    strat_list += new_strat_list
-    
+    stops_list += new_stops_list
+    strat_list += new_strat_list    
     
  
     """
@@ -397,13 +416,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Workflow
     """
 
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runSegmentationPreprocessing:
         workflow_bit_id['seg_preproc'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
                 seg_preproc = create_seg_preproc(False, 'seg_preproc_%d' % num_strat)
@@ -455,6 +475,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(seg_preproc.name)
             strat.update_resource_pool({'anatomical_gm_mask' : (seg_preproc, 'outputspec.gm_mask'),
@@ -467,17 +488,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             create_log_node(seg_preproc, 'outputspec.partial_volume_map', num_strat)
             num_strat += 1
-
+    
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
     """
     Inserting Functional Input Data workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runFunctionalDataGathering:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             # create a new node, Remember to change its name!
             # Flow = create_func_datasource(sub_dict['rest'])
             # Flow.inputs.inputnode.subject = subject_id
@@ -493,11 +516,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.set_leaf_properties(funcFlow, 'outputspec.rest')
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -505,13 +530,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Inserting Functional Image Preprocessing
     Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runFunctionalPreprocessing:
         workflow_bit_id['func_preproc'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             slice_timing = sub_dict.get('scan_parameters')
             # a node which checks if scan _parameters are present for each scan
@@ -590,6 +616,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(func_preproc.name)
 
@@ -613,17 +640,23 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     elif 'preprocessed' in sub_dict and 'mean_functional' in sub_dict and 'functional_brain_mask' in sub_dict:
         
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             k = 'preprocessed'
             add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                               log_dir, workflow, extra=True)
+            stops_list[i].append(k)
+                              
             k = 'mean_functional'
             add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                               log_dir, workflow)
+            stops_list[i].append(k)
+                              
             k = 'functional_brain_mask'
             add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                               log_dir, workflow)
+            stops_list[i].append(k)
     
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -635,13 +668,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     that depend on. The effect should be seen when regressing out nuisance signals and motion
     is used as one of the regressors
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runFristonModel:
         workflow_bit_id['fristons_parameter_model'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             fristons_model = fristons_twenty_four(wf_name='fristons_parameter_model_%d' % num_strat)
 
@@ -663,6 +697,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
             strat.append_name(fristons_model.name)
 
             strat.update_resource_pool({'movement_parameters':(fristons_model, 'outputspec.movement_file')})
@@ -671,6 +706,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(fristons_model, 'outputspec.movement_file', num_strat)
             
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -687,7 +723,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     workflow_counter += 1
     if 1 in c.runAnatomicalToFunctionalRegistration:
         workflow_bit_id['anat_to_func_register'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             anat_to_func_reg = pe.Node(interface=fsl.FLIRT(),
                                name='anat_to_func_register_%d' % num_strat)
             anat_to_func_reg.inputs.cost = 'corratio'
@@ -782,13 +818,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     # Depending on configuration, either passes output matrix to Func -> Template ApplyWarp,
     # or feeds into linear reg of BBReg operation (if BBReg is enabled)
 
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
     workflow_counter += 1
     
     if 1 in c.runRegisterFuncToAnat:
         workflow_bit_id['func_to_anat'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             func_to_anat = create_register_func_to_anat('func_to_anat_FLIRT_%d' % num_strat)
        
             # Input registration parameters
@@ -824,6 +861,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(func_to_anat.name)
             # strat.set_leaf_properties(func_mni_warp, 'out_file')
@@ -842,14 +880,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             num_strat += 1
             
     elif 'functional_to_anat_linear_xfm' in sub_dict:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             k = 'functional_to_anat_linear_xfm'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow, extra=True)
-    
+            stops_list[i].append(k)
+            
             num_strat += 1
     
-
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -862,13 +901,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     # Outputs 'functional_to_anat_linear_xfm', a matrix file of the functional-to-anatomical
     # registration warp to be applied LATER in func_mni_warp, which accepts it as input 'premat'
 
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
     workflow_counter += 1
     
     if 1 in c.runBBReg:
         workflow_bit_id['func_to_anat_bbreg'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             func_to_anat_bbreg = create_bbregister_func_to_anat('func_to_anat_bbreg_%d' % num_strat)
        
             # Input registration parameters
@@ -911,6 +951,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(func_to_anat.name)
             # strat.set_leaf_properties(func_mni_warp, 'out_file')
@@ -929,6 +970,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             #create_log_node(func_to_anat, 'outputspec.mni_func', num_strat)
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -946,7 +988,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     
     if 1 in c.runRegisterFuncToAnat:
         workflow_bit_id['func_to_anat'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             func_to_anat = create_bbregister_func_to_anat('func_to_anat_%d' % num_strat)
        
             # Input registration parameters
@@ -1029,13 +1071,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Inserting Generate Motion Statistics Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runGenerateMotionStatistics:
         workflow_bit_id['gen_motion_stats'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             gen_motion_stats = motion_power_statistics('gen_motion_stats_%d' % num_strat)
             gen_motion_stats.inputs.scrubbing_input.threshold = c.scrubbingThreshold
@@ -1080,6 +1123,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(gen_motion_stats.name)
 
@@ -1092,19 +1136,21 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(gen_motion_stats, 'outputspec.motion_params', num_strat)
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Inserting Nuisance Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runNuisance:
         workflow_bit_id['nuisance'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
                 nuisance = create_nuisance(False, 'nuisance_%d' % num_strat)
@@ -1165,7 +1211,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
-
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(nuisance.name)
 
@@ -1178,24 +1224,27 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             num_strat += 1
 
     elif 'functional_nuisance_residuals' in sub_dict:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             k = 'functional_nuisance_residuals'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow, extra=True)
+            stops_list[i].append(k)
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
     """
     Inserting Median Angle Correction Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runMedianAngleCorrection:
         workflow_bit_id['median_angle_corr'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             median_angle_corr = create_median_angle_correction('median_angle_corr_%d' % num_strat)
 
             median_angle_corr.get_node('median_angle_correct').iterables = ('target_angle_deg', c.targetAngleDeg)
@@ -1215,6 +1264,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(strat)
 
             strat.append_name(median_angle_corr.name)
 
@@ -1226,17 +1276,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
     """
     Inserting ALFF/fALFF
     Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runALFF:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             alff = create_alff('alff_falff_%d' % num_strat)
             alff.inputs.hp_input.hp = c.highPassFreqALFF
             alff.inputs.lp_input.lp = c.lowPassFreqALFF
@@ -1266,6 +1318,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(alff, 'outputspec.falff_img', num_strat)
 
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -1274,13 +1327,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Inserting Frequency Filtering Node
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runFrequencyFiltering:
         workflow_bit_id['frequency_filter'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             frequency_filter = pe.Node(util.Function(input_names=['realigned_file',
                                                                   'bandpass_freqs',
                                                                   'sample_period'],
@@ -1306,6 +1360,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(frequency_filter.name)
 
@@ -1317,13 +1372,15 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             num_strat += 1
     elif 'functional_freq_filtered' in sub_dict:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             k = 'functional_freq_filtered'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow, extra=True)
-                        
+            stops_list[i].append(k)
+            
             num_strat += 1
     
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -1332,6 +1389,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Inserting Scrubbing Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
@@ -1343,7 +1401,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
     if 1 in c.runScrubbing:
         workflow_bit_id['scrubbing'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             scrubbing = create_scrubbing_preproc('scrubbing_%d' % num_strat)
 
@@ -1373,6 +1431,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(scrubbing.name)
 
@@ -1385,6 +1444,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -1395,11 +1455,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Func -> Template, uses ApplyWarp (FSL) or Merge + WarpImageMultiTransform (ANTS) to apply
     also includes mean functional warp
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
     if 1 in c.runRegisterFuncToMNI:
 
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             # Run FSL ApplyWarp
             if 'FSL' in c.regOption:
@@ -1631,20 +1692,23 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         
         c.applyRegisterFuncToMNI = [1]
         
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
             k = 'functional_mni'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow)
             node, out_file = strat.get_node_from_resource_pool(k)
             strat.append_name(node.name)
+            stops_list[i].append(k)
+            
             k = 'functional_brain_mask_to_standard'
             strat = add_func_resource(k, sub_dict[k], subject_id, strat, num_strat, 
                                       log_dir, workflow)
+            stops_list[i].append(k)
             
             num_strat += 1
 
 
-
+    stops_list += new_stops_list
     strat_list += new_strat_list
     
 
@@ -1654,11 +1718,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Inserting VMHC
     Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runVMHC:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
                 preproc = create_vmhc(False)
@@ -1722,6 +1787,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -1731,11 +1797,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Inserting REHO
     Workflow
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runReHo:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             preproc = create_reho()
             preproc.inputs.inputspec.cluster_size = c.clusterSize
@@ -1762,8 +1829,8 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(reho, 'outputspec.raw_reho_map', num_strat)
             
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
-
 
 
     """
@@ -1774,7 +1841,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
     if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runALFF):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
 
@@ -1901,6 +1968,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
                 num_strat += 1
     
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -1916,10 +1984,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """    
     Smoothing ALFF fALFF Z scores and or possibly Z scores in MNI 
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
     if (1 in c.runALFF) and c.fwhm != None:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
 
             alff_Z_to_standard_smooth = None
@@ -2002,19 +2071,20 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 create_log_node(falff_Z_to_standard_smooth, 'out_file', num_strat)
 
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
-
-
-
+    
+    
     """
     Transforming ReHo Z scores to MNI
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
 
     if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI)and (1 in c.runReHo):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
 
@@ -2136,17 +2206,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 num_strat += 1
 
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Smoothing ReHo Z scores and or possibly Z scores in MNI 
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if (1 in c.runReHo) and c.fwhm != None:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
 
             reho_Z_to_standard_smooth = None
@@ -2197,18 +2269,20 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 create_log_node(reho_Z_to_standard_smooth, 'out_file', num_strat)
             
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Spatial Regression Based Time Series
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runSpatialRegression:
 
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             resample_functional_to_spatial_map = pe.Node(interface=fsl.FLIRT(),
                                                          name='resample_functional_to_spatial_map_%d' % num_strat)
@@ -2264,6 +2338,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(spatial_map_timeseries.name)
 
@@ -2275,18 +2350,20 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Voxel Based Time Series 
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
     if 1 in c.runVoxelTimeseries:
 
 
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             resample_functional_to_mask = pe.Node(interface=fsl.FLIRT(),
                                                   name='resample_functional_to_mask_%d' % num_strat)
@@ -2327,6 +2404,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(voxel_timeseries.name)
 
@@ -2336,6 +2414,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -2344,12 +2423,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     ROI Based Time Series
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runROITimeseries:
 
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             resample_functional_to_roi = pe.Node(interface=fsl.FLIRT(),
                                                   name='resample_functional_to_roi_%d' % num_strat)
@@ -2390,6 +2470,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(roi_timeseries.name)
 
@@ -2398,6 +2479,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(roi_timeseries, 'outputspec.roi_outputs', num_strat)
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -2405,11 +2487,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Inserting SCA
     Workflow for ROI INPUT
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runSCA and (1 in c.runROITimeseries):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             sca_roi = create_sca('sca_roi_%d' % num_strat)
 
@@ -2434,17 +2517,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             strat.append_name(sca_roi.name)
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Temporal Regression for Dual Regression
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runDualReg and (1 in c.runSpatialRegression):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             dr_temp_reg = create_temporal_reg('temporal_dual_regression_%d' % num_strat)
             dr_temp_reg.inputs.inputspec.normalize = c.mrsNorm
@@ -2478,17 +2563,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             create_log_node(dr_temp_reg, 'outputspec.temp_reg_map', num_strat)
             
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
     """
     Transforming Dual Regression Z stats to MNI
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
 
     if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runDualReg) and (1 in c.runSpatialRegression):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
 
@@ -2661,7 +2748,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 num_strat += 1
 
 
-
+    stops_list += new_stops_list
     strat_list += new_strat_list
     
 
@@ -2670,11 +2757,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Inserting SCA
     Workflow for Voxel INPUT
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runSCA and (1 in c.runVoxelTimeseries):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             sca_seed = create_sca('sca_seed_%d' % num_strat)
 
@@ -2696,17 +2784,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             strat.update_resource_pool({'sca_seed_Z':(sca_seed, 'outputspec.Z_score')})
             strat.append_name(sca_seed.name)
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Temporal Regression for SCA
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runMultRegSCA and (1 in c.runROITimeseries):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             sc_temp_reg = create_temporal_reg('temporal_regression_sca_%d' % num_strat, which='RT')
             sc_temp_reg.inputs.inputspec.normalize = c.mrsNorm
@@ -2739,17 +2829,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
             
             strat.append_name(sc_temp_reg.name)
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Smoothing Temporal Regression for SCA scores
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if (1 in c.runMultRegSCA) and (1 in c.runROITimeseries) and c.fwhm != None:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             sc_temp_reg_maps_smooth = pe.MapNode(interface=fsl.MultiImageMaths(),
                                               name='sca_tempreg_maps_stack_smooth_%d' % num_strat, iterfield=['in_file'])
@@ -2801,17 +2893,19 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             create_log_node(sc_temp_reg_maps_smooth, 'out_file', num_strat)
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Smoothing Temporal Regression for Dual Regression
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if (1 in c.runDualReg) and (1 in c.runSpatialRegression) and c.fwhm != None:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             dr_temp_reg_maps_smooth = pe.Node(interface=fsl.MultiImageMaths(),
                                               name='dr_tempreg_maps_stack_smooth_%d' % num_strat)
@@ -2862,18 +2956,20 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                                        'dr_tempreg_maps_z_files_smooth':(dr_temp_reg_maps_Z_files_smooth, 'out_file')})
             create_log_node(dr_temp_reg_maps_smooth, 'out_file', num_strat)
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
     """
     Transforming SCA Voxel Z scores to MNI
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
 
     if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runSCA) and (1 in c.runVoxelTimeseries):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
 
@@ -2949,8 +3045,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 strat.append_name(sca_seed_Z_to_standard.name)
                 num_strat += 1
 
-
-
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -2958,12 +3053,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Transforming SCA ROI Z scores to MNI
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
 
     if (1 in c.runRegisterFuncToMNI or 1 in c.applyRegisterFuncToMNI) and (1 in c.runSCA) and (1 in c.runROITimeseries):
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             if 'FSL' in c.regOption:
 
@@ -3038,7 +3134,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 strat.append_name(sca_roi_Z_to_standard.name)
                 num_strat += 1
 
-
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -3047,11 +3143,12 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     
     Smoothing SCA seed based Z scores and or possibly Z scores in MNI 
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if (1 in c.runSCA) and (1 in c.runVoxelTimeseries) and c.fwhm != None:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
 
             sca_seed_Z_to_standard_smooth = None
@@ -3101,6 +3198,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 strat.update_resource_pool({'sca_seed_Z_to_standard_smooth':(sca_seed_Z_to_standard_smooth, 'out_file')})
                 create_log_node(sca_seed_Z_to_standard_smooth, 'out_file', num_strat)
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -3109,7 +3207,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     Smoothing SCA roi based Z scores and or possibly Z scores in MNI 
     """
     if (1 in c.runSCA) and (1 in c.runROITimeseries) and c.fwhm != None:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
 
             sca_roi_Z_to_standard_smooth = None
@@ -3159,6 +3257,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 strat.append_name(sca_roi_Z_smooth.name)
                 strat.update_resource_pool({'sca_roi_Z_to_standard_smooth':(sca_roi_Z_to_standard_smooth, 'out_file')})
             num_strat += 1
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -3166,13 +3265,14 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Inserting Surface Registration
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     workflow_counter += 1
     if 1 in c.runSurfaceRegistraion:
         workflow_bit_id['surface_registration'] = workflow_counter
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             surface_reg = create_surface_registration('surface_reg_%d' % num_strat)
             surface_reg.inputs.inputspec.recon_subjects = c.reconSubjectsDirectory
@@ -3200,6 +3300,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(surface_reg.name)
 
@@ -3209,16 +3310,18 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
     """
     Inserting vertices based timeseries
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runVerticesTimeSeries:
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             vertices_timeseries = get_vertices_timeseries('vertices_timeseries_%d' % num_strat)
 
@@ -3244,6 +3347,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             strat.append_name(vertices_timeseries.name)
 
@@ -3251,17 +3355,20 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
+    
 
     """
     Inserting Network centrality
     """
+    new_stops_list = []
     new_strat_list = []
     num_strat = 0
 
     if 1 in c.runNetworkCentrality:
 
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
 
 
@@ -3346,9 +3453,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                 tmp.name = list(strat.name)
                 strat = tmp
                 new_strat_list.append(strat)
+                new_stops_list.append(deepcopy(stops_list[i]))
 
             num_strat += 1
 
+    stops_list += new_stops_list
     strat_list += new_strat_list
 
 
@@ -3359,6 +3468,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     """
     Quality Control
     """
+
 
 
     if 1 in c.generateQualityControlImages:
@@ -3380,7 +3490,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                                      output_names=['hist_path'],
                                      function=gen_histogram),
                         name='histogram')
-        for strat in strat_list:
+        for i,strat in enumerate(strat_list):
 
             #make SNR plot
 
@@ -3547,42 +3657,42 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
             # make QC montages for Skull Stripping Visualization
-            
-            if 1 in c.runAnatomicalPreprocessing:
 
-                try:
-                    anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
-                    skull, out_file_s = strat.get_node_from_resource_pool('anatomical_reorient')
+            try:
+                anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
+                skull, out_file_s = strat.get_node_from_resource_pool('anatomical_reorient')
 
-                    montage_skull = create_montage('montage_skull_%d' % num_strat,
+
+                montage_skull = create_montage('montage_skull_%d' % num_strat,
                                     'red', 'skull_vis')   ###
 
-                    skull_edge = pe.Node(util.Function(input_names=['file_'],
-                                                       output_names=['new_fname'],
-                                                       function=make_edge),
-                                         name='skull_edge_%d' % num_strat)
+                skull_edge = pe.Node(util.Function(input_names=['file_'],
+                                                   output_names=['new_fname'],
+                                                   function=make_edge),
+                                     name='skull_edge_%d' % num_strat)
 
 
-                    workflow.connect(skull, out_file_s,
-                                     skull_edge, 'file_')
+                workflow.connect(skull, out_file_s,
+                                 skull_edge, 'file_')
 
-                    workflow.connect(anat_underlay, out_file,
-                                     montage_skull, 'inputspec.underlay')
+                workflow.connect(anat_underlay, out_file,
+                                 montage_skull, 'inputspec.underlay')
 
-                    workflow.connect(skull_edge, 'new_fname',
-                                     montage_skull, 'inputspec.overlay')
+                workflow.connect(skull_edge, 'new_fname',
+                                 montage_skull, 'inputspec.overlay')
 
-                    strat.update_resource_pool({'qc___skullstrip_vis_a': (montage_skull, 'outputspec.axial_png'),
-                                                'qc___skullstrip_vis_s': (montage_skull, 'outputspec.sagittal_png')})
+                strat.update_resource_pool({'qc___skullstrip_vis_a': (montage_skull, 'outputspec.axial_png'),
+                                            'qc___skullstrip_vis_s': (montage_skull, 'outputspec.sagittal_png')})
 
-                    if not 1 in qc_montage_id_a:
-                            qc_montage_id_a[1] = 'skullstrip_vis_a'
-                            qc_montage_id_s[1] = 'skullstrip_vis_s'
+                if not 1 in qc_montage_id_a:
+                        qc_montage_id_a[1] = 'skullstrip_vis_a'
+                        qc_montage_id_s[1] = 'skullstrip_vis_s'
 
-                except:
+            except:
 
-                    print 'Cannot generate QC montages for Skull Stripping: Resources Not Found'
-                    raise
+                print 'Cannot generate QC montages for Skull Stripping: Resources Not Found'
+                raise
+
 
             ### make QC montages for mni normalized anatomical image
 
@@ -3612,40 +3722,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
             # make QC montages for CSF WM GM
-
-            ### make QC montages for mni normalized anatomical image
-            
-            if 1 in c.runRegistrationPreprocessing:
-            
-                try:
-                    mni_anat_underlay, out_file = strat.get_node_from_resource_pool('mni_normalized_anatomical')
-
-                    montage_mni_anat = create_montage('montage_mni_anat_%d' % num_strat,
-                                        'red', 'mni_anat')  
-
-                    workflow.connect(mni_anat_underlay, out_file,
-                                     montage_mni_anat, 'inputspec.underlay')
-
-                    montage_mni_anat.inputs.inputspec.overlay = p.resource_filename('CPAC','resources/templates/MNI152_Edge_AllTissues.nii.gz')
-
-                    strat.update_resource_pool({'qc___mni_normalized_anatomical_a': (montage_mni_anat, 'outputspec.axial_png'),
-                                                'qc___mni_normalized_anatomical_s': (montage_mni_anat, 'outputspec.sagittal_png')})
-
-                    if not 6 in qc_montage_id_a:
-                            qc_montage_id_a[6] = 'mni_normalized_anatomical_a'
-                            qc_montage_id_s[6] = 'mni_normalized_anatomical_s'
-
-                except:
-
-                    print 'Cannot generate QC montages for mni normalized anatomical: Resources Not Found'
-                    raise
-
-
-
-            # make QC montages for CSF WM GM
-            
-            if 1 in c.runSegmentationPreprocessing:
-            
+            if 1 in c.runSegmentationPreprocessing:            
                 try:
                     anat_underlay, out_file = strat.get_node_from_resource_pool('anatomical_brain')
                     csf_overlay, out_file_csf = strat.get_node_from_resource_pool('anatomical_csf_mask')
@@ -3657,9 +3734,6 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
                     workflow.connect(anat_underlay, out_file,
                                      montage_csf_gm_wm, 'inputspec.underlay')
-                                     
-                    montage_anat = create_montage('montage_anat_%d' % num_strat,
-                                    'red', 't1_edge_on_mean_func_in_t1')   ###
 
                     workflow.connect(csf_overlay, out_file_csf,
                                      montage_csf_gm_wm, 'inputspec.overlay_csf')
@@ -3683,9 +3757,7 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
 
 
             # make QC montage for Mean Functional in T1 with T1 edge
-            
             if 1 in c.runRegisterFuncToAnat:
-            
                 try:
                     anat, out_file = strat.get_node_from_resource_pool('anatomical_brain')
                     m_f_a, out_file_mfa = strat.get_node_from_resource_pool('mean_functional_in_anat')
@@ -3715,14 +3787,13 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
                             qc_montage_id_a[4] = 'mean_func_with_t1_edge_a'
                             qc_montage_id_s[4] = 'mean_func_with_t1_edge_s'
 
+
                 except:
                     print 'Cannot generate QC montages for Mean Functional in T1 with T1 edge: Resources Not Found'
                     raise
 
             # make QC montage for Mean Functional in MNI with MNI edge
-            
-            if 1 in c.runGenerateMotionStatistics:
-            
+            if 1 in c.runRegisterFuncToMNI:
                 try:
                     m_f_i, out_file = strat.get_node_from_resource_pool('mean_functional_in_mni')
 
@@ -4273,9 +4344,9 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
     for id in sub_dict['rest']:
         scan_ids.append('scan_'+ str(id))
     
-    for strat in strat_list:
+    for i,strat in enumerate(strat_list):
         rp = strat.get_resource_pool()
-
+        
         # build helper dictionary to assist with a clean strategy label for symlinks
 
         strategy_tag_helper_symlinks = {}
@@ -4340,8 +4411,11 @@ def prep_workflow(sub_dict, c, strategies, p_name=None):
         print 'strat_tag,  ~~~~~ , hash_val,  ~~~~~~ , pipeline_id: ', strat_tag, ' ~~~~~ ', hash_val, ' ~~~~~~ ', pipeline_id
         pip_ids.append(pipeline_id)
         wf_names.append(strat.get_name())
-
-        for key in sorted(rp.keys()):
+        
+        # Filter node keys
+        rp_keys = [ key for key in sorted(rp.keys()) if key not in stops_list[i] ]
+        
+        for key in rp_keys:
 
             ds = pe.Node(nio.DataSink(), name='sinker_%d' % sink_idx)
             ds.inputs.base_directory = c.outputDirectory
