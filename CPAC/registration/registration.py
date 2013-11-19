@@ -321,7 +321,6 @@ def create_bbregister_func_to_anat(name='bbregister_func_to_anat'):
     Returns
     -------
     register_func_to_anat : nipype.pipeline.engine.Workflow
-<<<<<<< HEAD
 
     Notes
     -----
@@ -382,68 +381,6 @@ def create_bbregister_func_to_anat(name='bbregister_func_to_anat'):
                                                        'bbr_schedule']),
                         name='inputspec')
 
-=======
-
-    Notes
-    -----
-    
-    !!!! SOME OF THE BELOW HAS CHANGED, OBSOLETE CODE HAS BEEN REMOVED
-
-    Workflow Inputs::
-
-        inputspec.func : string (nifti file)
-            Input functional scan to be registered to MNI space
-        inputspec.mni : string (nifti file)
-            Reference MNI file
-        inputspec.anat : string (nifti file)
-            Corresponding anatomical scan of subject
-        inputspec.interp : string
-            Type of interpolation to use ('trilinear' or 'nearestneighbour' or 'sinc')
-        inputspec.anat_to_mni_nonlinear_xfm : string (warp file)
-            Corresponding anatomical native space to MNI warp file
-        inputspec.anat_to_mni_linear_xfm : string (mat file)
-            Corresponding anatomical native space to MNI mat file
-        inputspec.anat_wm_segmentation : string (nifti file)
-            White matter segmentation probability mask in anatomical space
-        inputspec.bbr_schedule : string (.sch file)
-            Boundary based registration schedule file for flirt command
-        
-    Workflow Outputs::
-    
-        outputspec.func_to_anat_linear_xfm : string (mat file)
-            Affine transformation from functional to anatomical native space
-        outputspec.func_to_mni_linear_xfm : string (mat file)
-            Affine transformation from functional to MNI space
-        outputspec.mni_to_func_linear_xfm : string (mat file)
-            Affine transformation from MNI to functional space
-        outputspec.anat_wm_edge : string (nifti file)
-            White matter edge mask in anatomical space
-        outputspec.anat_func : string (nifti file)
-            Functional data in anatomical space
-        outputspec.mni_func : string (nifti file)
-            Functional scan registered to MNI standard space
-            
-    Workflow Graph:
-    
-    .. image:: ../images/register_func_to_mni.dot.png
-        :width: 500
-        
-    Detailed Workflow Graph:
-    
-    .. image:: ../images/register_func_to_mni_detailed.dot.png
-        :width: 500
-    """
-    
-    register_bbregister_func_to_anat = pe.Workflow(name=name)
-    
-    inputspec = pe.Node(util.IdentityInterface(fields=['func',
-                                                       'anat_skull',
-                                                       'linear_reg_matrix',
-                                                       'anat_wm_segmentation',
-                                                       'bbr_schedule']),
-                        name='inputspec')
-
->>>>>>> da6107a060fa0da485d7a1ac15f20ac6360c9346
     outputspec = pe.Node(util.IdentityInterface(fields=['func_to_anat_linear_xfm',
                                                         #'func_to_mni_linear_xfm',
                                                         #'mni_to_func_linear_xfm',
@@ -552,21 +489,12 @@ def create_ants_nonlinear_xfm(name='ants_nonlinear_xfm'):
     1. Performs a nonlinear anatomical-to-template registration.
        
     Workflow Graph:
-<<<<<<< HEAD
     
     .. image:: 
         :width: 500
     
     Detailed Workflow Graph:
     
-=======
-    
-    .. image:: 
-        :width: 500
-    
-    Detailed Workflow Graph:
-    
->>>>>>> da6107a060fa0da485d7a1ac15f20ac6360c9346
     .. image:: 
         :width: 500      
     """
@@ -834,12 +762,6 @@ def create_fsl_to_itk_conversion(name='fsl_to_itk_conversion'):
     
     Workflow Inputs::
     
-<<<<<<< HEAD
-        inputspec.anatomical_brain : string (nifti file)
-            File of brain to be normalized (registered)
-        inputspec.reference_brain : string (nifti file)
-            Target brain file to normalize to
-=======
         inputspec.transform_file : string (nifti file)
             Output matrix of FSL-based functional to anatomical registration
         inputspec.reference_file : string (nifti file)
@@ -848,12 +770,10 @@ def create_fsl_to_itk_conversion(name='fsl_to_itk_conversion'):
             Should match the input of the apply warp (in_file) unless you are
             applying the warp to a 4-d file, in which case this file should
             be a mean_functional file
->>>>>>> da6107a060fa0da485d7a1ac15f20ac6360c9346
 
             
     Workflow Outputs::
     
-<<<<<<< HEAD
         outputspec.warp_field : string (nifti file)
             Output warp field of registration
         outputspec.affine_transformation : text file
@@ -866,7 +786,6 @@ def create_fsl_to_itk_conversion(name='fsl_to_itk_conversion'):
     Registration Procedure:
     
     1. Performs a nonlinear anatomical-to-template registration.
-=======
         outputspec.itk_transform : string (nifti file)
             Converted affine transform in ITK format usable with ANTS
 
@@ -875,7 +794,6 @@ def create_fsl_to_itk_conversion(name='fsl_to_itk_conversion'):
     
     1. Converts an FSL-format affine matrix into an ITK-format
        affine matrix (for use with ANTS registration tools)
->>>>>>> da6107a060fa0da485d7a1ac15f20ac6360c9346
        
     Workflow Graph:
     

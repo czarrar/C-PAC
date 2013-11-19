@@ -506,14 +506,15 @@ def make_group_htmls(output_path):
             print subj_path + '/qc/snr_val'
 
             ### read average snr value from the file
+            sval = 0
             for root, dirs, files in os.walk(subj_path + '/qc/snr_val'):
                 if 'average_snr_file.txt' in files:
                     snr_file = os.path.join(root + '/average_snr_file.txt')
 
-            if os.path.exists(snr_file):
-                sval = open(snr_file, 'r').readline()
-                sval = '%.2f' % float(sval)
-                print 'snr value: ', sval
+                    if os.path.exists(snr_file):
+                        sval = open(snr_file, 'r').readline()
+                        sval = '%.2f' % float(sval)
+                        print 'snr value: ', sval
 
 
             if os.path.isdir(subj_path):
