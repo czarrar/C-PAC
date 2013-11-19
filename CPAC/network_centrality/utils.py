@@ -159,7 +159,7 @@ def calc_threshold(option,
     return r_value
  
 
-def map_centrality_matrix(centrality_matrix, affine, template_data, template_type):
+def map_centrality_matrix(centrality_matrix, aff, mask, template_type):
     """
     Method to map centrality matrix to a nifti image
     
@@ -167,10 +167,10 @@ def map_centrality_matrix(centrality_matrix, affine, template_data, template_typ
     ----------
     centrality_matrix : tuple (string, array_like)
         tuple containing matrix name and degree/eigenvector centrality matrix
-    affine : string (numpy mat file)
-        path to file containing image affine matrix
-    template_data : string (numpy mat file)
-        path to file containing mask or roi data matrix
+    aff : ndarray
+        Affine matrix of the input data
+    mask : ndarray
+        Mask or roi data matrix
     template_type : int
         type of template: 0 for mask, 1 for roi
     
@@ -189,10 +189,7 @@ def map_centrality_matrix(centrality_matrix, affine, template_data, template_typ
     import os
     import numpy as np
     
-    try:
-        
-        mask = load_mat(template_data)   
-        aff = load_mat(affine)
+    try:        
         out_file, matrix = centrality_matrix
        
         out_file = os.path.join(os.getcwd(), out_file + ".nii.gz")

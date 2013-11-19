@@ -122,25 +122,11 @@ def create_resting_state_graphs(allocated_memory = None,
     centrality_options = pe.Node(util.IdentityInterface(fields = ['weight_options',
                                                                   'method_options']),
                                  name = 'centrality_options')
+            
     
-   
-    read_data = pe.Node(util.Function( input_names = ['datafile', 
-                                                      'template'],
-                                       output_names= ['timeseries_data', 
-                                                      'affine', 
-                                                      'mask_data',
-                                                      'mask_type',
-                                                      'scans'],
-                                      function = load),
-                        name = 'read_data')
-    
-    wf.connect(inputspec, 'subject', 
-               read_data, 'datafile')
-    wf.connect(inputspec, 'template', 
-               read_data, 'template')
-    
-    
-    calculate_centrality = pe.Node(util.Function(input_names = ['method_options', 
+    calculate_centrality = pe.Node(util.Function(input_names = ['datafile', 
+                                                                'template', 
+                                                                'method_options', 
                                                                 'weight_options',
                                                                 'option',
                                                                 'threshold',
@@ -154,6 +140,10 @@ def create_resting_state_graphs(allocated_memory = None,
                                                  function = calc_centrality),
                                    name = 'calculate_centrality')
     
+    wf.connect(inputspec, 'subject', 
+               calculate_centrality, 'datafile')
+    wf.connect(inputspec, 'template', 
+               calculate_centrality, 'template')
     
     wf.connect(centrality_options, 'method_options',
                calculate_centrality, 'method_options')
@@ -164,17 +154,6 @@ def create_resting_state_graphs(allocated_memory = None,
                calculate_centrality, 'threshold')
     wf.connect(inputspec, 'threshold_option', 
                calculate_centrality, 'option')
-    
-    wf.connect(read_data, 'timeseries_data', 
-               calculate_centrality, 'timeseries_data')
-    wf.connect(read_data, 'scans', 
-               calculate_centrality, 'scans')
-    wf.connect(read_data, 'mask_data',
-                calculate_centrality, 'template_data')
-    wf.connect(read_data, 'affine',
-               calculate_centrality, 'affine')
-    wf.connect(read_data, 'mask_type',
-               calculate_centrality, 'template_type')
     
     calculate_centrality.inputs.allocated_memory = allocated_memory
     
@@ -201,12 +180,12 @@ def load(datafile, template):
         
     Returns
     -------
-    timeseries_data: string (numpy npy file)
-        path to file containing timeseries of the input data
-    affine: string (numpy npy file)
-        path to file containing affine matrix of teh input data
-    mask_data: string (numpy npy file)
-        path to file containing mask/parcellation unit matrix
+    timeseries_data: ndarray
+        Masked timeseries of the input data
+    affine: ndarray
+        Affine matrix of the input data
+    mask_data: ndarray
+        Mask/parcellation unit matrix
     template_type: string 
         0 for mask, 1 for parcellation unit 
     scans: string (int)
@@ -268,23 +247,11 @@ def load(datafile, template):
         template_type = 0
         mask = mask.astype('bool')
         timeseries = data[mask]
-        
-    #saving files
-    img_name = os.path.splitext(os.path.splitext(os.path.basename(datafile))[0])[0] + '.npy'
-    mask_name = os.path.splitext(os.path.splitext(os.path.basename(template))[0])[0]  + '.npy'
     
-    mask_data = os.path.join(os.getcwd(), mask_name)
-    timeseries_data = os.path.join(os.getcwd(),img_name)
-    affine = os.path.join(os.getcwd(),'affine.npy')
-        
-    np.save(mask_data, mask)
-    np.save(timeseries_data, timeseries)
-    np.save(affine, aff)
-    
-    return timeseries_data, affine, mask_data, template_type, scans
+    return timeseries, aff, mask, template_type, scans
 
 
-def get_centrality(timeseries_data, 
+def get_centrality(timeseries, 
                    method_options,
                    weight_options,
                    threshold,
@@ -297,6 +264,8 @@ def get_centrality(timeseries_data,
     
     Parameters
     ----------
+    timeseries : numpy array
+        timeseries of the input subject
     weight_options : string (list of boolean)
         list of two booleans for binarize and weighted options respectively
     method_options : string (list of boolean)
@@ -333,7 +302,6 @@ def get_centrality(timeseries_data,
     
     try:
         
-        timeseries = load_mat(timeseries_data)
         shape = timeseries.shape
         block_size = calc_blocksize(shape, memory_allocated)
         corr_matrix = np.zeros((shape[0], shape[0]), dtype = np.float16)
@@ -384,7 +352,7 @@ def get_centrality(timeseries_data,
 
 
 
-def get_centrality_opt(timeseries_data,
+def get_centrality_opt(timeseries,
                        method_options,
                        weight_options,
                        memory_allocated,
@@ -433,9 +401,8 @@ def get_centrality_opt(timeseries_data,
                                         calc_threshold
     #from scipy.sparse import dok_matrix
     
-    try:                                    
+    try:                         
         out_list =[]
-        timeseries = load_mat(timeseries_data)
         shape = timeseries.shape
         try:
             block_size = calc_blocksize(shape, memory_allocated)
@@ -565,15 +532,12 @@ def calc_eigenV(r_matrix,
     return out_list
 
 
-def calc_centrality(method_options, 
+def calc_centrality(datafile, 
+                    template, 
+                    method_options, 
                     weight_options,
                     option,
                     threshold,
-                    timeseries_data,
-                    scans,
-                    template_type,
-                    template_data, 
-                    affine,
                     allocated_memory):
     
     """
@@ -581,7 +545,10 @@ def calc_centrality(method_options,
     
     Parameters
     ----------
-        
+    datafile : string (nifti file)
+        path to subject data file
+    template : string (nifti file)
+        path to mask/parcellation unit
     method_options : list (boolean)
         list of two booleans for binarize and weighted options respectively
     weight_options : list (boolean)
@@ -591,16 +558,6 @@ def calc_centrality(method_options,
         any other for threshold value
     threshold : a float
         pvalue/sparsity_threshold/threshold value
-    timeseries_data : string (numpy filepath)
-        timeseries of the input subject
-    scans : an integer
-        number of scans in the subject
-    template_type : an integer
-        0 for mask, 1 for roi
-    template_data : string (numpy filepath)
-        path to file containing mask/parcellation unit matrix
-    affine : string (filepath)
-        path to file containing affine matrix of the input data
     allocated_memory : string
         amount of memory allocated to degree centrality
     
@@ -627,10 +584,14 @@ def calc_centrality(method_options,
         raise Exception("Invalid values in weight options" \
                         "Atleast one True value is required")
    
+   
+    ts, aff, mask, t_type, scans = load(datafile, template)
+   
+   
     #for sparsity threshold
     if option == 1 and allocated_memory == None:
         
-        centrality_matrix = get_centrality(timeseries_data, 
+        centrality_matrix = get_centrality(ts, 
                                            method_options,
                                            weight_options,
                                            threshold,
@@ -649,7 +610,7 @@ def calc_centrality(method_options,
         
         print "inside optimized_centraltity, r_value ->", r_value
         
-        centrality_matrix = get_centrality_opt(timeseries_data,
+        centrality_matrix = get_centrality_opt(ts,
                                                method_options, 
                                                weight_options,
                                                allocated_memory,
@@ -658,11 +619,10 @@ def calc_centrality(method_options,
                                                r_value)     
         
     def get_image(matrix, template_type):
-        
         centrality_image = map_centrality_matrix(matrix, 
-                                                 affine, 
-                                                 template_data,
-                                                 template_type)
+                                                 aff, 
+                                                 mask,
+                                                 t_type)
         out_list.append(centrality_image) 
          
     for mat in centrality_matrix:
