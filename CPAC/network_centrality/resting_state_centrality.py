@@ -5,6 +5,7 @@ from CPAC.network_centrality import *
 def create_resting_state_graphs(allocated_memory = None,
                                 wf_name = 'resting_state_graph'):
     """
+    Testing
     Workflow to calculate degree and eigenvector centrality
     measures for the resting state data.
     
