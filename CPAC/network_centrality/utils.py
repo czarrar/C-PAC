@@ -196,7 +196,7 @@ def map_centrality_matrix(centrality_matrix, aff, mask, template_type):
         sparse_m = np.zeros((mask.shape), dtype=float)
      
         print "mapping centrality matrix to nifti image...", out_file
-            
+        
         if int(template_type) == 0:
             cords = np.argwhere(mask)        
             index=0
