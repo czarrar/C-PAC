@@ -442,9 +442,9 @@ def get_centrality_opt(timeseries,
     
            if method_options[0]:
                if weight_options[0]:
-                   degree_mat_binarize[j:i] = np.sum((corr_matrix > r_value).astype(np.float32), axis = 1) -1
+                   degree_mat_binarize[j:i] = np.sum((corr_matrix > r_value).astype(np.float32), axis = 1)
                if weight_options[1]:
-                   degree_mat_weighted[j:i] = np.sum(corr_matrix*(corr_matrix > r_value).astype(np.float32), axis = 1) -1
+                   degree_mat_weighted[j:i] = np.sum(corr_matrix*(corr_matrix > r_value).astype(np.float32), axis = 1)
         
            j = i   
            if i == timeseries.shape[0]:
@@ -460,6 +460,11 @@ def get_centrality_opt(timeseries,
         except Exception:
             print "Error in calcuating eigen vector centrality"
             raise
+        
+        # Removing effect of auto-correlation
+        if method_options[0]:
+            degree_mat_binarize[degree_mat_binarize!=0] = degree_mat_binarize[degree_mat_binarize!=0] - 1
+            degree_mat_weighted[degree_mat_weighted!=0] = degree_mat_weighted[degree_mat_weighted!=0] - 1
         
         return out_list   
     
