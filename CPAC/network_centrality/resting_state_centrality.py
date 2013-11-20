@@ -425,7 +425,10 @@ def get_centrality_opt(timeseries,
             r_matrix = np.zeros((shape[0], shape[0]), dtype = np.float32)
         
         print "Normalize TimeSeries"
-        timeseries = norm_cols(timeseries.T)
+        try:
+            timeseries = norm_cols(timeseries.T)
+        except:
+            raise Exception("Error normalizing timeseries")
         
         j=0
         i = block_size
