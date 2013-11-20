@@ -577,7 +577,8 @@ def calc_centrality(datafile,
     from CPAC.network_centrality import map_centrality_matrix,\
                                         get_centrality, \
                                         get_centrality_opt,\
-                                        calc_threshold
+                                        calc_threshold, \
+                                        load
     
     out_list = []
     
@@ -589,7 +590,7 @@ def calc_centrality(datafile,
         raise Exception("Invalid values in weight options" \
                         "Atleast one True value is required")
    
-   
+    
     ts, aff, mask, t_type, scans = load(datafile, template)
    
    
