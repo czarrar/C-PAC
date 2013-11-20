@@ -307,16 +307,16 @@ def get_centrality(timeseries,
         j=0
         i = block_size
         
-        while i <= timeseries.shape[0]:
+        while i <= timeseries.shape[1]:
             print "block ->", i,j 
             #temp_matrix = np.nan_to_num(calc_corrcoef(timeseries[j:i].T, timeseries.T))
             temp_matrix = np.nan_to_num(timeseries[:,j:i].T.dot(timeseries))
             corr_matrix[j:i] = temp_matrix
             j = i   
-            if i == timeseries.shape[0]:
+            if i == timeseries.shape[1]:
                 break
-            elif (i+block_size) > timeseries.shape[0]: 
-                i = timeseries.shape[0] 
+            elif (i+block_size) > timeseries.shape[1]: 
+                i = timeseries.shape[1] 
             else:
                 i += block_size
         
@@ -425,15 +425,12 @@ def get_centrality_opt(timeseries,
             r_matrix = np.zeros((shape[0], shape[0]), dtype = np.float32)
         
         print "Normalize TimeSeries"
-        try:
-            timeseries = norm_cols(timeseries.T)
-        except:
-            raise Exception("Error normalizing timeseries")
+        timeseries = norm_cols(timeseries.T)
         
         j=0
         i = block_size
         
-        while i <= timeseries.shape[0]:
+        while i <= timeseries.shape[1]:
            
            print "running block ->", i, j 
            try:
@@ -455,10 +452,10 @@ def get_centrality_opt(timeseries,
                    degree_mat_weighted[j:i] = np.sum(corr_matrix*(corr_matrix > r_value).astype(np.float32), axis = 1)
         
            j = i   
-           if i == timeseries.shape[0]:
+           if i == timeseries.shape[1]:
                break
-           elif (i+block_size) > timeseries.shape[0]: 
-               i = timeseries.shape[0] 
+           elif (i+block_size) > timeseries.shape[1]: 
+               i = timeseries.shape[1] 
            else:
                i += block_size    
         
