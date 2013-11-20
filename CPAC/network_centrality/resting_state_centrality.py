@@ -290,8 +290,8 @@ def get_centrality(timeseries,
                                         calc_blocksize,\
                                         calc_threshold,\
                                         calc_eigenV
-    
     from scipy.sparse import csc_matrix
+    from CPAC.cwas.subdist import norm_cols, ncor
     
     out_list=[]
     
@@ -300,12 +300,17 @@ def get_centrality(timeseries,
         shape = timeseries.shape
         block_size = calc_blocksize(shape, memory_allocated)
         corr_matrix = np.zeros((shape[0], shape[0]), dtype = np.float16)
+        
+        print "Normalize TimeSeries"
+        timeseries = norm_cols(timeseries.T)
+        
         j=0
         i = block_size
         
         while i <= timeseries.shape[0]:
             print "block ->", i,j 
-            temp_matrix = np.nan_to_num(calc_corrcoef(timeseries[j:i].T, timeseries.T))
+            #temp_matrix = np.nan_to_num(calc_corrcoef(timeseries[j:i].T, timeseries.T))
+            temp_matrix = np.nan_to_num(timeseries[:,j:i].T.dot(timeseries))
             corr_matrix[j:i] = temp_matrix
             j = i   
             if i == timeseries.shape[0]:
@@ -419,8 +424,8 @@ def get_centrality_opt(timeseries,
         if method_options[1]:
             r_matrix = np.zeros((shape[0], shape[0]), dtype = np.float32)
         
-        #print "Normalize TimeSeries"
-        #timeseries = norm_cols(timeseries.T)
+        print "Normalize TimeSeries"
+        timeseries = norm_cols(timeseries.T)
         
         j=0
         i = block_size
@@ -429,8 +434,8 @@ def get_centrality_opt(timeseries,
            
            print "running block ->", i, j 
            try:
-               corr_matrix = np.nan_to_num(calc_corrcoef(timeseries[j:i].T, timeseries.T))
-               #corr_matrix = np.nan_to_num(timeseries[:,j:i].T.dot(timeseries))
+               #corr_matrix = np.nan_to_num(calc_corrcoef(timeseries[j:i].T, timeseries.T))
+               corr_matrix = np.nan_to_num(timeseries[:,j:i].T.dot(timeseries))
            except:
                raise Exception("Error in calcuating block wise correlation for the block %,%"%(j,i))
            
