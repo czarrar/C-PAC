@@ -610,7 +610,8 @@ def calc_centrality(datafile,
                                      scans)
         
         print "inside optimized_centraltity, r_value ->", r_value
-        
+        import time
+        start = time.clock()
         centrality_matrix = get_centrality_opt(ts,
                                                method_options, 
                                                weight_options,
@@ -618,13 +619,14 @@ def calc_centrality(datafile,
                                                threshold,
                                                scans,
                                                r_value)     
+        print "timing:", (time.clock() - start)
         
     def get_image(matrix, template_type):
         centrality_image = map_centrality_matrix(matrix, 
                                                  aff, 
                                                  mask,
                                                  template_type)
-        out_list.append(template_type) 
+        out_list.append(centrality_image) 
          
     for mat in centrality_matrix:
         get_image(mat, t_type)
