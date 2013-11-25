@@ -420,7 +420,7 @@ def get_centrality_opt(timeseries,
         if calc_degree:
             print "Setup Degree Output"
             if out_binarize:
-                degree_binarize = np.zeros(nvoxs, dtype=timeries.dtype)
+                degree_binarize = np.zeros(nvoxs, dtype=timeseries.dtype)
                 out_list.append(('degree_centrality_binarize', degree_binarize))
             if out_weighted:
                 degree_weighted = np.zeros(nvoxs, dtype=timeseries.dtype)
