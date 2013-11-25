@@ -1,3 +1,5 @@
+cimport numpy as np
+
 # Un-Weighted
 def centrality_unweighted_float(np.ndarray[float, ndim=2] cmat, np.ndarray[float, ndim=1] cent, float thresh):
     cdef unsigned int i,j
