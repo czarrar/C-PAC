@@ -247,7 +247,9 @@ def load(datafile, template):
         mask = mask.astype('bool')
         timeseries = data[mask & datmask]
     
-    return timeseries, aff, mask, template_type, scans
+    final_mask = mask & datmask
+    
+    return timeseries, aff, final_mask, template_type, scans
 
 
 def get_centrality(timeseries, 
@@ -436,15 +438,16 @@ def get_centrality_opt(timeseries,
         j = 0
         i = block_size
         
+        print "Computing centrality across %i voxels" % nvoxs
         while i <= nvoxs:
            
            print "running block ->", i, j
            
            try:
                print "...correlating"
-               corr_matrix = timeseries[:,j:i].T.dot(timeseries)
+               corr_matrix = np.dot(timeseries[:,j:i].T, timeseries)
            except:
-               raise Exception("Error in calcuating block wise correlation for the block %,%"%(j,i))
+               raise Exception("Error in calcuating block wise correlation for the block %i,%i"%(j,i))
            
            if r_value == None:
                print "...calculating threshold"
