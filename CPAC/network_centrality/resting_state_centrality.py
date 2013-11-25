@@ -483,8 +483,8 @@ def get_centrality_opt(timeseries,
         
         # Removing effect of auto-correlation
         if method_options[0]:
-            degree_mat_binarize[degree_mat_binarize!=0] = degree_mat_binarize[degree_mat_binarize!=0] - 1
-            degree_mat_weighted[degree_mat_weighted!=0] = degree_mat_weighted[degree_mat_weighted!=0] - 1
+            degree_binarize[degree_binarize!=0] = degree_binarize[degree_binarize!=0] - 1
+            degree_weighted[degree_weighted!=0] = degree_weighted[degree_weighted!=0] - 1
         
         return out_list   
     
