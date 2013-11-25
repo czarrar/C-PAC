@@ -13,8 +13,9 @@ from utils import convert_pvalue_to_r,\
                   map_centrality_matrix,\
                   calc_threshold,\
                   calc_blocksize, \
-                  calc_corrcoef,\
-                  check_timeseries
+                  calc_corrcoef, \
+                  check_timeseries, \
+                  centrality
 
 __all__ = ['create_resting_state_graphs', \
            'load',\
@@ -30,5 +31,6 @@ __all__ = ['create_resting_state_graphs', \
            'convert_sparsity_to_r', \
            'calc_blocksize',\
            'calc_threshold',\
-           'check_timeseries']
+           'check_timeseries',\
+           'centrality']
 

@@ -1,3 +1,35 @@
+import pyximport
+pyximport.install(setup_args={'include_dirs': [np.get_include()]})
+
+from thresh_and_sum import centrality_unweighted_float, centrality_unweighted_double, \
+                           centrality_weighted_float, centrality_weighted_double, \
+                           centrality_both_float, centrality_both_double
+
+
+def centrality(corr_matrix, r_value, degree_binarize=None, degree_weighted=None):
+    """
+    """
+    if degree_binarize is not None and degree_weighted is not None:
+        fun_type = "both"
+        args = [corr_matrix, degree_binarize, degree_weighted, r_value]
+    elif degree_binarize is not None:
+        fun_type = "unweighted"
+        args = [corr_matrix, degree_binarize, r_value]
+    elif degree_weighted is not None:
+        fun_type = "weighted"
+        args = [corr_matrix, degree_weighted, r_value]
+    else:
+        raise Exception("Arguments degree_binarize and/or degree_weighted must be specified and not None.")
+    
+    if corr_matrix.dtype.itemsize == 8:
+        fun_dtype = "double"
+    else:
+        fun_dtype = "float"
+    
+    fun = globals()["centrality_%s_%s" % (func_type, fun_dtype)]
+    fun(*args)
+    
+    return
 
 def convert_pvalue_to_r(scans, threshold):
         
@@ -272,16 +304,22 @@ def calc_corrcoef(X, Y=None):
     return r
 
 
-def calc_blocksize (shape, memory_allocated = None):
+def calc_blocksize (timeseries, memory_allocated = None):
     """
     Method to calculate blocksize to calculate correlation matrix
     as per the memory allocated by the user. By default, the block
-    size is 1000. 
-
+    size is 1000 when no memory limit is specified.
+    
+    If memory allocated is specified, then block size is calculated
+    as memory allocated subtracted by the memory of the timeseries 
+    and centrality output, then divided by the size of one correlation 
+    map. That is how many correlation maps can we calculate simultaneously 
+    in memory?
+    
     Parameters
     ----------
-    shape : tuple
-       shape of array
+    timeseries : numpy array
+       timeseries data: `nvoxs` x `ntpts`
     memory_allocated : float
        memory allocated in GB for degree centrality
     
@@ -293,24 +331,15 @@ def calc_blocksize (shape, memory_allocated = None):
     
     import warnings
     
-    block_size = 1000
+    block_size = 1000   # default
     
-    def get_size(num, unit):
-        
-        for x in range(3):
-            if unit == 'GB':
-                num /= 1024.0
-            elif unit == 'bytes':
-                num *= 1024.0
-        return float(num)
-    
-    nvoxs = shape[0]
-    ntpts = shape[1]
-    nbytes = 8  # TODO: replace
+    nvoxs   = timeseries.shape[0]
+    ntpts   = timeseries.shape[1]
+    nbytes  = timeseries.dtype.itemsize
     
     if memory_allocated:
-        block_size = int( get_size(memory_allocated, 'bytes')/(nvoxs * nbytes) - 2 - ntpts*nbytes )
-        #block_size =  int(0.8*(get_size(memory_allocated, 'bytes') - shape[0]*shape[1]*8 - shape[0]*8*2)/(shape[0]*8*4 + shape[1]*8))
+        memory_in_bytes = memory_allocated * 1024.0**3    # assume it is in GB
+        block_size = int( memory_in_bytes/(nvoxs * nbytes) - 2 - ntpts*nbytes )
         
     if block_size > nvoxs:
         block_size = nvoxs
