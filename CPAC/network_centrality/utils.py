@@ -1,35 +1,50 @@
+import numpy as np
 import pyximport
 pyximport.install(setup_args={'include_dirs': [np.get_include()]})
 
-from thresh_and_sum import centrality_unweighted_float, centrality_unweighted_double, \
+from thresh_and_sum import centrality_binarize_float, centrality_binarize_double, \
                            centrality_weighted_float, centrality_weighted_double, \
-                           centrality_both_float, centrality_both_double
+                           centrality_both_float, centrality_both_double    # these aren't currently used
 
 
-def centrality(corr_matrix, r_value, degree_binarize=None, degree_weighted=None):
+def centrality(corr_matrix, r_value, method, out=None):
     """
+    Calculate centrality for the rows in the corr_matrix using
+    a specified correlation threshold. The centrality output can 
+    be binarized or weighted.
+    
+    Paramaters
+    ---------
+    corr_matrix : numpy.ndarray
+    r_value : float
+    method : str
+        Can be 'binarize' or 'weighted'
+    out : numpy.ndarray (optional)
+        If specified then should have shape of `corr_matrix.shape[0]`
+    
+    Returns
+    -------
+    out : numpy.ndarray
     """
-    if degree_binarize is not None and degree_weighted is not None:
-        fun_type = "both"
-        args = [corr_matrix, degree_binarize, degree_weighted, r_value]
-    elif degree_binarize is not None:
-        fun_type = "unweighted"
-        args = [corr_matrix, degree_binarize, r_value]
-    elif degree_weighted is not None:
-        fun_type = "weighted"
-        args = [corr_matrix, degree_weighted, r_value]
-    else:
-        raise Exception("Arguments degree_binarize and/or degree_weighted must be specified and not None.")
+    
+    if method not in ["binarize", "weighted"]:
+        raise Exception("Method must be one of binarize or weighted and not %s" % method)
     
     if corr_matrix.dtype.itemsize == 8:
-        fun_dtype = "double"
+        dtype   = "double"
+        r_value = np.float64(r_value)
     else:
-        fun_dtype = "float"
+        dtype   = "float"
+        r_value = np.float32(r_value)
     
-    fun = globals()["centrality_%s_%s" % (func_type, fun_dtype)]
-    fun(*args)
+    if out is None:
+        out = np.zeros(corr_matrix.shape[0], dtype=corr_matrix.dtype)
     
-    return
+    func_name   = "centrality_%s_%s" % (method, dtype)
+    func        = globals()[func_name]
+    func(corr_matrix, out, r_value)
+    
+    return out
 
 def convert_pvalue_to_r(scans, threshold):
         
