@@ -304,11 +304,16 @@ def calc_blocksize (shape, memory_allocated = None):
                 num *= 1024.0
         return float(num)
     
+    nvoxs = shape[0]
+    ntpts = shape[1]
+    nbytes = 8  # TODO: replace
+    
     if memory_allocated:
-        block_size =  int(0.8*(get_size(memory_allocated, 'bytes') - shape[0]*shape[1]*8 - shape[0]*8*2)/(shape[0]*8*4 + shape[1]*8))
+        block_size = int( get_size(memory_allocated, 'bytes')/(nvoxs * nbytes) - 2 - ntpts*nbytes )
+        #block_size =  int(0.8*(get_size(memory_allocated, 'bytes') - shape[0]*shape[1]*8 - shape[0]*8*2)/(shape[0]*8*4 + shape[1]*8))
         
-    if block_size > shape[0]:
-        block_size = shape[0]
+    if block_size > nvoxs:
+        block_size = nvoxs
     elif block_size < 1:
         raise MemoryError(" Not enough memory available to perform degree centrality")
             
