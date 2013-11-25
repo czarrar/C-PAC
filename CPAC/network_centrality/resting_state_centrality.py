@@ -362,7 +362,6 @@ def get_centrality_opt(timeseries,
                        memory_allocated,
                        threshold, 
                        r_value = None):
-    
     """
     Method to calculate degree and eigen vector centrality. 
     This method takes into consideration the amount of memory
@@ -399,7 +398,8 @@ def get_centrality_opt(timeseries,
                                         calc_corrcoef,\
                                         calc_blocksize,\
                                         calc_eigenV,\
-                                        calc_threshold
+                                        calc_threshold,\
+                                        centrality
     #from scipy.sparse import dok_matrix
     from CPAC.cwas.subdist import norm_cols, ncor
     
