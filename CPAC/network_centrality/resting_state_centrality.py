@@ -207,9 +207,8 @@ def load(datafile, template):
         aff     = img.get_affine()    
         scans   = data.shape[3]
         
-        datmask = (data!=0).any(axis=3)
+        datmask = data.var(axis=3).astype('bool')
         mask    = nib.load(template).get_data().astype(np.float32)
-        
         
     except:
         print "Error in loading images for graphs"
@@ -464,7 +463,10 @@ def get_centrality_opt(timeseries,
                    centrality(corr_matrix, r_value, method="binarize", out=degree_binarize[j:i])
                if out_weighted:
                    centrality(corr_matrix, r_value, method="weighted", out=degree_weighted[j:i])
-
+            
+           print "...removing correlation matrix"
+           del corr_matrix
+           
            j = i
            if i == nvoxs:
                break
