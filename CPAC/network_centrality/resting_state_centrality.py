@@ -217,7 +217,6 @@ def load(datafile, template=None):
             mask    = np.ones((data.shape[:3]))
         else:
             mask    = nib.load(template).get_data().astype(np.float32)
-        final_mask  = mask & datmask
         
     except:
         print "Error in loading images for graphs"
@@ -245,12 +244,14 @@ def load(datafile, template=None):
                     flag=0
                 else:
                     timeseries = np.vstack((timeseries, avg))
+            final_mask  = datmask
         #template_type is 1 for parcellation
         template_type = 1
     else:
         #template_type is 0 for mask
         template_type = 0
         mask = mask.astype('bool')
+        final_mask = mask & datmask
         timeseries = data[final_mask]
     
     return timeseries, aff, final_mask, template_type, scans
