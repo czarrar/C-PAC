@@ -213,7 +213,7 @@ def load(datafile, template=None):
         scans   = data.shape[3]
         
         datmask     = data.var(axis=3).astype('bool')
-        if mask is None:
+        if template is None:
             mask    = np.ones((data.shape[:3]))
         else:
             mask    = nib.load(template).get_data().astype(np.float32)
