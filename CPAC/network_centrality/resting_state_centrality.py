@@ -160,19 +160,24 @@ def create_resting_state_graphs(allocated_memory = None,
 
 
 
-def load(datafile, template):
+def load(datafile, template=None):
     
     """
     Method to read data from datafile and mask/parcellation unit
     and store the mask data, timeseries, affine matrix, mask type
     and scans. The output of this method is used by all other nodes.
     
+    Note that this function also will internally compute it's own 
+    brain mask by getting all voxels with non-zero variance in the
+    timeseries.
+    
     Parameters
     ----------
     datafile : string (nifti file)
         path to subject data file
-    template : string (nifti file)
+    template : string (nifti file) or None (default: None)
         path to mask/parcellation unit
+        if none, then will be mask with all 1s
         
     Returns
     -------
@@ -207,19 +212,21 @@ def load(datafile, template):
         aff     = img.get_affine()    
         scans   = data.shape[3]
         
-        datmask = data.var(axis=3).astype('bool')
-        mask    = nib.load(template).get_data().astype(np.float32)
+        datmask     = data.var(axis=3).astype('bool')
+        if mask is None:
+            mask    = np.ones((data.shape[:3]))
+        else:
+            mask    = nib.load(template).get_data().astype(np.float32)
+        final_mask  = mask & datmask
         
     except:
         print "Error in loading images for graphs"
         raise
     
     
-    
     if mask.shape != data.shape[:3]:
         raise Exception("Invalid Shape Error. mask and data file have"\
                         "different shape please check the voxel size of the two files")
-
     
     #check for parcellation
     nodes = np.unique(mask).tolist()
@@ -244,9 +251,7 @@ def load(datafile, template):
         #template_type is 0 for mask
         template_type = 0
         mask = mask.astype('bool')
-        timeseries = data[mask & datmask]
-    
-    final_mask = mask & datmask
+        timeseries = data[final_mask]
     
     return timeseries, aff, final_mask, template_type, scans
 
