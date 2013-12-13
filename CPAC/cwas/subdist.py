@@ -49,5 +49,5 @@ def fischers_transform(S):
 
 def compute_distances(S0):
     S0   = norm_cols(S0.T).T
-    dmat = 1 - S0.dot(S0.T)
+    dmat = np.sqrt(2*(1 - S0.dot(S0.T)))
     return dmat

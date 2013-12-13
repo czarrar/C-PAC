@@ -2,6 +2,7 @@ import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
 
 from CPAC.network_centrality import *
+from CPAC.network_centrality.core import *
 
 def create_resting_state_graphs(allocated_memory = None,
                                 wf_name = 'resting_state_graph'):
@@ -448,6 +449,7 @@ def get_centrality_opt(timeseries,
            
            print "running block ->", i, j
            
+           if calc_degree:
            try:
                print "...correlating"
                corr_matrix = np.dot(timeseries[:,j:i].T, timeseries)
@@ -466,9 +468,9 @@ def get_centrality_opt(timeseries,
            if calc_degree:
                print "...calculating degree"
                if out_binarize:
-                   centrality(corr_matrix, r_value, method="binarize", out=degree_binarize[j:i])
+                   degree_centrality(corr_matrix, r_value, method="binarize", out=degree_binarize[j:i])
                if out_weighted:
-                   centrality(corr_matrix, r_value, method="weighted", out=degree_weighted[j:i])
+                   degree_centrality(corr_matrix, r_value, method="weighted", out=degree_weighted[j:i])
             
            print "...removing correlation matrix"
            del corr_matrix
@@ -499,7 +501,7 @@ def get_centrality_opt(timeseries,
     except Exception: 
         print "Error in calcuating Centrality"
         raise
- 
+
  
 def calc_eigenV(r_matrix, 
                 r_value, 
@@ -526,40 +528,19 @@ def calc_eigenV(r_matrix,
         
     
     """
-    
-    
-    import scipy.sparse.linalg as LA
     import numpy as np
     from scipy.sparse import csc_matrix    
 
     out_list =[]
     
-    try:
-        def getEigenVectorCentrality(matrix):
-            """
-            from numpy import linalg as LA
-            w, v = LA.eig(a)
-            index = np.argmax(w)
-            eigenValue = w.max()
-            eigenvector= v[index]
-            """
-            #using scipy method, which is a wrapper to the ARPACK functions
-            #http://docs.scipy.org/doc/scipy/reference/tutorial/arpack.html
-            eigenValue, eigenVector= LA.eigsh(matrix, k=1, which='LM', maxiter=1000)
-            print "eigenValues : ", eigenValue
-            eigen_matrix=(matrix.dot(np.abs(eigenVector)))/eigenValue[0]
-            return eigen_matrix
-    except:
-        raise Exception("Exception in calculating eigenvector centrality")
-    
     if weight_options[0]:
         print "calculating eigen vector centrality matrix..."
-        eigen_matrix_binarize = getEigenVectorCentrality(csc_matrix((r_matrix> r_value).astype(np.float32)))        
+        eigen_matrix_binarize = eigenvector_centrality(r_matrix, r_value, method="binarize")
         out_list.append(('eigenvector_centrality_binarize', eigen_matrix_binarize))
     
     if weight_options[1]:
         print "calculating weighted eigen vector centrality matrix..."
-        eigen_matrix_weighted = getEigenVectorCentrality(csc_matrix(r_matrix*(r_matrix > r_value).astype(np.float32)))        
+        eigen_matrix_weighted = eigenvector_centrality(r_matrix, r_value, method="weighted")     
         out_list.append(('eigenvector_centrality_weighted', eigen_matrix_weighted))
         
     return out_list
