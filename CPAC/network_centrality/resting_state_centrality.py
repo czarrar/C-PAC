@@ -405,7 +405,7 @@ def get_centrality_opt(timeseries,
                                         calc_blocksize,\
                                         calc_eigenV,\
                                         calc_threshold,\
-                                        centrality
+                                        degree_centrality
     #from scipy.sparse import dok_matrix
     from CPAC.cwas.subdist import norm_cols, ncor
     
@@ -450,11 +450,11 @@ def get_centrality_opt(timeseries,
            print "running block ->", i, j
            
            if calc_degree:
-           try:
-               print "...correlating"
-               corr_matrix = np.dot(timeseries[:,j:i].T, timeseries)
-           except:
-               raise Exception("Error in calcuating block wise correlation for the block %i,%i"%(j,i))
+               try:
+                   print "...correlating"
+                   corr_matrix = np.dot(timeseries[:,j:i].T, timeseries)
+               except:
+                   raise Exception("Error in calcuating block wise correlation for the block %i,%i"%(j,i))
            
            if r_value == None:
                print "...calculating threshold"

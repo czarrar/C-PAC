@@ -14,8 +14,11 @@ from utils import convert_pvalue_to_r,\
                   calc_threshold,\
                   calc_blocksize, \
                   calc_corrcoef, \
-                  check_timeseries, \
-                  centrality
+                  check_timeseries
+
+from core import degree_centrality, \
+                 eigenvector_centrality, \
+                 fast_eigenvector_centrality
 
 __all__ = ['create_resting_state_graphs', \
            'load',\
@@ -32,5 +35,7 @@ __all__ = ['create_resting_state_graphs', \
            'calc_blocksize',\
            'calc_threshold',\
            'check_timeseries',\
-           'centrality']
+           'degree_centrality',\
+           'eigenvector_centrality',\
+           'fast_eigenvector_centrality']
 

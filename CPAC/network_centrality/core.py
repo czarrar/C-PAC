@@ -1,3 +1,5 @@
+# coding: utf-8
+
 """
 These are function nodes of sorts that compute a centrality measure.
 """
@@ -6,6 +8,7 @@ These are function nodes of sorts that compute a centrality measure.
 # Degree Centrality
 ####
 
+import numpy as np
 import pyximport
 pyximport.install(setup_args={'include_dirs': [np.get_include()]})
 from thresh_and_sum import centrality_binarize_float, centrality_binarize_double, \
