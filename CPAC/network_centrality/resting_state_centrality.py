@@ -356,11 +356,11 @@ def get_centrality_by_sparsity(timeseries,
         if calc_eigen:
             if out_binarize:
                 print "...calculating binarize eigenvector"
-                eigen_binarize[:] = eigenvector_centrality(corr_matrix, r_value, method="binarize")
+                eigen_binarize = eigenvector_centrality(corr_matrix, r_value, method="binarize")
                 out_list.append(('eigenvector_centrality_binarize', eigen_binarize))
             if out_weighted:
                 print "...calculating weighted eigenvector"
-                eigen_weighted[:] = eigenvector_centrality(corr_matrix, r_value, method="weighted")
+                eigen_weighted = eigenvector_centrality(corr_matrix, r_value, method="weighted")
                 out_list.append(('eigenvector_centrality_weighted', eigen_weighted))            
             
     except Exception:
