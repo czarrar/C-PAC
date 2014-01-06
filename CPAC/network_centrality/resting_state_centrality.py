@@ -657,7 +657,7 @@ def calc_centrality(datafile,
     
     #p-value threshold centrality
     if option == 0:
-        centrality_matrix = get_centrality_by_threshold(ts,
+        centrality_matrix = get_centrality_by_thresh(ts,
                                                method_options, 
                                                weight_options,
                                                allocated_memory,
@@ -673,7 +673,7 @@ def calc_centrality(datafile,
                                                
     #r-value threshold centrality
     elif option == 2:
-        centrality_matrix = get_centrality_by_threshold(ts, 
+        centrality_matrix = get_centrality_by_thresh(ts, 
                                            method_options,
                                            weight_options,
                                            allocated_memory, 
