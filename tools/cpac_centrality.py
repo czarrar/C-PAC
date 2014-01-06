@@ -37,6 +37,8 @@ parser.add_argument('--weighted', action="store_true",
 
 # Option: Threshold
 # TODO: explicitly check that only one is specified.
+parser.add_argument('--no-threshold', action='store_true', 
+                    help="The raw correlations will be used and the approach will be very fast and low memory usage.")
 parser.add_argument('--sparsity', type=float, 
                     help="Sparsity based threshold. (Only one threshold option can be specified.)")
 parser.add_argument('--pvalue', type=float, 
@@ -47,7 +49,11 @@ parser.add_argument('--rho', type=float,
 # Option: Memory
 parser.add_argument('--memlimit', type=float, 
                     help="Memory limit that should be set.")
-                    
+
+# Option: Threads
+parser.add_argument('--nthreads', type=int, default=1, 
+                    help="Number of threads to parallel processes for Intel MKL")
+
 # Output
 parser.add_argument('-o', '--outdir', default=os.getcwd(), help="Output directory")
 
@@ -58,6 +64,12 @@ parser.add_argument('-o', '--outdir', default=os.getcwd(), help="Output director
 ###
 
 args = parser.parse_args()
+
+try:
+    import mkl
+    mkl.set_num_threads(args.nthreads)
+except ImportError:
+    pass
 
 if not args.degree and not args.eigen:
     raise SystemExit("--degree and/or --eigen must be specified")
@@ -74,11 +86,13 @@ elif args.sparsity is not None:
     option = 1
     threshold = args.sparsity
 elif args.rho is not None:
-    option = -1
+    option = 2
     threshold = args.rho
+elif args.no_threshold:
+    option = 3
+    threshold = None
 else:
-    raise SystemExit("You must specify one threshold option: --pvalue, --sparsity, --rho.")
-  
+    raise SystemExit("You must specify one threshold option: --pvalue, --sparsity, --rho, or --no-threshold.")
   
 ###
 # Call on the Big Guy/Gal (CPAC)
