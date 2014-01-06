@@ -262,7 +262,6 @@ def get_centrality_sparsity(timeseries,
                    method_options,
                    weight_options,
                    threshold,
-                   option, 
                    memory_allocated):
     
     """
@@ -623,7 +622,7 @@ def calc_centrality(datafile,
         list of two booleans for binarize and weighted options respectively
     option : an integer
         0 for probability p_value, 1 for sparsity threshold, 
-        any other for threshold value
+        2 for actual threshold value, and 3 for no threshold and fast approach
     threshold : a float
         pvalue/sparsity_threshold/threshold value
     allocated_memory : string
@@ -643,40 +642,53 @@ def calc_centrality(datafile,
     
     if method_options.count(True) == 0:  
         raise Exception("Invalid values in method_options " \
-                        "Atleast one True value is required")
+                        "At least one True value is required")
    
     if weight_options.count(True) == 0:
         raise Exception("Invalid values in weight options" \
-                        "Atleast one True value is required")
+                        "At least one True value is required")
    
     
     ts, aff, mask, t_type, scans = load(datafile, template)
-   
-   
-    #for sparsity threshold
-    if option == 1 and allocated_memory == None:
-        
-        centrality_matrix = get_centrality_by_sparsity(ts, 
-                                           method_options,
-                                           weight_options,
-                                           threshold,
-                                           option,
-                                           scans,
-                                           allocated_memory)
-    #optimized centrality
-    else:
-                
-        print "inside optimized_centraltity, r_value ->", r_value
-        import time
-        start = time.clock()
+    
+    
+    import time
+    start = time.clock()
+    
+    #p-value threshold centrality
+    if option == 0:
         centrality_matrix = get_centrality_by_threshold(ts,
                                                method_options, 
                                                weight_options,
                                                allocated_memory,
-                                               threshold,
-                                               r_value)     
-        print "timing:", (time.clock() - start)
-        
+                                               threshold)
+                                               
+    #for sparsity threshold
+    elif option == 1: 
+        centrality_matrix = get_centrality_by_sparsity(ts, 
+                                           method_options,
+                                           weight_options,
+                                           threshold,
+                                           allocated_memory)
+                                               
+    #r-value threshold centrality
+    elif option == 2:
+        centrality_matrix = get_centrality_by_threshold(ts, 
+                                           method_options,
+                                           weight_options,
+                                           allocated_memory, 
+                                           None,
+                                           threshold)
+    
+    #for fast approach (no thresholding)
+    elif option == 3:
+        centrality_matrix = get_centrality_fast(ts, method_options)
+    
+    else:
+        raise Exception("option must be between 0-3 and not %s" % str(option))
+    
+    print "timing:", (time.clock() - start)
+    
     def get_image(matrix, template_type):
         centrality_image = map_centrality_matrix(matrix, 
                                                  aff, 

@@ -2,7 +2,8 @@ from resting_state_centrality import create_resting_state_graphs,\
                                      load,\
                                      calc_centrality,\
                                      get_centrality_sparsity,\
-                                     get_centrality_thresh
+                                     get_centrality_thresh,\
+                                     get_centrality_fast
 
 from z_score import  get_zscore
 
@@ -24,6 +25,7 @@ __all__ = ['create_resting_state_graphs',\
            'load_mat',\
            'get_centrality_sparsity',\
            'get_centrality_thresh',\
+           'get_centrality_fast',\
            'map_centrality_matrix',\
            'get_zscore',\
            'calc_corrcoef',\
