@@ -62,10 +62,11 @@ def fast_degree_centrality(m):
     ntpts = m.shape[0]
     nvoxs = m.shape[1]
     
-    wts   = np.ones((nvoxs,1))                  # node weights
-    out   = m.dot(wts).T.dot(m)                 # M*wts'*M
+    wts   = np.ones((nvoxs,1))/np.sqrt(nvoxs)   # node weights
+    part1 = m.dot(wts)                          # part one of M*v
+    part2 = m.T.dot(part1)                      # part two of M*v
     
-    return out
+    return part2
 
 
 
@@ -73,7 +74,7 @@ def fast_degree_centrality(m):
 # Eigenvector Centrality
 ####
 
-def eigenvector_centrality(corr_matrix, r_value=None, method=None, verbose=True):
+def eigenvector_centrality(corr_matrix, r_value=None, method=None, verbose=True, to_transform=True, ret_eigenvalue=False):
     """
     Examples
     --------
@@ -89,28 +90,37 @@ def eigenvector_centrality(corr_matrix, r_value=None, method=None, verbose=True)
     from scipy.sparse import linalg as LA
     from scipy.sparse import csc_matrix
     
+    # Transform correlations to be in the range 0-1 (non-zero)
+    if to_transform:
+        corr_matrix = (1+corr_matrix)/2.0 # check that the memory usage isn't too high at this step
+    
     if r_value is None:
         corr_sparse = corr_matrix
     else:
+        if to_transform:
+            r_value = (1+r_value)/2.0 # transform to be 0-1 range
         if method == "binarize":
             corr_sparse = csc_matrix(corr_matrix > r_value, dtype='float32')
         elif method == "weighted":
             corr_sparse = csc_matrix(corr_matrix * (corr_matrix > r_value), dtype='float32')
         else:
             raise Exception("Unrecognized method %s" % method)
-        
+    
     #using scipy method, which is a wrapper to the ARPACK functions
     #http://docs.scipy.org/doc/scipy/reference/tutorial/arpack.html
     eigenValue, eigenVector = LA.eigsh(corr_sparse, k=1, which='LM', maxiter=1000)
-    if verbose:
-        print "eigenValues : ", eigenValue
-    eigen_matrix = corr_matrix.dot(np.abs(eigenVector))/eigenValue[0]
     
-    return eigen_matrix
+    if ret_eigenvalue:
+        return eigenValue, eigenVector
+    else:
+        return eigenVector
 
 
 def fast_eigenvector_centrality(m, maxiter=99, verbose=True):
     """
+    The output here is based on a transfered correlation matrix of m.
+    Where it equals (1+r)/2.
+    
     References
     ----------
     .. [1] Wink, A.M., de Munck, J.C., van der Werf, Y.D., van den Heuvel, O.A., Barkhof, F., 2012. Fast Eigenvector Centrality Mapping of Voxel-Wise Connectivity in Functional Magnetic Resonance Imaging: Implementation, Validation, and Interpretation. Brain Connectivity 2, 265–274.
@@ -123,7 +133,7 @@ def fast_eigenvector_centrality(m, maxiter=99, verbose=True):
     >>> m = np.random.random((ntpts,nvoxs)) # note that don't need to generate connectivity matrix
     >>> # Execute
     >>> from CPAC.network_centrality.core import fast_eigenvector_centrality
-    >>> eigenvector = fast_eigenvector_centrality(m)    
+    >>> eigenvector = fast_eigenvector_centrality(m)
     """
     from numpy import linalg as LA
     
@@ -144,15 +154,11 @@ def fast_eigenvector_centrality(m, maxiter=99, verbose=True):
     while (i < maxiter) & (dnorm > cnorm):
         vprev = vcurr                           # start with previous estimate
         prevsum = np.sum(vprev)                 # sum of estimate
-        vcurr_1 = m.dot(vprev)                 # part one of M*v
-        vcurr_2 = m.T.dot(vcurr_1)             # part two of M*v
+        vcurr_1 = m.dot(vprev)                  # part one of M*v
+        vcurr_2 = m.T.dot(vcurr_1)              # part two of M*v
         vcurr_3 = vcurr_2 + prevsum             # adding sum -- same effect as [M+1]*v
         vcurr   = vcurr_3/LA.norm(vcurr_3,2)    # normalize L2-norm
-        
-        # TODO: on the first iteration, one could output the weighted degree centrality
-        if i == 0:
-            pass # could save vcurr_2
-        
+                
         i += 1
         dnorm = LA.norm(vcurr-vprev, 2)
         cnorm = LA.norm(vcurr,2) * np.spacing(1)

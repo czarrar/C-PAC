@@ -112,8 +112,8 @@ def load_mat(mat_file):
 
 def calc_threshold(option, 
                    threshold,
-                   scans,
-                   corr_matrix= None,
+                   ntpts = None,
+                   corr_matrix = None,
                    full_matrix = True):  
     
     """
@@ -123,13 +123,16 @@ def calc_threshold(option,
     Parameters
     ----------
     option : an integer
-        threshold option
+        threshold option, can be:
+        * 0 = p-value threshold is converted to r-value
+        * 1 = sparsity threshold is converted to r-value
+        * else threshold is kept as the threshold
     threshold : a float
         thrshold value
-    scans : an integer
-        no of timepoints
+    ntpts : an integer
+        no of timepoints (only used with p->r aka option=0)
     corr_matrix : numpy array
-        correlation matrix
+        correlation matrix (only used with sparsity aka option=1)
     full_matrix : boolean
         True, if full matrix is considered.
         False, if only upper triangle is considered.
@@ -146,7 +149,7 @@ def calc_threshold(option,
      
     try:
          if option == 0:
-             r_value = convert_pvalue_to_r(scans, threshold)
+             r_value = convert_pvalue_to_r(ntpts, threshold)
          elif option == 1:
              r_value = convert_sparsity_to_r(corr_matrix, threshold, full_matrix)
          else:
@@ -273,7 +276,7 @@ def calc_corrcoef(X, Y=None):
     return r
 
 
-def calc_blocksize (timeseries, memory_allocated = None):
+def calc_blocksize(timeseries, memory_allocated = None, include_full_matrix = False):
     """
     Method to calculate blocksize to calculate correlation matrix
     as per the memory allocated by the user. By default, the block
@@ -291,6 +294,9 @@ def calc_blocksize (timeseries, memory_allocated = None):
        timeseries data: `nvoxs` x `ntpts`
     memory_allocated : float
        memory allocated in GB for degree centrality
+    include_full_matrix : boolean
+        do you want to consider the full correlation matrix in this calculation?
+        default: False
     
     Returns
     -------
@@ -306,17 +312,28 @@ def calc_blocksize (timeseries, memory_allocated = None):
     ntpts   = timeseries.shape[1]
     nbytes  = timeseries.dtype.itemsize
     
+    if include_full_matrix:
+        memory_for_full_matrix = nvoxs * nvoxs * nbytes
+    else:
+        memory_for_full_matrix = 0
+    
+    # memory_allocated = memory_for_timeseries + memory_for_output + memory_for_block + memory_for_full_matrix
     if memory_allocated:
-        memory_in_bytes = memory_allocated * 1024.0**3    # assume it is in GB
-        block_size = int( memory_in_bytes/(nvoxs * nbytes) - 2 - ntpts*nbytes )
+        memory_in_bytes         = memory_allocated * 1024.0**3  # assume it is in GB
+        memory_for_timeseries   = nvoxs * ntpts * nbytes
+        memory_for_output       = 2 * nvoxs * nbytes            # binarize and weighted output
+        # memory_for_block      = x # of voxels * nvoxs * nbytes
+        block_size  = int( (memory_in_bytes - memory_for_output - memory_for_timeseries - memory_for_full_matrix)/(nvoxs*nbytes) )
         
+        ## this is the condensed version of above (without the full matrix)
+        # block_size = int( memory_in_bytes/(nvoxs * nbytes) - 2 - ntpts*nbytes )
+    
     if block_size > nvoxs:
         block_size = nvoxs
     elif block_size < 1:
         raise MemoryError(" Not enough memory available to perform degree centrality")
             
     print "block_size -> ", block_size
-    
     
     return block_size
     

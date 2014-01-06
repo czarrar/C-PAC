@@ -258,12 +258,11 @@ def load(datafile, template=None):
     return timeseries, aff, final_mask, template_type, scans
 
 
-def get_centrality(timeseries, 
+def get_centrality_sparsity(timeseries, 
                    method_options,
                    weight_options,
                    threshold,
-                   option,
-                   scans,
+                   option, 
                    memory_allocated):
     
     """
@@ -273,22 +272,20 @@ def get_centrality(timeseries,
     ----------
     timeseries : numpy array
         timeseries of the input subject
+    method_options : string (list of boolean)
+        list of two booleans for degree and eigen options respectively
     weight_options : string (list of boolean)
         list of two booleans for binarize and weighted options respectively
-    method_options : string (list of boolean)
-        list of two booleans for binarize and weighted options respectively
-    threshold_matrix : string (numpy npy file)
-        path to file containing thresholded correlation matrix 
-    correlation_matrix : string (numpy npy file)
-        path to file containing correlation matrix
-    template_data : string (numpy npy file)
-        path to file containing mask or parcellation unit data    
+    threshold : float
+        sparsity threshold for the correlation values
+    memory_allocated : a string
+        amount of memory allocated to degree centrality
     
     Returns
     -------
     out_list : string (list of tuples)
         list of tuple containing output name to be used to store nifti image
-        for centrality and centrality matrix 
+        for centrality and centrality matrix
     
     Raises
     ------
@@ -297,63 +294,76 @@ def get_centrality(timeseries,
     
     import os
     import numpy as np
-    from CPAC.network_centrality import load_mat,\
-                                        calc_corrcoef,\
-                                        calc_blocksize,\
-                                        calc_threshold,\
-                                        calc_eigenV
-    from scipy.sparse import csc_matrix
-    from CPAC.cwas.subdist import norm_cols, ncor
+    from CPAC.network_centrality import calc_blocksize,\
+                                        convert_sparsity_to_r,\
+                                        degree_centrality,\
+                                        eigenvector_centrality
+    from CPAC.cwas.subdist import norm_cols
     
     out_list=[]
     
     try:
+        block_size  = calc_blocksize(timeseries, memory_allocated, include_full_matrix=True)
         
-        shape       = timeseries.shape
-        block_size  = calc_blocksize(timeseries, memory_allocated)
-        corr_matrix = np.zeros((shape[0], shape[0]), dtype = timeseries.dtype)
+        nvoxs = timeseries.shape[0]
+        ntpts = timeseries.shape[1]
+        
+        calc_degree  = method_options[0]
+        calc_eigen   = method_options[1]
+        out_binarize = weight_options[0]
+        out_weighted = weight_options[1]
+        
+        corr_matrix = np.zeros((nvoxs, nvoxs), dtype = timeseries.dtype)
+        
         
         print "Normalize TimeSeries"
         timeseries  = norm_cols(timeseries.T)
         
-        j=0
-        i = block_size
         
+        print "Computing centrality across %i voxels" % nvoxs
+        j = 0
+        i = block_size
         while i <= timeseries.shape[1]:
-            print "block ->", i,j 
-            corr_matrix[j:i] = timeseries[:,j:i].T.dot(timeseries)
-            j = i   
-            if i == timeseries.shape[1]:
+            print "running block ->", i,j
+            
+            print "...correlating"
+            np.dot(timeseries[:,j:i].T, timeseries, out=corr_matrix[j:i])
+            
+            j = i
+            if i == nvoxs:
                 break
-            elif (i+block_size) > timeseries.shape[1]: 
-                i = timeseries.shape[1] 
+            elif (i+block_size) > nvoxs:
+                i = nvoxs
             else:
                 i += block_size
         
-        r_value = calc_threshold(option, 
-                                 threshold, 
-                                 scans, 
-                                 corr_matrix,
-                                 full_matrix = True)
         
+        print "Calculating threshold"
+        r_value = convert_sparsity_to_r(corr_matrix, threshold, full_matrix = True)
         print "r_value ->", r_value
-                
-        if method_options[0]:
-            
-            print "calculating binarize degree centrality matrix..."
-            degree_matrix = np.sum( corr_matrix > r_value , axis = 1)  -1
-            out_list.append(('degree_centrality_binarize', degree_matrix))
-            
-            print "calculating weighted degree centrality matrix..."
-            degree_matrix = np.sum( corr_matrix*(corr_matrix > r_value), axis= 1) -1
-            out_list.append(('degree_centrality_weighted', degree_matrix))
-            
         
-        if method_options[1]:
-            out_list.extend(calc_eigenV(corr_matrix, 
-                                           r_value, 
-                                           weight_options))
-    
+        
+        if calc_degree:
+            if out_binarize:
+                print "...calculating binarize degree"
+                degree_binarize = degree_centrality(corr_matrix, r_value, method="binarize")
+                out_list.append(('degree_centrality_binarize', degree_matrix))
+            if out_weighted:
+                print "...calculating weighted degree"
+                degree_weighted = degree_centrality(corr_matrix, r_value, method="weighted")
+                out_list.append(('degree_centrality_weighted', degree_matrix))
+        
+        
+        if calc_eigen:
+            if out_binarize:
+                print "...calculating binarize eigenvector"
+                eigen_binarize[:] = eigenvector_centrality(corr_matrix, r_value, method="binarize")
+                out_list.append(('eigenvector_centrality_binarize', eigen_binarize))
+            if out_weighted:
+                print "...calculating weighted eigenvector"
+                eigen_weighted[:] = eigenvector_centrality(corr_matrix, r_value, method="weighted")
+                out_list.append(('eigenvector_centrality_weighted', eigen_weighted))            
+            
     except Exception:
         print "Error while calculating centrality"
         raise
@@ -362,12 +372,12 @@ def get_centrality(timeseries,
 
 
 
-def get_centrality_opt(timeseries,
-                       method_options,
-                       weight_options,
-                       memory_allocated,
-                       threshold, 
-                       r_value = None):
+def get_centrality_thresh(timeseries,
+                          method_options,
+                          weight_options,
+                          memory_allocated,
+                          threshold, 
+                          r_value = None):
     """
     Method to calculate degree and eigen vector centrality. 
     This method takes into consideration the amount of memory
@@ -377,14 +387,16 @@ def get_centrality_opt(timeseries,
     ----------
     timeseries_data : numpy array
         timeseries of the input subject
-    weight_options : string (list of boolean)
-        list of two booleans for binarize and weighted options respectively
     method_options : string (list of boolean)
+        list of two booleans for degree and eigen options respectively
+    weight_options : string (list of boolean)
         list of two booleans for binarize and weighted options respectively
     memory_allocated : a string
         amount of memory allocated to degree centrality
-    r_value :a float
-        threshold value
+    threshold : float
+        p-value threshold for the correlation values (ignored if the r_value option is specified)
+    r_value : float
+        threshold value in terms of the correlation (this will override the threshold option)
     
     Returns
     -------
@@ -400,19 +412,17 @@ def get_centrality_opt(timeseries,
     
     import numpy as np
     import os
-    from CPAC.network_centrality import load_mat,\
-                                        calc_corrcoef,\
-                                        calc_blocksize,\
-                                        calc_eigenV,\
-                                        calc_threshold,\
-                                        degree_centrality
-    #from scipy.sparse import dok_matrix
-    from CPAC.cwas.subdist import norm_cols, ncor
+    from CPAC.network_centrality import calc_blocksize,\
+                                        convert_pvalue_to_r,\
+                                        degree_centrality,\
+                                        eigenvector_centrality
+    from CPAC.cwas.subdist import norm_cols
     
     try:                         
         out_list = []
         nvoxs = timeseries.shape[0]
         ntpts = timeseries.shape[1]
+        
         try:
             block_size = calc_blocksize(timeseries, memory_allocated)
         except:
@@ -425,8 +435,17 @@ def get_centrality_opt(timeseries,
         out_binarize = weight_options[0]
         out_weighted = weight_options[1]
         
+        
+        if r_value == None:
+            print "Calculating threshold"
+            r_value = convert_pvalue_to_r(ntpts, threshold)
+            print "...%s -> %s" % (threshold, r_value)
+        
+        
+        print "Setup Intermediates/Outputs"
+        
         if calc_degree:
-            print "Setup Degree Output"
+            print "...degree"
             if out_binarize:
                 degree_binarize = np.zeros(nvoxs, dtype=timeseries.dtype)
                 out_list.append(('degree_centrality_binarize', degree_binarize))
@@ -435,41 +454,42 @@ def get_centrality_opt(timeseries,
                 out_list.append(('degree_centrality_weighted', degree_weighted))
         
         if calc_eigen:
-            print "Setup Eigen Intermediate File"
+            print "...eigen"
             r_matrix = np.zeros((nvoxs, nvoxs), dtype=timeseries.dtype)
+            if out_binarize:
+                eigen_binarize = np.zeros(nvoxs, dtype=timeseries.dtype)
+                out_list.append(('eigenvector_centrality_binarize', eigen_binarize))
+            if out_weighted:
+                eigen_weighted = np.zeros(nvoxs, dtype=timeseries.dtype)
+                out_list.append(('eigenvector_centrality_weighted', eigen_weighted))
+                
         
         print "Normalize TimeSeries"
         timeseries = norm_cols(timeseries.T)
         
-        j = 0
-        i = block_size
-        
+                
         print "Computing centrality across %i voxels" % nvoxs
+        i = block_size
+        j = 0
         while i <= nvoxs:
-           
            print "running block ->", i, j
            
-           if calc_degree:
-               try:
-                   print "...correlating"
-                   corr_matrix = np.dot(timeseries[:,j:i].T, timeseries)
-               except:
-                   raise Exception("Error in calcuating block wise correlation for the block %i,%i"%(j,i))
-           
-           if r_value == None:
-               print "...calculating threshold"
-               r_value = calc_threshold(1, threshold, ntpts, corr_matrix, full_matrix = False)
-               print "...%s -> %s" % (threshold, r_value)
-           
+           try:
+               print "...correlating"
+               corr_matrix = np.dot(timeseries[:,j:i].T, timeseries)
+           except:
+               raise Exception("Error in calcuating block wise correlation for the block %i,%i"%(j,i))
+                      
            if calc_eigen:
                print "...storing correlation matrix"
                r_matrix[j:i] = corr_matrix
            
            if calc_degree:
-               print "...calculating degree"
                if out_binarize:
+                   print "...calculating binarize degree"
                    degree_centrality(corr_matrix, r_value, method="binarize", out=degree_binarize[j:i])
                if out_weighted:
+                   print "...calculating weighted degree"
                    degree_centrality(corr_matrix, r_value, method="weighted", out=degree_weighted[j:i])
             
            print "...removing correlation matrix"
@@ -485,65 +505,99 @@ def get_centrality_opt(timeseries,
         
         try:
             if calc_eigen:
-                eigen_results = calc_eigenV(r_matrix, r_value, weight_options)
-                out_list.extend(eigen_results)
+                if out_binarize:
+                    print "...calculating binarize eigenvector"
+                    eigen_binarize[:] = eigenvector_centrality(r_matrix, r_value, method="binarize")
+                if out_weighted:
+                    print "...calculating weighted eigenvector"
+                    eigen_weighted[:] = eigenvector_centrality(r_matrix, r_value, method="weighted")
         except Exception:
             print "Error in calcuating eigen vector centrality"
             raise
         
-        # Removing effect of auto-correlation
-        if method_options[0]:
+        if calc_degree:
+            print "...removing effect of auto-correlation on degree"
             degree_binarize[degree_binarize!=0] = degree_binarize[degree_binarize!=0] - 1
             degree_weighted[degree_weighted!=0] = degree_weighted[degree_weighted!=0] - 1
         
-        return out_list   
+        return out_list
     
     except Exception: 
         print "Error in calcuating Centrality"
         raise
 
- 
-def calc_eigenV(r_matrix, 
-                r_value, 
-                weight_options):
-    
+
+def get_centrality_fast(timeseries,
+                        method_options):
     """
-    Method to calculate Eigen Vector Centrality
+    Method to calculate degree and eigen vector centrality. 
+    Relative to `get_centrality_opt`, it runs fast by not directly computing 
+    the correlation matrix. As a consequence, there are several differences/
+    limitations from the standard approach:
+    
+    1. Cannot specify a correlation threshold
+    2. As a consequence, the weighted dense matrix centrality is computed
+    3. No memory limit is specified since it is assumed to be ok
+    
+    Note that the approach doesn't directly calculate the complete correlation
+    matrix.
     
     Parameters
     ----------
-    
-    r_matrix : numpy array
-        correlation matrix
-    r_value : a float
-        threshold value
-    weight_options : list (boolean)
+    timeseries_data : numpy array
+        timeseries of the input subject
+    method_options : string (list of boolean)
         list of two booleans for binarize and weighted options respectively
-        
-        
+    
     Returns
     -------
-    out_list : list
-        list containing eigen vector centrality maps
-        
+    out_list : string (list of tuples)
+        list of tuple containing output name to be used to store nifti image
+        for centrality and centrality matrix. this will only be weighted since
+        the fast approaches are limited to this type of output.
     
+    Raises
+    ------
+    Exception
     """
+    
+    
     import numpy as np
-    from scipy.sparse import csc_matrix    
-
-    out_list =[]
+    from CPAC.network_centrality import fast_degree_centrality,\
+                                        fast_eigenvector_centrality
+    from CPAC.cwas.subdist import norm_cols
     
-    if weight_options[0]:
-        print "calculating eigen vector centrality matrix..."
-        eigen_matrix_binarize = eigenvector_centrality(r_matrix, r_value, method="binarize")
-        out_list.append(('eigenvector_centrality_binarize', eigen_matrix_binarize))
-    
-    if weight_options[1]:
-        print "calculating weighted eigen vector centrality matrix..."
-        eigen_matrix_weighted = eigenvector_centrality(r_matrix, r_value, method="weighted")     
-        out_list.append(('eigenvector_centrality_weighted', eigen_matrix_weighted))
+    try:
+        out_list    = []
+        nvoxs       = timeseries.shape[0]
+        ntpts       = timeseries.shape[1]
         
-    return out_list
+        # It's assumed that there is enough memory
+        # So a block size isn't set here
+        
+        calc_degree  = method_options[0]
+        calc_eigen   = method_options[1]
+        
+        print "Normalize Time-series"
+        timeseries = norm_cols(timeseries.T)
+        
+        print "Computing centrality across %i voxels" % nvoxs
+        
+        if calc_degree:
+            print "...calculating degree"
+            degree_weighted = fast_degree_centrality(timeseries)
+            out_list.append(('degree_centrality_weighted', degree_weighted))
+        
+        if calc_eigen:
+            print "...calculating eigen"
+            eigen_weighted = fast_eigen_centrality(timeseries)
+            out_list.append(('eigen_centrality_weighted', eigen_weighted))
+        
+        return out_list   
+    
+    except Exception: 
+        print "Error in calcuating centrality"
+        raise
 
 
 def calc_centrality(datafile, 
@@ -564,7 +618,7 @@ def calc_centrality(datafile,
     template : string (nifti file)
         path to mask/parcellation unit
     method_options : list (boolean)
-        list of two booleans for binarize and weighted options respectively
+        list of two booleans for degree and eigen options respectively
     weight_options : list (boolean)
         list of two booleans for binarize and weighted options respectively
     option : an integer
@@ -583,11 +637,7 @@ def calc_centrality(datafile,
         
     """
     
-    from CPAC.network_centrality import map_centrality_matrix,\
-                                        get_centrality, \
-                                        get_centrality_opt,\
-                                        calc_threshold, \
-                                        load
+    from CPAC.network_centrality import map_centrality_matrix
     
     out_list = []
     
@@ -606,7 +656,7 @@ def calc_centrality(datafile,
     #for sparsity threshold
     if option == 1 and allocated_memory == None:
         
-        centrality_matrix = get_centrality(ts, 
+        centrality_matrix = get_centrality_by_sparsity(ts, 
                                            method_options,
                                            weight_options,
                                            threshold,
@@ -615,18 +665,11 @@ def calc_centrality(datafile,
                                            allocated_memory)
     #optimized centrality
     else:
-        
-        if option ==1 :
-            r_value = None
-        else:
-            r_value = calc_threshold(option, 
-                                     threshold,
-                                     scans)
-        
+                
         print "inside optimized_centraltity, r_value ->", r_value
         import time
         start = time.clock()
-        centrality_matrix = get_centrality_opt(ts,
+        centrality_matrix = get_centrality_by_threshold(ts,
                                                method_options, 
                                                weight_options,
                                                allocated_memory,
