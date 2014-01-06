@@ -506,10 +506,10 @@ def get_centrality_by_thresh(timeseries,
             if calc_eigen:
                 if out_binarize:
                     print "...calculating binarize eigenvector"
-                    eigen_binarize[:] = eigenvector_centrality(r_matrix, r_value, method="binarize")
+                    eigen_binarize[:] = eigenvector_centrality(r_matrix, r_value, method="binarize").squeeze()
                 if out_weighted:
                     print "...calculating weighted eigenvector"
-                    eigen_weighted[:] = eigenvector_centrality(r_matrix, r_value, method="weighted")
+                    eigen_weighted[:] = eigenvector_centrality(r_matrix, r_value, method="weighted").squeeze()
         except Exception:
             print "Error in calcuating eigen vector centrality"
             raise
