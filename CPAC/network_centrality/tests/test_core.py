@@ -14,7 +14,38 @@ sys.path.insert(0, '/home2/data/Projects/CPAC_Regression_Test/nipype-installs/fc
 sys.path.insert(1, "/home2/data/Projects/CPAC_Regression_Test/2013-05-30_cwas/C-PAC")
 sys.path.append("/home/data/PublicProgram/epd-7.2-2-rh5-x86_64/lib/python2.7/site-packages")
 
+from CPAC.network_centrality import degree_centrality, fast_degree_centrality
 from CPAC.network_centrality import eigenvector_centrality, fast_eigenvector_centrality
+
+
+def test_degree_centrality_binarize():
+    print "testing centrality binarize"
+    
+    method      = "binarize"
+    nblock      = 20
+    nvoxs       = 100
+    r_value     = 0.2
+    corr_matrix = np.random.random((nblock, nvoxs))
+    
+    ref  = np.sum(corr_matrix>r_value, axis=1)
+    comp = degree_centrality(corr_matrix, r_value, method)
+    
+    assert_equal(ref, comp)
+
+def test_degree_centrality_weighted():
+    print "testing centrality weighted"
+    
+    method      = "weighted"
+    nblock      = 20
+    nvoxs       = 100
+    r_value     = 0.2
+    corr_matrix = np.random.random((nblock, nvoxs))
+    
+    ref  = np.sum(corr_matrix*(corr_matrix>r_value), axis=1)
+    comp = degree_centrality(corr_matrix, r_value, method)
+    
+    assert_equal(ref, comp)
+
 
 def test_fast_eigenvector_centrality(ntpts=100, nvoxs=1000):
     print "testing fast_eigenvector_centrality"
