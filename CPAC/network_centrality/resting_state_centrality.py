@@ -258,7 +258,7 @@ def load(datafile, template=None):
     return timeseries, aff, final_mask, template_type, scans
 
 
-def get_centrality_sparsity(timeseries, 
+def get_centrality_by_sparsity(timeseries, 
                    method_options,
                    weight_options,
                    threshold,
@@ -371,7 +371,7 @@ def get_centrality_sparsity(timeseries,
 
 
 
-def get_centrality_thresh(timeseries,
+def get_centrality_by_thresh(timeseries,
                           method_options,
                           weight_options,
                           memory_allocated,
