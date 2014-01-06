@@ -111,9 +111,9 @@ def eigenvector_centrality(corr_matrix, r_value=None, method=None, verbose=True,
     eigenValue, eigenVector = LA.eigsh(corr_sparse, k=1, which='LM', maxiter=1000)
     
     if ret_eigenvalue:
-        return eigenValue, eigenVector
+        return eigenValue, np.abs(eigenVector)
     else:
-        return eigenVector
+        return np.abs(eigenVector)
 
 
 def fast_eigenvector_centrality(m, maxiter=99, verbose=True):
