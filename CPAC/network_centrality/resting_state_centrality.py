@@ -230,11 +230,12 @@ def load(datafile, template=None):
     
     #check for parcellation
     nodes = np.unique(mask).tolist()
-    nodes.sort()
-    print "sorted nodes", nodes
-    
+        
     #extract timeseries
     if len(nodes)>2:
+        nodes.sort()
+        print "sorted nodes", nodes
+        
         flag=1
         for n in nodes:
             if n > 0:
@@ -590,7 +591,7 @@ def get_centrality_fast(timeseries,
         if calc_eigen:
             print "...calculating eigen"
             eigen_weighted = fast_eigenvector_centrality(timeseries)
-            out_list.append(('eigen_centrality_weighted', eigen_weighted))
+            out_list.append(('eigenvector_centrality_weighted', eigen_weighted))
         
         return out_list   
     
