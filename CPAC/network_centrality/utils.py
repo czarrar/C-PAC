@@ -331,7 +331,8 @@ def calc_blocksize(timeseries, memory_allocated = None, include_full_matrix = Fa
     if block_size > nvoxs:
         block_size = nvoxs
     elif block_size < 1:
-        raise MemoryError(" Not enough memory available to perform degree centrality")
+        memory_usage = memory_for_output + memory_for_timeseries + memory_for_full_matrix + nvoxs*nbytes
+        raise MemoryError(" Not enough memory available to perform degree centrality. Need a minimum of %.2f" % memory_usage)
             
     print "block_size -> ", block_size
     

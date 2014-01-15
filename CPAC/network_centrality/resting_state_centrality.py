@@ -423,13 +423,10 @@ def get_centrality_by_thresh(timeseries,
         nvoxs = timeseries.shape[0]
         ntpts = timeseries.shape[1]
         
-        try:
-            if calc_eigen:
-                block_size = calc_blocksize(timeseries, memory_allocated, include_full_matrix=True)
-            else:
-                block_size = calc_blocksize(timeseries, memory_allocated)
-        except:
-           raise Exception("Error in calculating block size")
+        if calc_eigen:
+            block_size = calc_blocksize(timeseries, memory_allocated, include_full_matrix=True)
+        else:
+            block_size = calc_blocksize(timeseries, memory_allocated)
         
         r_matrix = None
         
