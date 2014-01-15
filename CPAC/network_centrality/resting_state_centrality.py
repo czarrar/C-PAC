@@ -422,12 +422,7 @@ def get_centrality_by_thresh(timeseries,
         out_list = []
         nvoxs = timeseries.shape[0]
         ntpts = timeseries.shape[1]
-        
-        if calc_eigen:
-            block_size = calc_blocksize(timeseries, memory_allocated, include_full_matrix=True)
-        else:
-            block_size = calc_blocksize(timeseries, memory_allocated)
-        
+                
         r_matrix = None
         
         calc_degree  = method_options[0]
@@ -435,6 +430,10 @@ def get_centrality_by_thresh(timeseries,
         out_binarize = weight_options[0]
         out_weighted = weight_options[1]
         
+        if calc_eigen:
+            block_size = calc_blocksize(timeseries, memory_allocated, include_full_matrix=True)
+        else:
+            block_size = calc_blocksize(timeseries, memory_allocated)
         
         if r_value == None:
             print "Calculating threshold"
